@@ -41,5 +41,6 @@ public class AppTest extends TestCase {
      */
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
+        System.err.println("Run JUnit 3 tests in AppTest");
     }
 }
