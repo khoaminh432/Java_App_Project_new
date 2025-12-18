@@ -1,12 +1,33 @@
+# Compiled class files
+*.class
 
-# Maven
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Build directories
 target/
+build/
+bin/
+out/
+dist/
 
-# IDE
-.vscode/
+# IDE specific files
 .idea/
 *.iml
+.vscode/
+.eclipse/
+.settings/
+.project
+.classpath
 
-# OS
+# OS specific files
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
