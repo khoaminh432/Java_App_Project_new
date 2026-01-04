@@ -1,5 +1,8 @@
-package my_app;
+package  my_app;
+import java.net.URL;
+
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,14 +11,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import my_app.service.ConfigProperties;
-
 public class App extends Application {
 
     private TextArea console;
-
-    @Override
-    public void start(Stage stage) {
-
+    private static final String FILE = "/fxml/homepage.fxml";
+    public URL checkclass(){
+        return getClass().getResource(FILE);
+    }
+    private void testGUI(){
         this.console = new TextArea();
         this.console.setEditable(false);
         console.setWrapText(true);
@@ -43,10 +46,20 @@ public class App extends Application {
 
         VBox root = new VBox(10, console, input, btnSend);
         root.setPadding(new Insets(10));
+    }
+    @Override
+    public void start(Stage stage) throws Exception {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource(FILE)
+        );
 
-        stage.setTitle("JavaFX Console ");
-        stage.setScene(new Scene(root, 500, 400));
+        Scene scene = new Scene(loader.load());
+        
+        stage.setScene(scene);
+        stage.setTitle("JavaFX App");
         stage.show();
+        
+        
     }
 
     private void log(String text) {
