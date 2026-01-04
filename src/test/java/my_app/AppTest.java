@@ -36,6 +36,9 @@ public class AppTest extends TestCase {
         assertNotNull(userService);
         userService.someServiceMethod(); // Gọi phương thức để kiểm tra nó hoạt động
     }
+    public void testConfigProperties() {
+        
+    }
     /**
      * Kiểm tra model User có thể khởi tạo bằng constructor mặc định.
      */
