@@ -8,7 +8,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import my_app.service.ConfigProperties;
-
 public class App extends Application {
 
     private TextArea console;
@@ -28,12 +27,18 @@ public class App extends Application {
 
         btnSend.setOnAction(e -> {
             String cmd = input.getText();
+            
             log("> " + cmd);
 
             if ("clear".equalsIgnoreCase(cmd)) {
                 console.clear();
             } else {
-                log("Bạn đã nhập: " + cmd);
+                log("Bạn đã nhập: " + cmd+
+                "\n(Chức năng khác chưa được triển khai)"+
+                ConfigProperties.getDbUrl()
+            + "\n"+ConfigProperties.getDbUser()
+            + "\n"+ConfigProperties.getDbPassword()
+                );
             }
             input.clear();
         });
@@ -47,7 +52,8 @@ public class App extends Application {
     }
 
     private void log(String text) {
-        console.appendText(text + "\n");
+        console.appendText(text + "\n"
+    );
     }
 
     public static void main(String[] args) {
