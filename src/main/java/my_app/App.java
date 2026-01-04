@@ -1,4 +1,5 @@
 package my_app;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -46,7 +47,7 @@ public class App extends Application {
         VBox root = new VBox(10, console, input, btnSend);
         root.setPadding(new Insets(10));
 
-        stage.setTitle("JavaFX Console ");
+        stage.setTitle("JavaFX Console");
         stage.setScene(new Scene(root, 500, 400));
         stage.show();
     }
