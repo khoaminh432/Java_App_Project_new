@@ -3,6 +3,7 @@ package my_app;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import my_app.service.UserService;
 /*** Sử dụng JUnit 3 (TestCase, TestSuite).
  */
 public class AppTest extends TestCase {
@@ -20,9 +21,7 @@ public class AppTest extends TestCase {
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        System.out.println();
         return new TestSuite(AppTest.class);
-        
     }
 
     /**
@@ -31,7 +30,11 @@ public class AppTest extends TestCase {
     public void testAppClassExists() {
         App app = new App();
         assertNotNull(app);
-        System.out.println(app.checkclass());
+    }
+    public void testUserServiceMethod() {
+        UserService userService = new UserService();
+        assertNotNull(userService);
+        userService.someServiceMethod(); // Gọi phương thức để kiểm tra nó hoạt động
     }
     /**
      * Kiểm tra model User có thể khởi tạo bằng constructor mặc định.
