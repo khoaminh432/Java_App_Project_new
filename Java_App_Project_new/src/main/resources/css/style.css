@@ -1,0 +1,14 @@
+.colorsize{
+    -fx-background-color: #dadada;
+}
+.btn-left-content:hover{
+    -fx-background-color: #5c71d8;
+}
+.btn-left-content:pressed{
+    -fx-border-color:  #2e3e83;
+    -fx-border-width:2px 2px 0px 2px;
+}
+
+.btn-left-content{
+    -fx-cursor: hand;
+}
