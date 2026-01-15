@@ -1,3 +1,4 @@
+
 -- Product Category
 INSERT INTO Product_Category (category_name, description) VALUES
 ('Electronics', 'Gadgets, phones, and laptops'),
