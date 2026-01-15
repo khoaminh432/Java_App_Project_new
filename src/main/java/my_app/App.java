@@ -9,13 +9,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import my_app.service.ConfigProperties;
+import my_app.util.DBConnection;
 public class App extends Application {
 
     private TextArea console;
 
     @Override
     public void start(Stage stage) {
-
+        DBConnection dbConn = new DBConnection();
+        System.out.println("DB Connection: " + dbConn.getConn());
         this.console = new TextArea();
         this.console.setEditable(false);
         console.setWrapText(true);
@@ -50,6 +52,7 @@ public class App extends Application {
         stage.setTitle("JavaFX Console");
         stage.setScene(new Scene(root, 500, 400));
         stage.show();
+        dbConn.close();
     }
 
     private void log(String text) {
@@ -60,4 +63,5 @@ public class App extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+    
 }
