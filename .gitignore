@@ -1,33 +1,12 @@
-# Compiled class files
-*.class
 
-# Package Files
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# Build directories
+# Maven
 target/
-build/
-bin/
-out/
-dist/
 
-# IDE specific files
+# IDE
+.vscode/
 .idea/
 *.iml
-.vscode/
-.eclipse/
-.settings/
-.project
-.classpath
-
-# OS specific files
+.github/
+# OS
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log

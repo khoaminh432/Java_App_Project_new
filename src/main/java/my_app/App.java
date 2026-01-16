@@ -1,60 +1,48 @@
 package my_app;
+
+import java.io.IOException;
+
 import javafx.application.Application;
-import javafx.geometry.Insets;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import my_app.service.ConfigProperties;
-
+import my_app.util.DBConnection;
 public class App extends Application {
-
+    private static final String APP_NAME = "JavaFX Console Application";
+    private static final String APP_PATH = "/fxml/homepage.fxml";
     private TextArea console;
 
     @Override
     public void start(Stage stage) {
-
-        this.console = new TextArea();
-        this.console.setEditable(false);
-        console.setWrapText(true);
-        console.setPrefHeight(300);
-
-        TextField input = new TextField();
-        input.setPromptText("Nhập lệnh...");
-
-        Button btnSend = new Button("Chạy");
-
-        btnSend.setOnAction(e -> {
-            String cmd = input.getText();
-            log("> " + cmd);
-
-            if ("clear".equalsIgnoreCase(cmd)) {
-                console.clear();
-            } else {
-                log("Bạn đã nhập: " + cmd);
-                log("DB User from config: " + ConfigProperties.getDbUser());
-                log("DB Password from config: " + ConfigProperties.getDbPassword());
-                log("DB URL from config: " + ConfigProperties.getDbUrl());
-            }
-            input.clear();
-        });
-
-        VBox root = new VBox(10, console, input, btnSend);
-        root.setPadding(new Insets(10));
-
-        stage.setTitle("JavaFX Console ");
-        stage.setScene(new Scene(root, 500, 400));
+        DBConnection dbConn = new DBConnection();
+        FXMLLoader loader = new FXMLLoader(
+            getClass().getResource(APP_PATH)
+        );
+        Scene scene;
+        try {
+            scene = new Scene(loader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        stage.setTitle(APP_NAME);
+        stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest(e ->
+        {
+            dbConn.close();
+        }
+        );
     }
 
     private void log(String text) {
-        console.appendText(text + "\n");
+        console.appendText(text + "\n"
+    );
     }
 
     public static void main(String[] args) {
         launch(args);
-    
     }
+    
 }
