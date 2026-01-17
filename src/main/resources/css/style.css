@@ -9,6 +9,111 @@
     -fx-border-width:2px 2px 0px 2px;
 }
 
+.label-warning {
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: bold;
+}
+.label-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+.label-desc {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7f8c8d;
+}
+
 .btn-left-content{
     -fx-cursor: hand;
+}
+.text-field {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+
+    -fx-border-color: #dcdde1;
+    -fx-border-width: 1.2;
+
+    -fx-padding: 10 14;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2f3640;
+
+    -fx-prompt-text-fill: #a4b0be;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0.0, 0, 2);
+}
+
+.text-field:focused {
+    -fx-border-color: #4a90e2;
+    -fx-border-width: 2;
+
+    -fx-effect: dropshadow(gaussian, rgba(74,144,226,0.35), 10, 0.2, 0, 3);
+}
+.text-field:hover {
+    -fx-border-color: #a4b0be;
+}
+.button {
+    -fx-background-color: linear-gradient(to right, #4a90e2, #357abd);
+    -fx-background-radius: 12;
+
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0.2, 0, 3);
+}
+.button:hover {
+    -fx-background-color: linear-gradient(to right, #5aa0f2, #468cd8);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.25, 0, 4);
+}
+.button:pressed {
+    -fx-background-color: linear-gradient(to right, #357abd, #2c5fa8);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0.1, 0, 1);
+    -fx-translate-y: 1;
+}
+.radio-button {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2f3640;
+    -fx-cursor: hand;
+}
+
+/* Vòng tròn ngoài */
+.radio-button .radio {
+    -fx-background-color: white;
+    -fx-border-color: #b2bec3;
+    -fx-border-width: 2;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-padding: 4;
+}
+.radio-button:hover .radio {
+    -fx-border-color: #4a90e2;
+}
+.radio-button:selected .radio {
+    -fx-border-color: #4a90e2;
+}
+
+/* Chấm tròn bên trong */
+.radio-button:selected .radio .dot {
+    -fx-background-color: #4a90e2;
+    -fx-background-radius: 50%;
+}
+.dark .radio-button {
+    -fx-text-fill: #f5f6fa;
+}
+
+.dark .radio-button .radio {
+    -fx-background-color: #2f3640;
+    -fx-border-color: #57606f;
+}
+
+.dark .radio-button:selected .radio {
+    -fx-border-color: #74b9ff;
+}
+
+.dark .radio-button:selected .radio .dot {
+    -fx-background-color: #74b9ff;
 }
