@@ -17,8 +17,8 @@ public class AppTest extends Application {
 
     @Override
     public void start(Stage stage) {
-        DBConnection dbConn = new DBConnection();
-        System.out.println("DB Connection: " + dbConn.getConn());
+        DBConnection dbConn = DBConnection.getInstance();
+        System.out.println("DB Connection: " + dbConn.connect());
         this.console = new TextArea();
         this.console.setEditable(false);
         console.setWrapText(true);

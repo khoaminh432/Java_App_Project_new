@@ -15,7 +15,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        DBConnection dbConn = new DBConnection();
+        DBConnection dbConn = DBConnection.getInstance();
         FXMLLoader loader = new FXMLLoader(
             getClass().getResource(APP_PATH)
         );
