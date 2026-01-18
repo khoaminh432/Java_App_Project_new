@@ -1,26 +1,35 @@
 package my_app.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import my_app.service.ConfigProperties;
 public class DBConnection  {
+    private static DBConnection instance;
+    public static String DB_TYPE = "mysql";
     private final String url = ConfigProperties.getDbUrl();
     private final String user = ConfigProperties.getDbUser();
     private final String password = ConfigProperties.getDbPassword();
     private Connection conn;
-    public Connection getConnection() throws Exception {
+    private Connection getConnection() throws Exception {
         return DriverManager.getConnection(this.url, this.user, this.password);
     }
-    public DBConnection() {
+    private DBConnection() {
         try {
             this.conn = getConnection();
-            System.out.println("Kết nối DB thành công!");
+            System.out.println("Kết nối DB thành công (Singleton)");
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi kết nối đến cơ sở dữ liệu", e);
+            throw new RuntimeException("Không thể kết nối DB", e);
         }
     }
-    public Connection getConn() {
-
+    public Connection connect() {
         return this.conn;
+    }
+    /** Lấy instance duy nhất */
+    public static synchronized DBConnection getInstance() {
+        if (instance == null) {
+            instance = new DBConnection();
+        }
+        return instance;
     }
     public void close() {
         try {
@@ -34,8 +43,10 @@ public class DBConnection  {
     }
 
     public static void main(String[] args) {
-        DBConnection dbConn = new DBConnection();
-        System.out.println("DB Connection: " + dbConn.getConn());
+        DBConnection dbConn = DBConnection.getInstance();
+        // Sử dụng kết nối
+        Connection conn = dbConn.connect();
+        // Đóng kết nối khi không còn sử dụng
         dbConn.close();
     }
 }
