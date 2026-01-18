@@ -20,7 +20,22 @@ public class Customer {
         this.password = password;
         this.status = status;
     }
-    
+    public Customer(String fullName, String phoneNumber, 
+                   String email, String password, String status) {
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.password = password;
+        this.status = status;
+    }
+    public Customer(Customer other) {
+        this.id = other.id;
+        this.fullName = other.fullName;
+        this.phoneNumber = other.phoneNumber;
+        this.email = other.email;
+        this.password = other.password;
+        this.status = other.status;
+    }
     // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }

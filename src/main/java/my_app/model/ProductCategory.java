@@ -13,6 +13,14 @@ public class ProductCategory {
         this.categoryName = categoryName;
         this.description = description;
     }
+
+    public ProductCategory(String categoryName, String description) {
+        this(null, categoryName, description);
+    }
+
+    public ProductCategory(ProductCategory other) {
+        this(other.id, other.categoryName, other.description);
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

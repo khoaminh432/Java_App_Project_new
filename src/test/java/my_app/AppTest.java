@@ -8,6 +8,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import my_app.service.UserService;
+import my_app.util.DBConnection;
 import my_app.util.QueryExecutor;
 /*** Sử dụng JUnit 3 (TestCase, TestSuite).
  */
@@ -55,7 +56,9 @@ public class AppTest extends TestCase {
         assertNotNull(results);
         results.forEach(record -> {
             System.out.println(record);
-        });}
+        });
+        DBConnection.close();
+    }
         
     /**
      * Kiểm tra model User có thể khởi tạo bằng constructor mặc định.

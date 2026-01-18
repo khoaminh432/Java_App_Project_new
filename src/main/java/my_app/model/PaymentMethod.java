@@ -11,6 +11,14 @@ public class PaymentMethod {
         this.id = id;
         this.methodName = methodName;
     }
+
+    public PaymentMethod(String methodName) {
+        this(null, methodName);
+    }
+
+    public PaymentMethod(PaymentMethod other) {
+        this(other.id, other.methodName);
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

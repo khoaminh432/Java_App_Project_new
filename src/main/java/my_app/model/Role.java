@@ -15,6 +15,14 @@ public class Role {
         this.roleName = roleName;
         this.hourlyRate = hourlyRate;
     }
+
+    public Role(String roleName, BigDecimal hourlyRate) {
+        this(null, roleName, hourlyRate);
+    }
+
+    public Role(Role other) {
+        this(other.id, other.roleName, other.hourlyRate);
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

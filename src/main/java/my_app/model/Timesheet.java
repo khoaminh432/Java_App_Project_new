@@ -19,6 +19,15 @@ public class Timesheet {
         this.hoursWorked = hoursWorked;
         this.workDate = workDate;
     }
+
+    public Timesheet(Integer employeeId, BigDecimal hoursWorked, LocalDate workDate) {
+        this(null, employeeId, hoursWorked, workDate);
+    }
+
+    public Timesheet(Timesheet other) {
+        this(other.id, other.employeeId, other.hoursWorked, other.workDate);
+        this.employee = other.employee;
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

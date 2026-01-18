@@ -31,6 +31,18 @@ public class Employee {
         this.status = status;
         this.roleId = roleId;
     }
+
+    public Employee(String firstName, String lastName, String phoneNumber,
+                   LocalDate dob, String address, BigDecimal basicSalary,
+                   String status, Integer roleId) {
+        this(null, firstName, lastName, phoneNumber, dob, address, basicSalary, status, roleId);
+    }
+
+    public Employee(Employee other) {
+        this(other.id, other.firstName, other.lastName, other.phoneNumber, other.dob,
+             other.address, other.basicSalary, other.status, other.roleId);
+        this.role = other.role;
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

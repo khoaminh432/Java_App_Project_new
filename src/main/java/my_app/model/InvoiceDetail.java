@@ -22,6 +22,17 @@ public class InvoiceDetail {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
     }
+
+    public InvoiceDetail(Integer invoiceId, Integer productId,
+                        Integer quantity, BigDecimal unitPrice) {
+        this(null, invoiceId, productId, quantity, unitPrice);
+    }
+
+    public InvoiceDetail(InvoiceDetail other) {
+        this(other.id, other.invoiceId, other.productId, other.quantity, other.unitPrice);
+        this.invoice = other.invoice;
+        this.product = other.product;
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

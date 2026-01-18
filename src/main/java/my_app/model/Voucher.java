@@ -17,6 +17,14 @@ public class Voucher {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
+    public Voucher(String promotionName, LocalDateTime startDate, LocalDateTime endDate) {
+        this(null, promotionName, startDate, endDate);
+    }
+
+    public Voucher(Voucher other) {
+        this(other.id, other.promotionName, other.startDate, other.endDate);
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

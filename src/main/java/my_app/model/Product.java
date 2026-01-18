@@ -25,6 +25,17 @@ public class Product {
         this.status = status;
         this.categoryId = categoryId;
     }
+
+    public Product(String productName, BigDecimal unitPrice,
+                  String unit, Integer quantity, String status, Integer categoryId) {
+        this(null, productName, unitPrice, unit, quantity, status, categoryId);
+    }
+
+    public Product(Product other) {
+        this(other.id, other.productName, other.unitPrice, other.unit, other.quantity,
+             other.status, other.categoryId);
+        this.category = other.category;
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

@@ -24,6 +24,16 @@ public class Order {
         this.totalAmount = totalAmount;
         this.status = status;
     }
+
+    public Order(Integer customerId, LocalDateTime orderDate,
+                BigDecimal subTotal, BigDecimal totalAmount, String status) {
+        this(null, customerId, orderDate, subTotal, totalAmount, status);
+    }
+
+    public Order(Order other) {
+        this(other.id, other.customerId, other.orderDate, other.subTotal, other.totalAmount, other.status);
+        this.customer = other.customer;
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

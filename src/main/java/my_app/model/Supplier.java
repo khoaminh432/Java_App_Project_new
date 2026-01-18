@@ -15,6 +15,14 @@ public class Supplier {
         this.address = address;
         this.phoneNumber = phoneNumber;
     }
+
+    public Supplier(String supplierName, String address, String phoneNumber) {
+        this(null, supplierName, address, phoneNumber);
+    }
+
+    public Supplier(Supplier other) {
+        this(other.id, other.supplierName, other.address, other.phoneNumber);
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

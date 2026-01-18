@@ -20,6 +20,17 @@ public class InvoiceVoucherDetail {
         this.voucherId = voucherId;
         this.discountValue = discountValue;
     }
+
+    public InvoiceVoucherDetail(Integer invoiceId, Integer voucherId,
+                               BigDecimal discountValue) {
+        this(null, invoiceId, voucherId, discountValue);
+    }
+
+    public InvoiceVoucherDetail(InvoiceVoucherDetail other) {
+        this(other.id, other.invoiceId, other.voucherId, other.discountValue);
+        this.invoice = other.invoice;
+        this.voucher = other.voucher;
+    }
     
     // Getters and Setters
     public Integer getId() { return id; }

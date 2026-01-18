@@ -29,6 +29,38 @@ public class OnlineOrder extends Order {
         this.estimatedDeliveryTime = estimatedDeliveryTime;
         this.completedTime = completedTime;
     }
+
+    public OnlineOrder(Integer id, Integer customerId, LocalDateTime orderDate,
+                       BigDecimal subTotal, BigDecimal totalAmount, String status,
+                       Integer shipperId, String receiverName, String phoneNumber,
+                       String address, BigDecimal shippingFee,
+                       LocalDateTime estimatedDeliveryTime, LocalDateTime completedTime) {
+        super(id, customerId, orderDate, subTotal, totalAmount, status);
+        this.shipperId = shipperId;
+        this.receiverName = receiverName;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.shippingFee = shippingFee;
+        this.estimatedDeliveryTime = estimatedDeliveryTime;
+        this.completedTime = completedTime;
+    }
+
+    public OnlineOrder(Integer customerId, LocalDateTime orderDate,
+                       BigDecimal subTotal, BigDecimal totalAmount, String status,
+                       Integer shipperId, String receiverName, String phoneNumber,
+                       String address, BigDecimal shippingFee,
+                       LocalDateTime estimatedDeliveryTime, LocalDateTime completedTime) {
+        this(null, customerId, orderDate, subTotal, totalAmount, status, shipperId,
+             receiverName, phoneNumber, address, shippingFee, estimatedDeliveryTime, completedTime);
+    }
+
+    public OnlineOrder(OnlineOrder other) {
+        this(other.getId(), other.getCustomerId(), other.getOrderDate(), other.getSubTotal(),
+             other.getTotalAmount(), other.getStatus(), other.shipperId, other.receiverName,
+             other.phoneNumber, other.address, other.shippingFee, other.estimatedDeliveryTime,
+             other.completedTime);
+        this.shipper = other.shipper;
+    }
     
     // Getters and Setters
     public Integer getShipperId() { return shipperId; }

@@ -31,10 +31,10 @@ public class DBConnection  {
         }
         return instance;
     }
-    public void close() {
+    public static void close() {
         try {
-            if (this.conn != null && !this.conn.isClosed()) {
-                this.conn.close();
+            if (instance.conn != null && !instance.conn.isClosed()) {
+                instance.conn.close();
                 System.out.println("Đóng kết nối DB thành công!");
             }
         } catch (Exception e) {

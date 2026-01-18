@@ -9,8 +9,6 @@ public class GoodsReceipt {
     private Integer supplierId;
     private Integer totalQuantity;
     private BigDecimal totalPrice;
-    private Supplier supplier; // Reference to Supplier object
-    
     // Constructors
     public GoodsReceipt() {}
     
@@ -21,6 +19,15 @@ public class GoodsReceipt {
         this.supplierId = supplierId;
         this.totalQuantity = totalQuantity;
         this.totalPrice = totalPrice;
+    }
+
+    public GoodsReceipt(LocalDateTime receivedDate, Integer supplierId,
+                       Integer totalQuantity, BigDecimal totalPrice) {
+        this(null, receivedDate, supplierId, totalQuantity, totalPrice);
+    }
+
+    public GoodsReceipt(GoodsReceipt other) {
+        this(other.id, other.receivedDate, other.supplierId, other.totalQuantity, other.totalPrice);
     }
     
     // Getters and Setters
@@ -38,10 +45,6 @@ public class GoodsReceipt {
     
     public BigDecimal getTotalPrice() { return totalPrice; }
     public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
-    
-    public Supplier getSupplier() { return supplier; }
-    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
-    
     @Override
     public String toString() {
         return "GoodsReceipt{" +
