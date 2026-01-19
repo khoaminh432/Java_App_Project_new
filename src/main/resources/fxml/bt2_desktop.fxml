@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="376.0" prefWidth="721.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.bt2_desktopController">
+   <children>
+      <VBox alignment="TOP_CENTER" layoutX="215.0" layoutY="120.0" prefHeight="413.0" prefWidth="816.0" spacing="15.0" style="-fx-background-color: #0001;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="Bài tập desktop 2">
+               <font>
+                  <Font name="System Bold" size="34.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" prefHeight="7.0" prefWidth="800.0" spacing="10.0">
+               <children>
+                  <Label prefHeight="30.0" prefWidth="130.0" styleClass="label-title" stylesheets="@../css/style.css" text="Chiều dài : " />
+                  <TextField fx:id="tfLength" prefHeight="45.0" prefWidth="209.0" styleClass="text-field" stylesheets="@../css/style.css" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="7.0" prefWidth="800.0" spacing="10.0">
+               <children>
+                  <Label prefHeight="30.0" prefWidth="130.0" styleClass="label-title" stylesheets="@../css/style.css" text="Chiều rộng: " />
+                  <TextField fx:id="tfWidth" prefHeight="45.0" prefWidth="209.0" styleClass="text-field" stylesheets="@../css/style.css" />
+               </children>
+            </HBox>
+            <Button fx:id="btnCalc" mnemonicParsing="false" onAction="#handleCalc" prefHeight="45.0" prefWidth="70.0" stylesheets="@../css/style.css" text="Tính" />
+            <AnchorPane prefHeight="206.0" prefWidth="722.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" layoutX="155.0" layoutY="14.0" prefHeight="100.0" prefWidth="200.0" spacing="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="139.0" prefWidth="370.0">
+                           <children>
+                              <Label prefHeight="30.0" styleClass="label-title" stylesheets="@../css/style.css" text="Chu vi: " />
+                              <Label fx:id="lbArea" prefHeight="30.0" styleClass="label-title" stylesheets="@../css/style.css" text="chưa có" />
+                           </children>
+                           <padding>
+                              <Insets left="100.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefHeight="139.0" prefWidth="370.0">
+                           <children>
+                              <Label prefHeight="30.0" styleClass="label-title" stylesheets="@../css/style.css" text="Diện tích: " />
+                              <Label fx:id="lbPerimeter" prefHeight="30.0" styleClass="label-title" stylesheets="@../css/style.css" text="chưa có" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

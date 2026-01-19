@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="622.0" style="-fx-background-color: #bababa;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.bt5_desktopController">
+   <children>
+      <VBox alignment="TOP_CENTER" layoutX="215.0" layoutY="120.0" prefHeight="413.0" prefWidth="816.0" spacing="15.0" style="-fx-background-color: #0001;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="Bài tập desktop 5">
+               <font>
+                  <Font name="System Bold" size="34.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" prefHeight="7.0" prefWidth="800.0" spacing="10.0">
+               <children>
+                  <Label prefHeight="30.0" styleClass="label-title" stylesheets="@../css/style.css" text="Nhập vào 1 số:" />
+                  <TextField fx:id="tfNumber" prefHeight="45.0" prefWidth="209.0" styleClass="text-field" stylesheets="@../css/style.css" />
+               </children>
+            </HBox>
+            <Button fx:id="btnCalc" mnemonicParsing="false" onAction="#handleCalc" prefHeight="45.0" prefWidth="70.0" stylesheets="@../css/style.css" text="Tính" />
+            <AnchorPane prefHeight="161.0" prefWidth="550.0">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="158.0" prefWidth="550.0" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label fx:id="lbNumber" prefHeight="30.0" styleClass="label-title" stylesheets="@../css/style.css" text="Số : " />
+                        <Label fx:id="lbNumberCheck" prefHeight="30.0" styleClass="label-title" stylesheets="@../css/style.css" text="chưa có" />
+                     </children>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

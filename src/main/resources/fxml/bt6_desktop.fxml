@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="468.0" prefWidth="621.0" style="-fx-background-color: #dadada;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.bt6_desktopController">
+   <children>
+      <VBox alignment="CENTER" layoutX="142.0" layoutY="-28.0" prefHeight="414.0" prefWidth="556.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox alignment="CENTER" prefHeight="123.0" prefWidth="556.0" spacing="20.0">
+               <children>
+                  <Label styleClass="label-title" stylesheets="@../css/style.css" text="Bài tập desktop 6" />
+                  <HBox alignment="CENTER" prefHeight="7.0" prefWidth="556.0">
+                     <children>
+                        <Label styleClass="label-title" stylesheets="@../css/style.css" text="Nhập 1 số: " />
+                        <TextField fx:id="tfnumber" promptText="Nhập số để kiểm tra" styleClass="text-field" stylesheets="@../css/style.css" />
+                     </children>
+                  </HBox>
+                  <Button fx:id="btSubmit" mnemonicParsing="false" onAction="#handleSubmit" stylesheets="@../css/style.css" text="Button" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" />
+               </padding>
+            </VBox>
+            <HBox alignment="CENTER" prefHeight="35.0" prefWidth="622.0" spacing="20.0">
+               <children>
+                  <RadioButton fx:id="rbCauA" mnemonicParsing="false" selected="true" text="Câu A">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="rgroup" />
+                     </toggleGroup></RadioButton>
+                  <RadioButton fx:id="rbCauB" mnemonicParsing="false" text="Câu B" toggleGroup="$rgroup" />
+                  <RadioButton fx:id="rbCauC" mnemonicParsing="false" text="Câu C" toggleGroup="$rgroup" />
+                  <RadioButton fx:id="rbCauD" mnemonicParsing="false" text="Câu D" toggleGroup="$rgroup" />
+                  <RadioButton fx:id="rbCauE" mnemonicParsing="false" text="Câu E" toggleGroup="$rgroup" />
+               </children>
+            </HBox>
+            <StackPane fx:id="spPage" style="-fx-pref-height: 100%; -fx-border-color: red;" VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox prefHeight="141.0" prefWidth="622.0" />
+               </children>
+            </StackPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

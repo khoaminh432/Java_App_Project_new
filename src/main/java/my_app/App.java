@@ -14,7 +14,7 @@ import my_app.service.ConfigProperties;
 public class App extends Application {
 
     private TextArea console;
-    private static final String FILE = "/fxml/bt1_desktop.fxml";
+    private static final String FILE = "/fxml/bt6_desktop.fxml";
     public URL checkclass(){
         return getClass().getResource(FILE);
     }
