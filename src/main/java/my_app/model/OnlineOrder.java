@@ -2,6 +2,7 @@ package my_app.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public class OnlineOrder extends Order {
     private Integer shipperId;
@@ -60,6 +61,50 @@ public class OnlineOrder extends Order {
              other.phoneNumber, other.address, other.shippingFee, other.estimatedDeliveryTime,
              other.completedTime);
         this.shipper = other.shipper;
+    }
+    public OnlineOrder(Map<String, Object> data) {
+        applyFromMap(data);
+    }
+    public void applyFromMap(Map<String, Object> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+        super.applyFromMap(data);
+
+        Integer newShipperId = ModelMapperHelper.getInteger(data, "shipperId", "shipper_id");
+        if (newShipperId != null) {
+            this.shipperId = newShipperId;
+        }
+
+        String newReceiverName = ModelMapperHelper.getString(data, "receiverName", "receiver_name");
+        if (newReceiverName != null) {
+            this.receiverName = newReceiverName;
+        }
+
+        String newPhone = ModelMapperHelper.getString(data, "phoneNumber", "phone_number");
+        if (newPhone != null) {
+            this.phoneNumber = newPhone;
+        }
+
+        String newAddress = ModelMapperHelper.getString(data, "address");
+        if (newAddress != null) {
+            this.address = newAddress;
+        }
+
+        BigDecimal newShippingFee = ModelMapperHelper.getBigDecimal(data, "shippingFee", "shipping_fee");
+        if (newShippingFee != null) {
+            this.shippingFee = newShippingFee;
+        }
+
+        LocalDateTime newEstimatedDeliveryTime = ModelMapperHelper.getLocalDateTime(data, "estimatedDeliveryTime", "estimated_delivery_time");
+        if (newEstimatedDeliveryTime != null) {
+            this.estimatedDeliveryTime = newEstimatedDeliveryTime;
+        }
+
+        LocalDateTime newCompletedTime = ModelMapperHelper.getLocalDateTime(data, "completedTime", "completed_time");
+        if (newCompletedTime != null) {
+            this.completedTime = newCompletedTime;
+        }
     }
     
     // Getters and Setters

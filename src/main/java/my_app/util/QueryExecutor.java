@@ -23,6 +23,8 @@ public class QueryExecutor {
                     result.put(rs.getMetaData().getColumnName(i),rs.getObject(i));
                 list.add(result);
             }
+        rs.close();
+        preteble.close();
         return list;   
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi thực thi truy vấn", e);

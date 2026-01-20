@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import my_app.service.ConfigProperties;
 public class DBConnection  {
     private static DBConnection instance;
-    public static String DB_TYPE = "mysql";
+    
     private final String url = ConfigProperties.getDbUrl();
     private final String user = ConfigProperties.getDbUser();
     private final String password = ConfigProperties.getDbPassword();

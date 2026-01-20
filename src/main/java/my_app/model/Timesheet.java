@@ -2,6 +2,7 @@ package my_app.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 
 public class Timesheet {
     private Integer id;
@@ -27,6 +28,34 @@ public class Timesheet {
     public Timesheet(Timesheet other) {
         this(other.id, other.employeeId, other.hoursWorked, other.workDate);
         this.employee = other.employee;
+    }
+    public Timesheet(Map<String, Object> data) {
+        applyFromMap(data);
+    }
+    public void applyFromMap(Map<String, Object> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+
+        Integer newId = ModelMapperHelper.getInteger(data, "id");
+        if (newId != null) {
+            this.id = newId;
+        }
+
+        Integer newEmployeeId = ModelMapperHelper.getInteger(data, "employeeId", "employee_id");
+        if (newEmployeeId != null) {
+            this.employeeId = newEmployeeId;
+        }
+
+        BigDecimal newHoursWorked = ModelMapperHelper.getBigDecimal(data, "hoursWorked", "hours_worked");
+        if (newHoursWorked != null) {
+            this.hoursWorked = newHoursWorked;
+        }
+
+        LocalDate newWorkDate = ModelMapperHelper.getLocalDate(data, "workDate", "work_date");
+        if (newWorkDate != null) {
+            this.workDate = newWorkDate;
+        }
     }
     
     // Getters and Setters

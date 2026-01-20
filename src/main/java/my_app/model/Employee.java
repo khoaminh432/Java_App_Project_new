@@ -2,6 +2,7 @@ package my_app.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 
 public class Employee {
     private Integer id;
@@ -42,6 +43,59 @@ public class Employee {
         this(other.id, other.firstName, other.lastName, other.phoneNumber, other.dob,
              other.address, other.basicSalary, other.status, other.roleId);
         this.role = other.role;
+    }
+    public Employee(Map<String, Object> data) {
+        applyFromMap(data);
+    }
+    public void applyFromMap(Map<String, Object> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+
+        Integer newId = ModelMapperHelper.getInteger(data, "id");
+        if (newId != null) {
+            this.id = newId;
+        }
+
+        String newFirstName = ModelMapperHelper.getString(data, "firstName", "first_name");
+        if (newFirstName != null) {
+            this.firstName = newFirstName;
+        }
+
+        String newLastName = ModelMapperHelper.getString(data, "lastName", "last_name");
+        if (newLastName != null) {
+            this.lastName = newLastName;
+        }
+
+        String newPhone = ModelMapperHelper.getString(data, "phoneNumber", "phone_number");
+        if (newPhone != null) {
+            this.phoneNumber = newPhone;
+        }
+
+        LocalDate newDob = ModelMapperHelper.getLocalDate(data, "dob", "date_of_birth");
+        if (newDob != null) {
+            this.dob = newDob;
+        }
+
+        String newAddress = ModelMapperHelper.getString(data, "address");
+        if (newAddress != null) {
+            this.address = newAddress;
+        }
+
+        BigDecimal newSalary = ModelMapperHelper.getBigDecimal(data, "basicSalary", "basic_salary");
+        if (newSalary != null) {
+            this.basicSalary = newSalary;
+        }
+
+        String newStatus = ModelMapperHelper.getString(data, "status");
+        if (newStatus != null) {
+            this.status = newStatus;
+        }
+
+        Integer newRoleId = ModelMapperHelper.getInteger(data, "roleId", "role_id");
+        if (newRoleId != null) {
+            this.roleId = newRoleId;
+        }
     }
     
     // Getters and Setters

@@ -1,6 +1,7 @@
 package my_app.model;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class InvoiceVoucherDetail {
     private Integer id;
@@ -30,6 +31,34 @@ public class InvoiceVoucherDetail {
         this(other.id, other.invoiceId, other.voucherId, other.discountValue);
         this.invoice = other.invoice;
         this.voucher = other.voucher;
+    }
+    public InvoiceVoucherDetail(Map<String, Object> data) {
+        applyFromMap(data);
+    }
+    public void applyFromMap(Map<String, Object> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+
+        Integer newId = ModelMapperHelper.getInteger(data, "id");
+        if (newId != null) {
+            this.id = newId;
+        }
+
+        Integer newInvoiceId = ModelMapperHelper.getInteger(data, "invoiceId", "invoice_id");
+        if (newInvoiceId != null) {
+            this.invoiceId = newInvoiceId;
+        }
+
+        Integer newVoucherId = ModelMapperHelper.getInteger(data, "voucherId", "voucher_id");
+        if (newVoucherId != null) {
+            this.voucherId = newVoucherId;
+        }
+
+        BigDecimal newDiscountValue = ModelMapperHelper.getBigDecimal(data, "discountValue", "discount_value");
+        if (newDiscountValue != null) {
+            this.discountValue = newDiscountValue;
+        }
     }
     
     // Getters and Setters

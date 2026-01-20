@@ -1,19 +1,17 @@
 package my_app;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import my_app.service.UserService;
+import my_app.dao.CustomerDao;
 import my_app.util.DBConnection;
 import my_app.util.QueryExecutor;
 /*** Sử dụng JUnit 3 (TestCase, TestSuite).
+ * 
  */
 public class AppTest extends TestCase {
-
+    private QueryExecutor qe = new QueryExecutor();
+    
     /**
      * Create the test case
      *
@@ -37,29 +35,35 @@ public class AppTest extends TestCase {
         App app = new App();
         assertNotNull(app);
     }
-    public void testUserServiceMethod() {
-        UserService userService = new UserService();
-        assertNotNull(userService);
-        userService.someServiceMethod(); // Gọi phương thức để kiểm tra nó hoạt động
-    }
+    // public void testUserServiceMethod() {
+    //     UserService userService = new UserService();
+    //     assertNotNull(userService);
+    //     userService.someServiceMethod(); // Gọi phương thức để kiểm tra nó hoạt động
+    // }
     // public void testcheckConnectDB(){
     //     DBConnection dbConnection = DBConnection.getInstance();
     //     assertNotNull(dbConnection);
     //     dbConnection.close();
     // }
     
-    public void testDBConnectionSingleton() {
-        List<Object> instances = new ArrayList<>();
-        QueryExecutor qe = new QueryExecutor();
-        assertNotNull(qe);
-        ArrayList<HashMap<String,Object>> results = qe.ExecuteQuery("SELECT * from customer where id=?"   ,1);
-        assertNotNull(results);
-        results.forEach(record -> {
-            System.out.println(record);
-        });
+    // public void testDBConnectionSingleton() {
+    //     List<Object> instances = new ArrayList<>();
+    //     QueryExecutor qe = new QueryExecutor();
+    //     assertNotNull(qe);
+    //     ArrayList<HashMap<String,Object>> results = qe.ExecuteQuery("SELECT * from customer where id=?"   ,1);
+    //     assertNotNull(results);
+    //     results.forEach(record -> {
+    //         System.out.println(record);
+    //     });
+    //     DBConnection.close();
+    // }
+    public void testMethodModel(){
+        CustomerDao customerDao = new CustomerDao();
+        assertNotNull(customerDao);
+        System.out.println(customerDao.findById(1));
         DBConnection.close();
     }
-        
+    
     /**
      * Kiểm tra model User có thể khởi tạo bằng constructor mặc định.
      */

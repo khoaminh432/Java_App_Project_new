@@ -1,6 +1,7 @@
 package my_app.model;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class Product {
     private Integer id;
@@ -35,6 +36,50 @@ public class Product {
         this(other.id, other.productName, other.unitPrice, other.unit, other.quantity,
              other.status, other.categoryId);
         this.category = other.category;
+    }
+
+    public Product(Map<String, Object> data) {
+        applyFromMap(data);
+    }
+    public void applyFromMap(Map<String, Object> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+
+        Integer newId = ModelMapperHelper.getInteger(data, "id");
+        if (newId != null) {
+            this.id = newId;
+        }
+
+        String newProductName = ModelMapperHelper.getString(data, "productName", "product_name");
+        if (newProductName != null) {
+            this.productName = newProductName;
+        }
+
+        BigDecimal newUnitPrice = ModelMapperHelper.getBigDecimal(data, "unitPrice", "unit_price");
+        if (newUnitPrice != null) {
+            this.unitPrice = newUnitPrice;
+        }
+
+        String newUnit = ModelMapperHelper.getString(data, "unit");
+        if (newUnit != null) {
+            this.unit = newUnit;
+        }
+
+        Integer newQuantity = ModelMapperHelper.getInteger(data, "quantity");
+        if (newQuantity != null) {
+            this.quantity = newQuantity;
+        }
+
+        String newStatus = ModelMapperHelper.getString(data, "status");
+        if (newStatus != null) {
+            this.status = newStatus;
+        }
+
+        Integer newCategoryId = ModelMapperHelper.getInteger(data, "categoryId", "category_id");
+        if (newCategoryId != null) {
+            this.categoryId = newCategoryId;
+        }
     }
     
     // Getters and Setters

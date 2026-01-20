@@ -2,6 +2,7 @@ package my_app.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 
 public class Shipper extends Employee {
     private String vehiclePlateNumber;
@@ -38,6 +39,25 @@ public class Shipper extends Employee {
              other.getDob(), other.getAddress(), other.getBasicSalary(), other.getStatus(),
              other.getRoleId(), other.vehiclePlateNumber, other.currentStatus);
         setRole(other.getRole());
+    }
+    public Shipper(Map<String, Object> data) {
+        applyFromMap(data);
+    }
+    public void applyFromMap(Map<String, Object> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+        super.applyFromMap(data);
+
+        String newVehiclePlate = ModelMapperHelper.getString(data, "vehiclePlateNumber", "vehicle_plate_number");
+        if (newVehiclePlate != null) {
+            this.vehiclePlateNumber = newVehiclePlate;
+        }
+
+        String newCurrentStatus = ModelMapperHelper.getString(data, "currentStatus", "current_status");
+        if (newCurrentStatus != null) {
+            this.currentStatus = newCurrentStatus;
+        }
     }
     
     // Getters and Setters
