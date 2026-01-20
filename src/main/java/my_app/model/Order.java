@@ -2,6 +2,7 @@ package my_app.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public class Order {
     private Integer id;
@@ -24,7 +25,54 @@ public class Order {
         this.totalAmount = totalAmount;
         this.status = status;
     }
-    
+
+    public Order(Integer customerId, LocalDateTime orderDate,
+                BigDecimal subTotal, BigDecimal totalAmount, String status) {
+        this(null, customerId, orderDate, subTotal, totalAmount, status);
+    }
+
+    public Order(Order other) {
+        this(other.id, other.customerId, other.orderDate, other.subTotal, other.totalAmount, other.status);
+        this.customer = other.customer;
+    }
+    public Order(Map<String, Object> data) {
+        applyFromMap(data);
+    }
+    public void applyFromMap(Map<String, Object> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+
+        Integer newId = ModelMapperHelper.getInteger(data, "id");
+        if (newId != null) {
+            this.id = newId;
+        }
+
+        Integer newCustomerId = ModelMapperHelper.getInteger(data, "customerId", "customer_id");
+        if (newCustomerId != null) {
+            this.customerId = newCustomerId;
+        }
+
+        LocalDateTime newOrderDate = ModelMapperHelper.getLocalDateTime(data, "orderDate", "order_date");
+        if (newOrderDate != null) {
+            this.orderDate = newOrderDate;
+        }
+
+        BigDecimal newSubTotal = ModelMapperHelper.getBigDecimal(data, "subTotal", "sub_total");
+        if (newSubTotal != null) {
+            this.subTotal = newSubTotal;
+        }
+
+        BigDecimal newTotalAmount = ModelMapperHelper.getBigDecimal(data, "totalAmount", "total_amount");
+        if (newTotalAmount != null) {
+            this.totalAmount = newTotalAmount;
+        }
+
+        String newStatus = ModelMapperHelper.getString(data, "status");
+        if (newStatus != null) {
+            this.status = newStatus;
+        }
+    }
     // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
