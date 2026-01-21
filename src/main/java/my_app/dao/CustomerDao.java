@@ -21,7 +21,16 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
             Customer cus = new Customer(action);
             list.add(cus);
         });
-        
+        return list;
+    }
+
+    @Override
+    public ArrayList<Customer> findAll(String status){
+        ArrayList<Customer> list  = new ArrayList<Customer>();
+        qe.ExecuteQuery(QUERYALL+" WHERE status = ?", status).forEach(action->{
+            Customer cus = new Customer(action);
+            list.add(cus);
+        });
         return list;
     }
 
