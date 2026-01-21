@@ -23,8 +23,6 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         });
         return list;
     }
-
-    @Override
     public ArrayList<Customer> findAll(String status){
         ArrayList<Customer> list  = new ArrayList<Customer>();
         qe.ExecuteQuery(QUERYALL+" WHERE status = ?", status).forEach(action->{

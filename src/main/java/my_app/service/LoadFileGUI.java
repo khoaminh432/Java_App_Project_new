@@ -1,18 +1,25 @@
 package my_app.service;
 
+import java.io.IOException;
+
 import javafx.fxml.FXMLLoader;
-import javafx.application.Application;
-public class LoadFileGUI{
-    private FXMLLoader floader;
-    public  LoadFileGUI(String location){
-        floader = new FXMLLoader(
-            getClass().getResource(location)
-        );
+import javafx.scene.Parent;
+
+public class LoadFileGUI {
+    private final FXMLLoader fxmlLoader;
+
+    public LoadFileGUI(String location) {
+        this.fxmlLoader = new FXMLLoader(getClass().getResource(location));
+    
     }
-    public FXMLLoader getLoader(){
-        return this.floader;
+
+    
+
+    public FXMLLoader getLoader() {
+        return this.fxmlLoader;
     }
-    public Parent load(){
-        return this.floader.load();
+
+    public Parent load() throws IOException {
+        return this.fxmlLoader.load();
     }
 }
