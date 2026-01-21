@@ -10,7 +10,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #F5F7FA;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.indexController">
    <left>
-      <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="0.0" style="-fx-background-color: #9dbcff;" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="210.0" style="-fx-background-color: #9dbcff;" BorderPane.alignment="CENTER">
          <children>
             <AnchorPane prefHeight="50.0" prefWidth="202.0">
                <children>
