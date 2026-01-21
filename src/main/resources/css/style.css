@@ -1,0 +1,12 @@
+
+.form-container {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-padding: 35;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 6);
+}
+.title-main {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3436;
+}
