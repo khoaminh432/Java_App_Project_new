@@ -20,6 +20,7 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(
             getClass().getResource(APP_PATH)
         );
+        
         QueryExecutor queryExecutor = new QueryExecutor();
         System.out.println(queryExecutor.ExecuteQuery("select * from customer"));
         Scene scene;

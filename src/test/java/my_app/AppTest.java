@@ -4,6 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import my_app.dao.CustomerDao;
+import my_app.dao.InvoiceDao;
 import my_app.util.DBConnection;
 import my_app.util.QueryExecutor;
 /*** Sử dụng JUnit 3 (TestCase, TestSuite).
@@ -58,9 +59,15 @@ public class AppTest extends TestCase {
     //     DBConnection.close();
     // }
     public void testMethodModel(){
+        new QueryExecutor();
+        new QueryExecutor();
         CustomerDao customerDao = new CustomerDao();
         assertNotNull(customerDao);
         System.out.println(customerDao.findById(1));
+        InvoiceDao invoiceDao = new InvoiceDao();
+        assertNotNull(invoiceDao);
+        System.out.println(invoiceDao.findAll());
+        
         DBConnection.close();
     }
     
