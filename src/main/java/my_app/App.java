@@ -12,7 +12,7 @@ import my_app.util.QueryExecutor;
 
 public class App extends Application {
     private static final String APP_NAME = "JavaFX Console Application";
-    private static final String APP_PATH = "/fxml/homepage.fxml";
+    private static final String APP_PATH = "/fxml/admin/index.fxml";
     private TextArea console;
 
     @Override
