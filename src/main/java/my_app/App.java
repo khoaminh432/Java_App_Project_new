@@ -8,19 +8,23 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import my_app.service.LoadFileGUI;
 import my_app.util.DBConnection;
-import my_app.util.QueryExecutor;
 
 public class App extends Application {
     private static final String APP_NAME = "JavaFX Console Application";
     private static final String APP_PATH = "/fxml/admin/index.fxml";
     private TextArea console;
-
+    private LoadFileGUI loader;
+    private DBConnection dbConn;
+    private void initDB(){
+        dbConn = DBConnection.getInstance();
+    }
+    private void DesktopRoot(){
+        loader = new LoadFileGUI(APP_PATH);
+    }
     @Override
     public void start(Stage stage) {
-        DBConnection dbConn = DBConnection.getInstance();
-        LoadFileGUI loader = new LoadFileGUI(APP_PATH);
-        QueryExecutor queryExecutor = new QueryExecutor();
-        System.out.println(queryExecutor.ExecuteQuery("select * from customer"));
+        initDB();
+        DesktopRoot();
         Scene scene;
         try {
             scene = new Scene(loader.load());
@@ -37,11 +41,7 @@ public class App extends Application {
         }
         );
     }
-
-    private void log(String text) {
-        console.appendText(text + "\n"
-    );
-    }
+    
 
     public static void main(String[] args) {
         launch(args);

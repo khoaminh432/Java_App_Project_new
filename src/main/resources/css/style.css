@@ -1,12 +1,58 @@
-
+.leftmenu{
+    -fx-background-color: #b5bfcf;
+    
+}
+.header-leftmenu{
+    -fx-background-color: #9499a6;
+}
+*{
+    -fx-text-fill: #1F2937;
+}
 .form-container {
     -fx-background-color: #ffffff;
     -fx-background-radius: 16;
     -fx-padding: 35;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 6);
 }
+
 .title-main {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-fill: #2d3436;
 }
+.button-leftmenu {
+    -fx-background-color: transparent;   /* không nền */
+    -fx-text-fill: #101c28;               /* màu chữ */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+
+    
+    -fx-padding: 10 15 10 20;
+    
+    -fx-pref-width: 190px;
+
+    -fx-border-width: 0 0 0 4;
+    -fx-border-color: transparent;
+
+    -fx-cursor: hand;
+}
+
+/* Hover */
+.button-leftmenu:hover {
+    -fx-text-fill: #2980b9;
+    -fx-background-color: rgba(13, 69, 125, 0.08);
+    -fx-border-color: #2980b9;
+}
+
+/* Khi click */
+.button-leftmenu:pressed {
+    -fx-background-color: rgba(5, 58, 94, 0.15);
+}
+
+/* Trạng thái được chọn (active) */
+.button-leftmenu.active {
+    -fx-text-fill: #2980b9;
+    -fx-background-color: rgba(41, 128, 185, 0.12);
+    -fx-border-color: #2980b9;
+}
+
