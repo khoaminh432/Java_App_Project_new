@@ -11,7 +11,7 @@ public class Customer {
     private String status;
     public static int customerCount = 0;
     // Constructors
-    public Customer() {}
+    public Customer() {customerCount++;}
     
     public Customer(Integer id, String fullName, String phoneNumber, 
                    String email, String password, String status) {
@@ -33,6 +33,7 @@ public class Customer {
         customerCount++;
     }
     public Customer(Customer other) {
+        
         this.id = other.id;
         this.fullName = other.fullName;
         this.phoneNumber = other.phoneNumber;
