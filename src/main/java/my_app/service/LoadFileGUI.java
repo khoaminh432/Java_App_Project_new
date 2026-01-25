@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.Node;
 
 public class LoadFileGUI extends FXMLLoader {
     private final FXMLLoader fxmlLoader;
@@ -26,12 +27,18 @@ public class LoadFileGUI extends FXMLLoader {
         AnchorPane.setLeftAnchor(parent, 0.0);
         AnchorPane.setRightAnchor(parent, 0.0);
     }
+    public Node getNode() throws IOException {
+        return (Node) fxmlLoader.load();
+    }
     public Parent load() throws IOException {
         Parent parent = fxmlLoader.load();
         
         setAnchor(parent);
 
         return parent;
+    }
+    public Object getController() {
+        return fxmlLoader.getController();
     }
     public void ShowPage(AnchorPane apLoadPane,Parent page) {
         apLoadPane.getChildren().setAll(page);

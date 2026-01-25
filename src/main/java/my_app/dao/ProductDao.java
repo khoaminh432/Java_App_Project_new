@@ -20,6 +20,17 @@ public class ProductDao implements GenericDao<Product, Integer> {
         return results.isEmpty() ? null : new Product(results.get(0));
     }
 
+    public List<Product> findByName(String Name){
+        if (Name == null || Name.isEmpty()) {
+            throw new IllegalArgumentException("Product name must not be null or empty");
+        }
+        String searchQuery = BASE_QUERY + " WHERE product_name LIKE ?";
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(searchQuery, "%" + Name + "%");
+        List<Product> products = new ArrayList<>(records.size());
+        records.forEach(row -> products.add(new Product(row)));
+        return products;
+    }
+
     @Override
     public List<Product> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
