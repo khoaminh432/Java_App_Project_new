@@ -60,7 +60,7 @@ public class indexController extends SwitchPage {
     @FXML
     private void loadHomePage() throws IOException{
         HomePage = createPage("/fxml/admin/component/homepage.fxml");
-         loadPage(HomePage.load());
+        loadPage(HomePage.load());
     }
 
     @FXML
@@ -72,14 +72,14 @@ public class indexController extends SwitchPage {
     @FXML
     private void loadCustomerPage() throws IOException{
         System.out.println("Load Customer Page");
-        CustomerPage = createPage("/fxml/admin/component/customerpage.fxml");
+        CustomerPage = createPage("/fxml/admin/component/product/addproduct.fxml");
         loadPage(CustomerPage.load());
     }
 
     private void loadLabel(){
         lbTimeNow.setText(dateNow.toString());
     }
-
+    
     @FXML
     public void initialize() {
         try {

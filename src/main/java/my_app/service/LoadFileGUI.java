@@ -3,9 +3,9 @@ package my_app.service;
 import java.io.IOException;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.Node;
 
 public class LoadFileGUI extends FXMLLoader {
     private final FXMLLoader fxmlLoader;
@@ -35,6 +35,13 @@ public class LoadFileGUI extends FXMLLoader {
         
         setAnchor(parent);
 
+        return parent;
+    }
+    public Parent load(Boolean setAnchor) throws IOException {
+        Parent parent = fxmlLoader.load();
+        if (setAnchor) {
+            setAnchor(parent);
+        }
         return parent;
     }
     public Object getController() {

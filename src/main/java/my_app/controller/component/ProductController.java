@@ -39,6 +39,9 @@ public class ProductController {
     private TableColumn<Product, String> colSize;
 
     @FXML
+    private TableColumn<Product, String> colStatus;
+
+    @FXML
     private TableColumn<Product, Void> colActionHandle;
 
     @FXML
@@ -94,11 +97,13 @@ public class ProductController {
         settableProduct(filteredProducts);
     }
 
+    // dữ liệu của table
     private void configureColumns() {
         colID.setCellValueFactory(new PropertyValueFactory<>("id"));
         colName.setCellValueFactory(new PropertyValueFactory<>("productName"));
         colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         colSize.setCellValueFactory(new PropertyValueFactory<>("unit"));
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colPrice.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(toDouble(cell.getValue().getUnitPrice())));
         LoadActionButtons();
     }
