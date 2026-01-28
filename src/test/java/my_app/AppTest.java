@@ -8,7 +8,7 @@ import my_app.dao.InvoiceDao;
 import my_app.dao.ShipperDao;
 import my_app.util.DBConnection;
 import my_app.util.QueryExecutor;
-/*** Sử dụng JUnit 3 (TestCase, TestSuite).
+/*** Using JUnit 3 (TestCase, TestSuite).
  * 
  */
 public class AppTest extends TestCase {
@@ -31,7 +31,7 @@ public class AppTest extends TestCase {
     }
 
     /**
-     * Kiểm tra class App tồn tại và có thể khởi tạo.
+     * Verify that the App class exists and can be instantiated.
      */
     public void testAppClassExists() {
         App app = new App();
@@ -40,7 +40,7 @@ public class AppTest extends TestCase {
     // public void testUserServiceMethod() {
     //     UserService userService = new UserService();
     //     assertNotNull(userService);
-    //     userService.someServiceMethod(); // Gọi phương thức để kiểm tra nó hoạt động
+    //     userService.someServiceMethod(); // Call the method to ensure it works
     // }
     // public void testcheckConnectDB(){
     //     DBConnection dbConnection = DBConnection.getInstance();
@@ -77,7 +77,7 @@ public class AppTest extends TestCase {
     }
     
     /**
-     * Kiểm tra model User có thể khởi tạo bằng constructor mặc định.
+     * Run the test suite from the command line.
      */
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
