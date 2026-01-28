@@ -2,7 +2,6 @@ package my_app.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import my_app.model.Role;
 import my_app.util.QueryExecutor;
@@ -21,9 +20,9 @@ public class RoleDao implements GenericDao<Role, Integer> {
     }
 
     @Override
-    public List<Role> findAll() {
+    public  ArrayList<Role> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        List<Role> roles = new ArrayList<>(records.size());
+        ArrayList<Role> roles = new ArrayList<>(records.size());
         records.forEach(row -> roles.add(new Role(row)));
         return roles;
     }

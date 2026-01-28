@@ -3,7 +3,6 @@ package my_app.dao;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import my_app.model.Order;
 import my_app.util.QueryExecutor;
@@ -22,9 +21,9 @@ public class OrderDao implements GenericDao<Order, Integer> {
     }
 
     @Override
-    public List<Order> findAll() {
+    public  ArrayList<Order> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        List<Order> orders = new ArrayList<>(records.size());
+        ArrayList<Order> orders = new ArrayList<>(records.size());
         records.forEach(row -> orders.add(new Order(row)));
         return orders;
     }
