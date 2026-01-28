@@ -3,7 +3,6 @@ package my_app.dao;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import my_app.model.Invoice;
 import my_app.util.QueryExecutor;
@@ -22,9 +21,9 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
     }
 
     @Override
-    public List<Invoice> findAll() {
+    public  ArrayList<Invoice> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        List<Invoice> invoices = new ArrayList<>(records.size());
+        ArrayList<Invoice> invoices = new ArrayList<>(records.size());
         records.forEach(row -> invoices.add(new Invoice(row)));
         return invoices;
     }

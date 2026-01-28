@@ -22,9 +22,9 @@ public class EmployeeDao implements GenericDao<Employee, Integer> {
     }
 
     @Override
-    public List<Employee> findAll() {
+    public  ArrayList<Employee> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        List<Employee> employees = new ArrayList<>(records.size());
+        ArrayList<Employee> employees = new ArrayList<>(records.size());
         records.forEach(row -> employees.add(new Employee(row)));
         return employees;
     }

@@ -2,7 +2,6 @@ package my_app.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import my_app.model.Shipper;
 import my_app.util.QueryExecutor;
@@ -25,9 +24,9 @@ public class ShipperDao implements GenericDao<Shipper, Integer> {
     }
 
     @Override
-    public List<Shipper> findAll() {
+    public  ArrayList<Shipper> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        List<Shipper> shippers = new ArrayList<>(records.size());
+        ArrayList<Shipper> shippers = new ArrayList<>(records.size());
         records.forEach(row -> shippers.add(new Shipper(row)));
         return shippers;
     }

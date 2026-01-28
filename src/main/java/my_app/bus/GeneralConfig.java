@@ -1,6 +1,6 @@
 package my_app.bus;
 
-public class GeneralConfig<T> {
+public interface GeneralConfig<T> {
     public void findAll();
     public void findById(int id);
     public void searchNameByArray(String name);

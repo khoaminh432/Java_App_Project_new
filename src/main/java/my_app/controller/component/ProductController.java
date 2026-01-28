@@ -1,7 +1,6 @@
 package my_app.controller.component;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -15,13 +14,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import my_app.bus.ProductBus;
 import my_app.controller.component.product.handleListController;
-import my_app.dao.ProductDao;
 import my_app.model.Product;
 import my_app.service.LoadFileGUI;
 public class ProductController {
-    private final ProductDao productDao = new ProductDao();
     private final ObservableList<Product> products = FXCollections.observableArrayList();
+    private final ProductBus  productBus = new ProductBus(products);
     private static int QuantityProduct = 0;
     @FXML
     private TableColumn<Product, Integer> colID;
@@ -60,7 +59,7 @@ public class ProductController {
     public void initialize() {
         
         tableProduct.setItems(products);
-        loadProducts();
+        productBus.findAll();
         configureColumns();
         setMouseClickEvent();
         searchBarProducts();
@@ -69,7 +68,7 @@ public class ProductController {
     private void searchBarProducts(){
         tfSearchProduct.textProperty().addListener((obs,oldval,newval)->{
             if(newval=="")
-                loadProducts();
+                productBus.findAll();
             
             else
              try{
@@ -84,17 +83,12 @@ public class ProductController {
     
     private void searchIDProducts(String keyword){
             int id = Integer.parseInt(keyword);
-            Product product = productDao.findById(id);
-            if(product != null){
-                settableProduct(List.of(product));
-            } else {
-                settableProduct(List.of());
-            }
+            productBus.findById(id);
     }
 
     private void searchNameProducts(String keyword) {
-        List<Product> filteredProducts = productDao.findByName(keyword);
-        settableProduct(filteredProducts);
+        // productBus.searchNameByDB(keyword);
+        productBus.searchNameByArray(keyword);
     }
 
     // dữ liệu của table
@@ -143,17 +137,8 @@ public class ProductController {
             }
         });
     }
-    private void settableProduct(List<Product> allProducts){
-        QuantityProduct = allProducts.size();
-        products.setAll(allProducts);
-        updateStatisticProduct();
-    }
-    private void loadProducts() {
-        List<Product> allProducts = productDao.findAll();
-        
-        settableProduct(allProducts);
-        
-    }
+    
+    
     private void updateStatisticProduct(){
         lbQuantiryProduct.setText(String.valueOf(QuantityProduct));
     }

@@ -1,11 +1,11 @@
 package my_app.bus;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import javafx.collections.ObservableList;
 import my_app.dao.ProductDao;
 import my_app.model.Product;
-
 public class ProductBus implements  GeneralConfig<Product> {
     private ProductDao productDao = new ProductDao();
     public static ArrayList<Product> listProducts = new ArrayList<>();
@@ -28,13 +28,19 @@ public class ProductBus implements  GeneralConfig<Product> {
         // TODO Auto-generated method stub
         
         Product product = productDao.findById(id);
-        products.setAll(product);
+        listProducts.clear();
+        if(product != null){
+            listProducts.add(product);
+        }
+        setobser();
     }
     @Override
     public void searchNameByArray(String name) {
         // TODO Auto-generated method stub
-        listProducts.stream().filter(p ->p.getProductName().toLowerCase().contains(name));
-        setobser();
+        ArrayList<Product> filteredList = (ArrayList<Product>) listProducts.stream()
+                .filter(p -> p.getProductName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
+        products.setAll(filteredList);
     }
     @Override
     public void searchNameByDB(String name) {
