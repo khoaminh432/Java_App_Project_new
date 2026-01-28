@@ -3,6 +3,8 @@ package my_app;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import my_app.dao.StudentDao;
+import my_app.util.DBConnection;
 /*** Sử dụng JUnit 3 (TestCase, TestSuite).
  */
 public class AppTest extends TestCase {
@@ -32,6 +34,14 @@ public class AppTest extends TestCase {
         App app = new App();
         assertNotNull(app);
         System.out.println(app.checkclass());
+    }
+    public void testDB(){
+        StudentDao studentDao = new StudentDao();
+        assertNotNull(studentDao);
+        int a = studentDao.delete(6);
+        System.out.println(a+" dòng đã được chèn.");
+        System.out.println("Kết nối DB thành công trong test");
+        DBConnection.close();
     }
     /**
      * Kiểm tra model User có thể khởi tạo bằng constructor mặc định.

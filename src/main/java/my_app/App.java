@@ -14,7 +14,7 @@ import my_app.service.ConfigProperties;
 public class App extends Application {
 
     private TextArea console;
-    private static final String FILE = "/fxml/bt6_desktop.fxml";
+    private static final String FILE = "/fxml/admin/btsinhvien.fxml";
     public URL checkclass(){
         return getClass().getResource(FILE);
     }
@@ -58,7 +58,7 @@ public class App extends Application {
         stage.setScene(scene);
         stage.setTitle("JavaFX App");
         stage.show();
-        
+
         
     }
 
