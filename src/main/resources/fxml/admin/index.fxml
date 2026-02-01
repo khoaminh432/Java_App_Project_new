@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #F5F7FA;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.indexController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #cccccc;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.indexController">
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="210.0" styleClass="leftmenu" stylesheets="@../../css/style.css" BorderPane.alignment="CENTER">
          <children>
@@ -35,6 +35,7 @@
                   <Button fx:id="btnEmployeePage" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="41.0" prefWidth="939.0" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Nhân Viên" />
                   <Button fx:id="btnCustomerPage" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#loadCustomerPage" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Khách Hàng" />
                   <Button fx:id="btnBillPage" alignment="TOP_LEFT" mnemonicParsing="false" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Hóa Đơn" />
+                  <Button fx:id="btnBillPage1" alignment="TOP_LEFT" mnemonicParsing="false" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Nhập Hàng" />
                </children>
                <padding>
                   <Insets top="10.0" />

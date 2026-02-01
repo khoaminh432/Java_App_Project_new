@@ -2,7 +2,6 @@ package my_app.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import my_app.model.User;
@@ -22,9 +21,9 @@ public class UserDao implements GenericDao<User, Integer> {
 	}
 
 	@Override
-	public List<User> findAll() {
+	public 	ArrayList<User> findAll() {
 		ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-		List<User> users = new ArrayList<>(records.size());
+		ArrayList<User> users = new ArrayList<>(records.size());
 		records.forEach(row -> users.add(mapToUser(row)));
 		return users;
 	}

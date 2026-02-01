@@ -2,7 +2,6 @@ package my_app.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import my_app.model.Supplier;
 import my_app.util.QueryExecutor;
@@ -21,9 +20,9 @@ public class SupplierDao implements GenericDao<Supplier, Integer> {
     }
 
     @Override
-    public List<Supplier> findAll() {
+    public      ArrayList<Supplier> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        List<Supplier> suppliers = new ArrayList<>(records.size());
+        ArrayList<Supplier> suppliers = new ArrayList<>(records.size());
         records.forEach(row -> suppliers.add(new Supplier(row)));
         return suppliers;
     }
