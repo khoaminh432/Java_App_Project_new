@@ -3,17 +3,18 @@ package my_app;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import my_app.dao.CustomerDao;
-import my_app.dao.InvoiceDao;
-import my_app.dao.ShipperDao;
+import my_app.bus.CustomerBus;
 import my_app.util.DBConnection;
 import my_app.util.QueryExecutor;
-/*** Using JUnit 3 (TestCase, TestSuite).
- * 
+
+/**
+ * * Using JUnit 3 (TestCase, TestSuite).
+ *
  */
 public class AppTest extends TestCase {
+
     private QueryExecutor qe = new QueryExecutor();
-    
+
     /**
      * Create the test case
      *
@@ -47,7 +48,7 @@ public class AppTest extends TestCase {
     //     assertNotNull(dbConnection);
     //     dbConnection.close();
     // }
-    
+
     // public void testDBConnectionSingleton() {
     //     List<Object> instances = new ArrayList<>();
     //     QueryExecutor qe = new QueryExecutor();
@@ -59,23 +60,15 @@ public class AppTest extends TestCase {
     //     });
     //     DBConnection.close();
     // }
-    public void testMethodModel(){
-        
-        CustomerDao customerDao = new CustomerDao();
-        assertNotNull(customerDao);
-        System.out.println("customerdao: "+customerDao.findById(1));
-        
-        InvoiceDao invoiceDao = new InvoiceDao();
-        assertNotNull(invoiceDao);
-        System.out.println("invoicedao: "+invoiceDao.findAll());
-        
-        ShipperDao shipperdao = new ShipperDao();
-        assertNotNull(shipperdao);
-        System.out.println("shipperdao: "+shipperdao.findAll());
-
+    public void testMethodModel() {
+        CustomerBus customerBus = new CustomerBus();
+        assertNotNull(customerBus);
+        customerBus.findAll();
+        assertNotNull(customerBus.getCustomers());
+        System.out.println(customerBus.getCustomers());
         DBConnection.close();
     }
-    
+
     /**
      * Run the test suite from the command line.
      */
