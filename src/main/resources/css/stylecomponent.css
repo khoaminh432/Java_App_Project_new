@@ -1,7 +1,11 @@
 
 .container-component{
-    -fx-background-color: #c8c8c8;
-    -fx-background-radius: 25px;
+    -fx-background-color: #d6d6d6;
+    -fx-background-radius: 5px;
+}
+.background-component{
+    -fx-background-color: #cccccc;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 30, 0.15, 0, 10); 
 }
 
 /* Title Styles */

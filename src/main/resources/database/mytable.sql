@@ -1,27 +1,29 @@
--- 1. Product Category
-CREATE TABLE Product_Category (
+use jdbc_demo;;
+
+-- 1. product_category
+CREATE TABLE product_category (
     id INT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(255) NOT NULL,
     description TEXT
 );
 
--- 2. Supplier
-CREATE TABLE Supplier (
+-- 2. supplier
+CREATE TABLE supplier (
     id INT PRIMARY KEY AUTO_INCREMENT,
     supplier_name VARCHAR(255) NOT NULL,
     address TEXT,
     phone_number VARCHAR(20)
 );
 
--- 3. Employee Role
-CREATE TABLE Role (
+-- 3. role
+CREATE TABLE role (
     id INT PRIMARY KEY AUTO_INCREMENT,
     role_name VARCHAR(100) NOT NULL,
     hourly_rate DECIMAL(15, 2) DEFAULT 0
 );
 
--- 4. Customer
-CREATE TABLE Customer (
+-- 4. customer
+CREATE TABLE customer (
     id INT PRIMARY KEY AUTO_INCREMENT,
     full_name VARCHAR(255),
     phone_number VARCHAR(20) UNIQUE,
@@ -30,21 +32,22 @@ CREATE TABLE Customer (
     status VARCHAR(50)
 );
 
--- 5. Payment Method
-CREATE TABLE Payment_Method (
+-- 5. payment_method
+CREATE TABLE payment_method (
     id INT PRIMARY KEY AUTO_INCREMENT,
     method_name VARCHAR(100) NOT NULL
 );
 
--- 6. Voucher
-CREATE TABLE Voucher (
+-- 6. voucher
+CREATE TABLE voucher (
     id INT PRIMARY KEY AUTO_INCREMENT,
     promotion_name VARCHAR(255),
     start_date DATETIME,
     end_date DATETIME
 );
--- 7. Employee
-CREATE TABLE Employee (
+
+-- 7. employee
+CREATE TABLE employee (
     id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
@@ -54,11 +57,11 @@ CREATE TABLE Employee (
     basic_salary DECIMAL(15, 2),
     status VARCHAR(50),
     role_id INT,
-    FOREIGN KEY (role_id) REFERENCES Role(id)
+    FOREIGN KEY (role_id) REFERENCES role(id)
 );
 
--- 8. Product
-CREATE TABLE Product (
+-- 8. product
+CREATE TABLE product (
     id INT PRIMARY KEY AUTO_INCREMENT,
     product_name VARCHAR(255) NOT NULL,
     unit_price DECIMAL(15, 2) NOT NULL,
@@ -66,59 +69,78 @@ CREATE TABLE Product (
     quantity INT DEFAULT 0,
     status VARCHAR(50),
     category_id INT,
-    FOREIGN KEY (category_id) REFERENCES Product_Category(id)
+    FOREIGN KEY (category_id) REFERENCES product_category(id)
 );
 
--- 9. Shipper (Inherits from Employee 1:1)
-CREATE TABLE Shipper (
+-- 9. shipper (inherits from employee 1:1)
+CREATE TABLE shipper (
     id INT PRIMARY KEY,
     vehicle_plate_number VARCHAR(50),
     current_status VARCHAR(50),
-    FOREIGN KEY (id) REFERENCES Employee(id)
+    FOREIGN KEY (id) REFERENCES employee(id)
 );
 
--- 10. Timesheet
-CREATE TABLE Timesheet (
+-- 10. timesheet
+CREATE TABLE timesheet (
     id INT PRIMARY KEY AUTO_INCREMENT,
     employee_id INT,
     hours_worked DECIMAL(5, 2),
     work_date DATE DEFAULT (CURRENT_DATE),
-    FOREIGN KEY (employee_id) REFERENCES Employee(id)
+    FOREIGN KEY (employee_id) REFERENCES employee(id)
 );
--- 11. Goods Receipt (Phiếu nhập hàng)
-CREATE TABLE Goods_Receipt (
+
+-- 11. goods_receipt (phiếu nhập hàng)
+CREATE TABLE goods_receipt (
     id INT PRIMARY KEY AUTO_INCREMENT,
     received_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     supplier_id INT,
     total_quantity INT,
     total_price DECIMAL(15, 2),
-    FOREIGN KEY (supplier_id) REFERENCES Supplier(id)
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id)
 );
 
--- 12. Goods Receipt Detail
-CREATE TABLE Goods_Receipt_Detail (
+-- 12. ingredient
+CREATE TABLE ingredient (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ingredient_name VARCHAR(50),
+    net_weight INT,
+    quantity INT
+);
+
+-- 13. goods_receipt_detail
+CREATE TABLE goods_receipt_detail (
     id INT PRIMARY KEY AUTO_INCREMENT,
     receipt_id INT,
-    product_id INT,
+    ingredient_id INT,
     quantity INT,
     unit_price DECIMAL(15, 2),
-    FOREIGN KEY (receipt_id) REFERENCES Goods_Receipt(id),
-    FOREIGN KEY (product_id) REFERENCES Product(id)
+    FOREIGN KEY (receipt_id) REFERENCES goods_receipt(id),
+    FOREIGN KEY (ingredient_id) REFERENCES ingredient(id)
 );
 
--- 13. Order (Đơn đặt hàng chung)
-CREATE TABLE `Order` (
+-- 14. ingredient_product
+CREATE TABLE ingredient_product (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT,
+    ingredient_id INT,
+    estimate INT,
+    FOREIGN KEY (product_id) REFERENCES product(id),
+    FOREIGN KEY (ingredient_id) REFERENCES ingredient(id)
+);
+
+-- 15. order (đơn đặt hàng chung)
+CREATE TABLE `order` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     customer_id INT,
     order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     sub_total DECIMAL(15, 2),
     total_amount DECIMAL(15, 2),
     status VARCHAR(50),
-    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+    FOREIGN KEY (customer_id) REFERENCES customer(id)
 );
 
--- 14. Online Order (Specialization of Order)
-CREATE TABLE Online_Order (
+-- 16. online_order (specialization of order)
+CREATE TABLE online_order (
     id INT PRIMARY KEY,
     customer_id INT,
     shipper_id INT,
@@ -130,23 +152,24 @@ CREATE TABLE Online_Order (
     completed_time DATETIME,
     status VARCHAR(50),
     total_amount DECIMAL(15, 2),
-    FOREIGN KEY (id) REFERENCES `Order`(id),
-    FOREIGN KEY (customer_id) REFERENCES Customer(id),
-    FOREIGN KEY (shipper_id) REFERENCES Shipper(id)
+    FOREIGN KEY (id) REFERENCES `order`(id),
+    FOREIGN KEY (customer_id) REFERENCES customer(id),
+    FOREIGN KEY (shipper_id) REFERENCES shipper(id)
 );
 
--- 15. Order Detail
-CREATE TABLE Order_Detail (
+-- 17. order_detail
+CREATE TABLE order_detail (
     id INT PRIMARY KEY AUTO_INCREMENT,
     order_id INT,
     product_id INT,
     quantity INT,
     unit_price DECIMAL(15, 2),
-    FOREIGN KEY (order_id) REFERENCES `Order`(id),
-    FOREIGN KEY (product_id) REFERENCES Product(id)
+    FOREIGN KEY (order_id) REFERENCES `order`(id),
+    FOREIGN KEY (product_id) REFERENCES product(id)
 );
--- 16. Invoice
-CREATE TABLE Invoice (
+
+-- 18. invoice
+CREATE TABLE invoice (
     id INT PRIMARY KEY AUTO_INCREMENT,
     customer_id INT,
     employee_id INT,
@@ -154,29 +177,29 @@ CREATE TABLE Invoice (
     payment_method_id INT,
     issued_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     total_amount DECIMAL(15, 2),
-    FOREIGN KEY (customer_id) REFERENCES Customer(id),
-    FOREIGN KEY (employee_id) REFERENCES Employee(id),
-    FOREIGN KEY (order_id) REFERENCES `Order`(id),
-    FOREIGN KEY (payment_method_id) REFERENCES Payment_Method(id)
+    FOREIGN KEY (customer_id) REFERENCES customer(id),
+    FOREIGN KEY (employee_id) REFERENCES employee(id),
+    FOREIGN KEY (order_id) REFERENCES `order`(id),
+    FOREIGN KEY (payment_method_id) REFERENCES payment_method(id)
 );
 
--- 17. Invoice Detail
-CREATE TABLE Invoice_Detail (
+-- 19. invoice_detail
+CREATE TABLE invoice_detail (
     id INT PRIMARY KEY AUTO_INCREMENT,
     invoice_id INT,
     product_id INT,
     quantity INT,
     unit_price DECIMAL(15, 2),
-    FOREIGN KEY (invoice_id) REFERENCES Invoice(id),
-    FOREIGN KEY (product_id) REFERENCES Product(id)
+    FOREIGN KEY (invoice_id) REFERENCES invoice(id),
+    FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
--- 18. Invoice Voucher Detail
-CREATE TABLE Invoice_Voucher_Detail (
+-- 20. invoice_voucher_detail
+CREATE TABLE invoice_voucher_detail (
     id INT PRIMARY KEY AUTO_INCREMENT,
     invoice_id INT,
     voucher_id INT,
     discount_value DECIMAL(15, 2),
-    FOREIGN KEY (invoice_id) REFERENCES Invoice(id),
-    FOREIGN KEY (voucher_id) REFERENCES Voucher(id)
+    FOREIGN KEY (invoice_id) REFERENCES invoice(id),
+    FOREIGN KEY (voucher_id) REFERENCES voucher(id)
 );
