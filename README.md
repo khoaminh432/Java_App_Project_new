@@ -5,6 +5,7 @@
 ---
 
 ## 🌟 Tính năng nổi bật
+
 - Đăng nhập người dùng cơ bản với xử lý ở tầng `service`
 - Tổ chức code theo MVC giúp tách biệt UI, logic và dữ liệu
 - Sử dụng JavaFX CSS/FXML để dễ dàng thay đổi giao diện
@@ -14,28 +15,31 @@
 ---
 
 ## 🧰 Công nghệ chính
-| Thành phần | Mô tả |
-| --- | --- |
-| Java 17+ | Ngôn ngữ chính, tận dụng các tính năng hiện đại (Records, Stream API, OOP) |
-| JavaFX 20+ | Xây dựng giao diện desktop, hỗ trợ Scene Builder, CSS, FXML |
-| Maven 3.9+ | Quản lý dependency và lifecycle `clean`, `test`, `javafx:run` |
-| JDBC + MySQL | Thao tác cơ sở dữ liệu quan hệ, dễ triển khai trên XAMPP/Cloud |
-| JUnit 5 | Viết và chạy unit test cho `service`/`dao` |
+
+| Thành phần   | Mô tả                                                                      |
+| ------------ | -------------------------------------------------------------------------- |
+| Java 17+     | Ngôn ngữ chính, tận dụng các tính năng hiện đại (Records, Stream API, OOP) |
+| JavaFX 20+   | Xây dựng giao diện desktop, hỗ trợ Scene Builder, CSS, FXML                |
+| Maven 3.9+   | Quản lý dependency và lifecycle `clean`, `test`, `javafx:run`              |
+| JDBC + MySQL | Thao tác cơ sở dữ liệu quan hệ, dễ triển khai trên XAMPP/Cloud             |
+| JUnit 5      | Viết và chạy unit test cho `service`/`dao`                                 |
 
 ---
 
 ## 🏗️ Kiến trúc & Vai trò thư mục
-| Tầng | Mô tả |
-| --- | --- |
-| `my_app.model` | Khai báo entity (POJO) phản ánh bảng dữ liệu |
-| `my_app.dao` | Chứa lớp thao tác SQL/JDBC, quản lý truy vấn |
-| `my_app.service` | Chứa nghiệp vụ, validate dữ liệu trước khi gọi DAO |
+
+| Tầng                | Mô tả                                                           |
+| ------------------- | --------------------------------------------------------------- |
+| `my_app.model`      | Khai báo entity (POJO) phản ánh bảng dữ liệu                    |
+| `my_app.dao`        | Chứa lớp thao tác SQL/JDBC, quản lý truy vấn                    |
+| `my_app.service`    | Chứa nghiệp vụ, validate dữ liệu trước khi gọi DAO              |
 | `my_app.controller` | Lắng nghe sự kiện JavaFX, điều phối dữ liệu giữa View ↔ Service |
-| `my_app.util` | Tiện ích chung (kết nối DB, helper) |
+| `my_app.util`       | Tiện ích chung (kết nối DB, helper)                             |
 
 ---
 
 ## 📁 Cấu trúc dự án
+
 ```
 JAVA_App_Project_new
 ├── pom.xml
@@ -61,6 +65,7 @@ JAVA_App_Project_new
 ---
 
 ## ⚙️ Yêu cầu hệ thống
+
 - JDK 17 trở lên (`java -version` để kiểm tra)
 - Maven 3.9 trở lên (`mvn -v`)
 - MySQL 8.x (hoặc tương thích) và driver `mysql-connector-j`
@@ -69,6 +74,7 @@ JAVA_App_Project_new
 ---
 
 ## 🚀 Khởi chạy nhanh
+
 1. **Cài đặt dependency** (Maven tự tải khi build lần đầu):
    ```bash
    mvn clean install
@@ -87,13 +93,15 @@ JAVA_App_Project_new
 ---
 
 ## 🗄️ Cấu hình cơ sở dữ liệu
-| Tham số | Ý nghĩa |
-| --- | --- |
-| `DBConnection.URL` | Chuỗi JDBC, ví dụ `jdbc:mysql://localhost:3306/my_app_db` |
-| `DBConnection.USER` | Tài khoản MySQL |
-| `DBConnection.PASSWORD` | Mật khẩu tương ứng |
+
+| Tham số                 | Ý nghĩa                                                   |
+| ----------------------- | --------------------------------------------------------- |
+| `DBConnection.URL`      | Chuỗi JDBC, ví dụ `jdbc:mysql://localhost:3306/my_app_db` |
+| `DBConnection.USER`     | Tài khoản MySQL                                           |
+| `DBConnection.PASSWORD` | Mật khẩu tương ứng                                        |
 
 Các bước khởi tạo nhanh:
+
 1. Tạo schema `my_app_db` (tùy đổi tên cho phù hợp).
 2. Import file SQL (nếu có) trong thư mục `docs/` hoặc tự tạo bảng mẫu `users`.
 3. Cập nhật thông tin kết nối trong `my_app.util.DBConnection`.
@@ -101,6 +109,7 @@ Các bước khởi tạo nhanh:
 ---
 
 ## 🔍 Quy trình phát triển gợi ý
+
 1. Thiết kế giao diện bằng Scene Builder → xuất `*.fxml` vào `src/main/resources/fxml`.
 2. Liên kết `fx:controller` với lớp trong `my_app.controller`.
 3. Cài đặt logic trong `controller`, giao tiếp với `service`.
@@ -110,6 +119,7 @@ Các bước khởi tạo nhanh:
 ---
 
 ## 🧭 Lộ trình mở rộng
+
 - Thêm phân quyền (admin/user) và ghi nhớ phiên đăng nhập
 - Xây dựng bộ CRUD hoàn chỉnh cho bảng `users`
 - Áp dụng CSS nâng cao, animation, Dark/Light theme
@@ -119,15 +129,25 @@ Các bước khởi tạo nhanh:
 ---
 
 ## 👤 Thông tin sinh viên
-- Họ tên: _Điền họ tên_  
-- Môn học: _Lập trình Java / Phát triển ứng dụng_  
-- Giảng viên hướng dẫn: _Tên GV_  
+
+- Họ tên: _Điền họ tên_
+- Môn học: _Lập trình Java / Phát triển ứng dụng_
+- Giảng viên hướng dẫn: _Tên GV_
 
 ---
 
 ## 📎 Tài liệu tham khảo trong repo
+
 - `docs/erd`: sơ đồ ERD, use case, class diagram phục vụ bảo vệ đồ án
 - `README.md`: hướng dẫn setup nhanh và mô tả kiến trúc
 - `LICENSE`: giấy phép sử dụng mã nguồn (nếu cần công bố)
 
 > ✅ Dự án mang tính thực tiễn, sẵn sàng để trình bày trong đồ án hoặc phát triển thành sản phẩm hoàn chỉnh.
+
+## Cách dẫn file controller vào trong giao diện chỉ gọi từ my_app
+
+- my_app.controller.example
+
+## Cách nhận file giao diện vào java
+
+- "/fxml/file.fxml"

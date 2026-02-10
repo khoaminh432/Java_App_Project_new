@@ -3,8 +3,10 @@ package my_app.controller.component.product;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import my_app.model.Product;
+
 public class handleListController {
-     @FXML
+
+    @FXML
     private Button btnDelete;
 
     @FXML
@@ -15,19 +17,22 @@ public class handleListController {
 
     private Product product;
 
-    public void setData(Product product){
+    public void setData(Product product) {
         this.product = product;
     }
+
     @FXML
-    private void handleEdit(){
+    private void handleEdit() {
         System.out.println("Edit product: " + product.getProductName());
     }
+
     @FXML
-    private void handleDelete(){
+    private void handleDelete() {
         System.out.println("Delete product: " + product.getProductName());
     }
+
     @FXML
-    private void handleView(){
+    private void handleView() {
         System.out.println("View product: " + product.getProductName());
     }
 }
