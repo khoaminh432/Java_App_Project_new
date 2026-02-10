@@ -1,9 +1,11 @@
 package my_app.dao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import my_app.model.IngredientProduct;
+import my_app.model.ModelMapperHelper;
 import my_app.util.QueryExecutor;
 
 public class IngredientProductDao implements GenericDao<IngredientProduct, Integer> {
@@ -33,12 +35,12 @@ public class IngredientProductDao implements GenericDao<IngredientProduct, Integ
         if (entity == null) {
             throw new IllegalArgumentException("Ingredient product entity must not be null");
         }
-        final String insertSql = "INSERT INTO ingredient_product (product_id, ingredient_id, estimate, unit_price) VALUES (?,?,?,?)";
+        final String insertSql = "INSERT INTO ingredient_product (product_id, ingredient_id, estimate, total_price) VALUES (?,?,?,?)";
         return qe.ExecuteUpdate(insertSql,
                 entity.getProductId(),
                 entity.getIngredientId(),
                 entity.getEstimate(),
-                entity.getUnitPrice());
+                entity.getTotalPrice());
     }
 
     @Override
@@ -46,12 +48,12 @@ public class IngredientProductDao implements GenericDao<IngredientProduct, Integ
         if (entity == null || entity.getId() == null) {
             throw new IllegalArgumentException("Ingredient product entity and id must not be null");
         }
-        final String updateSql = "UPDATE ingredient_product SET product_id=?, ingredient_id=?, estimate=?, unit_price=? WHERE id=?";
+        final String updateSql = "UPDATE ingredient_product SET product_id=?, ingredient_id=?, estimate=?, total_price=? WHERE id=?";
         return qe.ExecuteUpdate(updateSql,
                 entity.getProductId(),
                 entity.getIngredientId(),
                 entity.getEstimate(),
-                entity.getUnitPrice(),
+                entity.getTotalPrice(),
                 entity.getId());
     }
 
@@ -63,8 +65,21 @@ public class IngredientProductDao implements GenericDao<IngredientProduct, Integ
         return qe.ExecuteUpdate("DELETE FROM ingredient_product WHERE id=?", id);
     }
 
+    public BigDecimal getTotalPrice(Integer ingredientId, Integer estimate) {
+        final String query = "select ?*unit_price/net_weight as total_calculator\n"
+                + //
+                "from ingredient ing\n"
+                + //
+                "where ing.id = ?;";
+        if (ingredientId == null) {
+            throw new IllegalArgumentException("Ingredient id must not be null");
+        }
+        ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(query, estimate, ingredientId);
+        return results.isEmpty() ? null : ModelMapperHelper.getBigDecimal(results.get(0), "total_calculator");
+    }
+
     public IngredientProduct findByIngredientId(Integer ingredientId) {
-        final String query = "select grd.ingredient_id,grd.unit_price\n"
+        final String query = "select grd.ingredient_id as total_price\n"
                 + //
                 "from goods_receipt_detail grd\n"
                 + //

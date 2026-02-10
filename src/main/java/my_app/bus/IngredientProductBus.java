@@ -57,7 +57,7 @@ public class IngredientProductBus implements GeneralConfig<IngredientProduct> {
                 || containsIgnoreCase(mapping.getProductId(), needle)
                 || containsIgnoreCase(mapping.getIngredientId(), needle)
                 || containsIgnoreCase(mapping.getEstimate(), needle)
-                || containsIgnoreCase(mapping.getUnitPrice(), needle))
+                || containsIgnoreCase(mapping.getTotalPrice(), needle))
                 .collect(Collectors.toList());
     }
 

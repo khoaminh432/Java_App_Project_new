@@ -343,6 +343,7 @@ public class ProductController {
     private void addIngredientTemp(IngredientProduct ingredient, Node node) {
         ingredientTemp.add(ingredient);
         vbIngredientTemp.getChildren().add(node);
+        vbIngredientTemp.layout();
     }
 
     private void removeIngredientTemp(IngredientProduct ingredient, Node node) {

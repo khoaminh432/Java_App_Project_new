@@ -33,11 +33,13 @@ public class IngredientDao implements GenericDao<Ingredient, Integer> {
         if (entity == null) {
             throw new IllegalArgumentException("Ingredient entity must not be null");
         }
-        final String insertSql = "INSERT INTO ingredient (ingredient_name, net_weight, quantity) VALUES (?,?,?)";
+        final String insertSql = "INSERT INTO ingredient (ingredient_name, net_weight, quantity, total_weight, unit_price) VALUES (?,?,?,?,?)";
         return qe.ExecuteUpdate(insertSql,
                 entity.getIngredientName(),
                 entity.getNetWeight(),
-                entity.getQuantity());
+                entity.getQuantity(),
+                entity.getTotalWeight(),
+                entity.getUnitPrice());
     }
 
     @Override
@@ -45,11 +47,13 @@ public class IngredientDao implements GenericDao<Ingredient, Integer> {
         if (entity == null || entity.getId() == null) {
             throw new IllegalArgumentException("Ingredient entity and id must not be null");
         }
-        final String updateSql = "UPDATE ingredient SET ingredient_name=?, net_weight=?, quantity=? WHERE id=?";
+        final String updateSql = "UPDATE ingredient SET ingredient_name=?, net_weight=?, quantity=?, total_weight=?, unit_price=? WHERE id=?";
         return qe.ExecuteUpdate(updateSql,
                 entity.getIngredientName(),
                 entity.getNetWeight(),
                 entity.getQuantity(),
+                entity.getTotalWeight(),
+                entity.getUnitPrice(),
                 entity.getId());
     }
 

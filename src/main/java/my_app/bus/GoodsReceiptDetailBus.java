@@ -56,6 +56,7 @@ public class GoodsReceiptDetailBus implements GeneralConfig<GoodsReceiptDetail> 
                 .filter(detail -> containsIgnoreCase(detail.getId(), needle)
                 || containsIgnoreCase(detail.getReceiptId(), needle)
                 || containsIgnoreCase(detail.getIngredientId(), needle)
+                || containsIgnoreCase(detail.getNetWeight(), needle)
                 || containsIgnoreCase(detail.getQuantity(), needle))
                 .collect(Collectors.toList());
     }

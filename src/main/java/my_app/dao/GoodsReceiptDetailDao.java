@@ -33,10 +33,11 @@ public class GoodsReceiptDetailDao implements GenericDao<GoodsReceiptDetail, Int
         if (entity == null) {
             throw new IllegalArgumentException("Goods receipt detail entity must not be null");
         }
-        final String insertSql = "INSERT INTO goods_receipt_detail (receipt_id, ingredient_id, quantity, unit_price) VALUES (?,?,?,?)";
+        final String insertSql = "INSERT INTO goods_receipt_detail (receipt_id, ingredient_id, net_weight, quantity, unit_price) VALUES (?,?,?,?,?)";
         return qe.ExecuteUpdate(insertSql,
                 entity.getReceiptId(),
                 entity.getIngredientId(),
+                entity.getNetWeight(),
                 entity.getQuantity(),
                 entity.getUnitPrice());
     }
@@ -46,10 +47,11 @@ public class GoodsReceiptDetailDao implements GenericDao<GoodsReceiptDetail, Int
         if (entity == null || entity.getId() == null) {
             throw new IllegalArgumentException("Goods receipt detail entity and id must not be null");
         }
-        final String updateSql = "UPDATE goods_receipt_detail SET receipt_id=?, ingredient_id=?, quantity=?, unit_price=? WHERE id=?";
+        final String updateSql = "UPDATE goods_receipt_detail SET receipt_id=?, ingredient_id=?, net_weight=?, quantity=?, unit_price=? WHERE id=?";
         return qe.ExecuteUpdate(updateSql,
                 entity.getReceiptId(),
                 entity.getIngredientId(),
+                entity.getNetWeight(),
                 entity.getQuantity(),
                 entity.getUnitPrice(),
                 entity.getId());

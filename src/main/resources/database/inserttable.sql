@@ -1,5 +1,29 @@
 use jdbc_demo;
 
+-- Ensure ingredient.total_weight exists before seeding (works on MySQL < 8.0)
+SET @ingredient_total_weight_exists := (
+	SELECT COUNT(*)
+	FROM information_schema.columns
+	WHERE table_schema = DATABASE()
+		AND table_name = 'ingredient'
+		AND column_name = 'total_weight'
+);
+
+SET @ingredient_alter_sql := IF(
+	@ingredient_total_weight_exists = 0,
+	'ALTER TABLE ingredient ADD COLUMN total_weight INT DEFAULT 0 AFTER quantity',
+	'SELECT 1'
+);
+
+PREPARE ingredient_stmt FROM @ingredient_alter_sql;
+EXECUTE ingredient_stmt;
+DEALLOCATE PREPARE ingredient_stmt;
+
+-- Backfill total_weight for any existing rows
+UPDATE ingredient
+SET total_weight = COALESCE(net_weight, 0) * COALESCE(quantity, 0)
+WHERE total_weight IS NULL;
+
 -- 1. product_category
 INSERT INTO product_category (category_name, description) VALUES
 ('Cà phê', 'Các loại cà phê nguyên chất và pha chế'),
@@ -145,34 +169,47 @@ INSERT INTO goods_receipt (received_date, supplier_id, total_quantity, total_pri
 
 -- 12. ingredient
 INSERT INTO ingredient (ingredient_name, net_weight, quantity) VALUES
-('Cà phê Arabica', 1000, 50),
-('Sữa đặc có đường', 380, 100),
-('Trà đen', 500, 80),
-('Đào tươi', 1000, 30),
+('Cà phê Arabica', 1000, 5),
+('Sữa đặc có đường', 380, 10),
+('Trà đen', 500, 8),
+('Đào tươi', 1000, 3),
 ('Bơ', 500, 20),
-('Cam tươi', 1000, 40),
-('Bột mì', 1000, 25),
-('Khoai tây', 1000, 15),
-('Đường trắng', 1000, 200),
-('Caramel syrup', 1000, 50);
+('Cam tươi', 1000, 4),
+('Bột mì', 1000, 2),
+('Khoai tây', 1000, 1),
+('Đường trắng', 1000, 20),
+('Caramel syrup', 1000, 5);
+
 
 -- 13. goods_receipt_detail
-INSERT INTO goods_receipt_detail (receipt_id, ingredient_id, quantity, unit_price) VALUES
-(1, 1, 50, 100000.00),
-(1, 9, 50, 50000.00),
-(2, 2, 100, 25000.00),
-(3, 3, 200, 30000.00),
-(4, 4, 150, 30000.00),
-(5, 7, 80, 40000.00),
-(6, 9, 300, 30000.00),
-(7, 10, 1000, 2000.00),
-(8, 8, 500, 10000.00),
-(9, 5, 200, 20000.00);
+INSERT INTO goods_receipt_detail (receipt_id, ingredient_id, quantity, unit_price,net_weight) VALUES
+(1, 1, 5, 100000.00, 1000),
+(1, 9, 5, 50000.00, 1000),
+(2, 2, 10, 25000.00, 380),
+(3, 3, 2, 30000.00, 500),
+(4, 4, 15, 30000.00, 1000),
+(5, 7, 8, 40000.00, 1000),
+(6, 9, 30, 30000.00, 1000),
+(7, 10, 10, 2000.00, 1000),
+(8, 8, 50, 10000.00, 1000),
+(9, 5, 20, 20000.00, 500);
 
 -- 14. ingredient_product
-INSERT INTO ingredient_product (product_id, ingredient_id, estimate, unit_price) VALUES
-(1, 1, 20, 100000.00),
-(1, 9, 10, 50000.00),
+INSERT INTO ingredient_product (product_id, ingredient_id, estimate, total_price) VALUES
+(1, 1, 20,  100000.00),
+(1, 2, 10,  25000.00),
+(1, 9, 10,  50000.00),
+(2, 1, 20, 100000.00),
+(2, 2, 15, 25000.00),
+(2, 9, 10, 50000.00),
+(3, 3, 30, 30000.00),
+(3, 2, 20, 25000.00),
+(3, 9, 15, 20000.00),
+(4, 3, 25, 30000.00),
+(4, 4, 20, 30000.00),
+(1, 1, 20,  100000.00),
+(1, 2, 10,  25000.00),
+(1, 9, 10,  50000.00),
 (2, 1, 20, 100000.00),
 (2, 2, 15, 25000.00),
 (2, 9, 10, 50000.00),
@@ -244,3 +281,19 @@ INSERT INTO invoice_voucher_detail (invoice_id, voucher_id, discount_value) VALU
 (5, 3, 90000.00),
 (6, 4, 21000.00),
 (7, 5, 15000.00);
+
+
+
+DELIMITER $$
+-- 
+CREATE TRIGGER IF NOT EXISTS trg_ingredient_product_after_insert
+AFTER INSERT ON ingredient_product
+FOR EACH ROW
+BEGIN
+    UPDATE ingredient ing
+    SET ing.total_weight = COALESCE(ing.total_weight,0) - (COALESCE(NEW.estimate,0))
+    WHERE ing.id = NEW.ingredient_id;
+END$$
+
+DELIMITER ;
+

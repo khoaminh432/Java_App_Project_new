@@ -8,6 +8,7 @@ public class GoodsReceiptDetail {
     private Integer id;
     private Integer receiptId;
     private Integer ingredientId;
+    private Integer netWeight;
     private Integer quantity;
     private BigDecimal unitPrice;
     private GoodsReceipt goodsReceipt; // Reference to GoodsReceipt object
@@ -16,23 +17,29 @@ public class GoodsReceiptDetail {
     public GoodsReceiptDetail() {
     }
 
-    public GoodsReceiptDetail(Integer id, Integer receiptId, Integer ingredientId,
-            Integer quantity, BigDecimal unitPrice) {
-        this.id = id;
-        this.receiptId = receiptId;
-        this.ingredientId = ingredientId;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
+    public GoodsReceiptDetail(Integer receiptId, Integer ingredientId,
+            Integer netWeight, Integer quantity, BigDecimal unitPrice) {
+        this(null, receiptId, ingredientId, netWeight, quantity, unitPrice);
     }
 
     public GoodsReceiptDetail(Integer receiptId, Integer ingredientId,
             Integer quantity, BigDecimal unitPrice) {
-        this(null, receiptId, ingredientId, quantity, unitPrice);
+        this(null, receiptId, ingredientId, null, quantity, unitPrice);
     }
 
     public GoodsReceiptDetail(GoodsReceiptDetail other) {
-        this(other.id, other.receiptId, other.ingredientId, other.quantity, other.unitPrice);
+        this(other.id, other.receiptId, other.ingredientId, other.netWeight, other.quantity, other.unitPrice);
         this.goodsReceipt = other.goodsReceipt;
+    }
+
+    public GoodsReceiptDetail(Integer id, Integer receiptId, Integer ingredientId,
+            Integer netWeight, Integer quantity, BigDecimal unitPrice) {
+        this.id = id;
+        this.receiptId = receiptId;
+        this.ingredientId = ingredientId;
+        this.netWeight = netWeight;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
     }
 
     public GoodsReceiptDetail(Map<String, Object> data) {
@@ -57,6 +64,11 @@ public class GoodsReceiptDetail {
         Integer newIngredientId = ModelMapperHelper.getInteger(data, "ingredientId", "ingredient_id");
         if (newIngredientId != null) {
             this.ingredientId = newIngredientId;
+        }
+
+        Integer newNetWeight = ModelMapperHelper.getInteger(data, "netWeight", "net_weight");
+        if (newNetWeight != null) {
+            this.netWeight = newNetWeight;
         }
 
         Integer newQuantity = ModelMapperHelper.getInteger(data, "quantity");
@@ -95,6 +107,14 @@ public class GoodsReceiptDetail {
         this.ingredientId = ingredientId;
     }
 
+    public Integer getNetWeight() {
+        return netWeight;
+    }
+
+    public void setNetWeight(Integer netWeight) {
+        this.netWeight = netWeight;
+    }
+
     public Integer getQuantity() {
         return quantity;
     }
@@ -121,6 +141,9 @@ public class GoodsReceiptDetail {
 
     // Helper method to calculate line total
     public BigDecimal getLineTotal() {
+        if (unitPrice == null || quantity == null) {
+            return BigDecimal.ZERO;
+        }
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 
@@ -130,6 +153,7 @@ public class GoodsReceiptDetail {
                 + "id=" + id
                 + ", receiptId=" + receiptId
                 + ", ingredientId=" + ingredientId
+                + ", netWeight=" + netWeight
                 + ", quantity=" + quantity
                 + ", unitPrice=" + unitPrice
                 + '}';
