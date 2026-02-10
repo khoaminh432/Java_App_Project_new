@@ -124,6 +124,7 @@ CREATE TABLE ingredient_product (
     product_id INT,
     ingredient_id INT,
     estimate INT,
+    unit_price DECIMAL(15, 2),
     FOREIGN KEY (product_id) REFERENCES product(id),
     FOREIGN KEY (ingredient_id) REFERENCES ingredient(id)
 );

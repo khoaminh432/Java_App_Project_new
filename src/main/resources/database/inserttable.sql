@@ -170,17 +170,17 @@ INSERT INTO goods_receipt_detail (receipt_id, ingredient_id, quantity, unit_pric
 (9, 5, 200, 20000.00);
 
 -- 14. ingredient_product
-INSERT INTO ingredient_product (product_id, ingredient_id, estimate) VALUES
-(1, 1, 20),
-(1, 9, 10),
-(2, 1, 20),
-(2, 2, 15),
-(2, 9, 10),
-(3, 3, 30),
-(3, 2, 20),
-(3, 9, 15),
-(4, 3, 25),
-(4, 4, 20);
+INSERT INTO ingredient_product (product_id, ingredient_id, estimate, unit_price) VALUES
+(1, 1, 20, 100000.00),
+(1, 9, 10, 50000.00),
+(2, 1, 20, 100000.00),
+(2, 2, 15, 25000.00),
+(2, 9, 10, 50000.00),
+(3, 3, 30, 30000.00),
+(3, 2, 20, 25000.00),
+(3, 9, 15, 20000.00),
+(4, 3, 25, 30000.00),
+(4, 4, 20, 30000.00);
 
 -- 15. order
 INSERT INTO `order` (customer_id, order_date, sub_total, total_amount, status) VALUES

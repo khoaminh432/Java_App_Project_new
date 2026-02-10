@@ -1,5 +1,6 @@
 package my_app.model;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 public class IngredientProduct {
@@ -8,6 +9,7 @@ public class IngredientProduct {
     private Integer productId;
     private Integer ingredientId;
     private Integer estimate;
+    private BigDecimal unitPrice;
     private Product product;
     private Ingredient ingredient;
 
@@ -15,18 +17,31 @@ public class IngredientProduct {
     }
 
     public IngredientProduct(Integer id, Integer productId, Integer ingredientId, Integer estimate) {
+        this(id, productId, ingredientId, estimate, null);
+    }
+
+    public IngredientProduct(Integer id, Integer productId, Integer ingredientId, Integer estimate, BigDecimal unitPrice) {
         this.id = id;
         this.productId = productId;
         this.ingredientId = ingredientId;
         this.estimate = estimate;
+        this.unitPrice = unitPrice;
     }
 
     public IngredientProduct(Integer productId, Integer ingredientId, Integer estimate) {
-        this(null, productId, ingredientId, estimate);
+        this(null, productId, ingredientId, estimate, null);
+    }
+
+    public IngredientProduct(Integer productId, Integer ingredientId, Integer estimate, BigDecimal unitPrice) {
+        this(null, productId, ingredientId, estimate, unitPrice);
+    }
+
+    public IngredientProduct(Integer ingredientId, BigDecimal unitPrice) {
+        this(null, null, ingredientId, null, unitPrice);
     }
 
     public IngredientProduct(IngredientProduct other) {
-        this(other.id, other.productId, other.ingredientId, other.estimate);
+        this(other.id, other.productId, other.ingredientId, other.estimate, other.unitPrice);
         this.product = other.product;
         this.ingredient = other.ingredient;
     }
@@ -58,6 +73,11 @@ public class IngredientProduct {
         Integer newEstimate = ModelMapperHelper.getInteger(data, "estimate");
         if (newEstimate != null) {
             this.estimate = newEstimate;
+        }
+
+        BigDecimal newUnitPrice = ModelMapperHelper.getBigDecimal(data, "unitPrice", "unit_price");
+        if (newUnitPrice != null) {
+            this.unitPrice = newUnitPrice;
         }
     }
 
@@ -93,6 +113,14 @@ public class IngredientProduct {
         this.estimate = estimate;
     }
 
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
     public Product getProduct() {
         return product;
     }
@@ -116,6 +144,7 @@ public class IngredientProduct {
                 + ", productId=" + productId
                 + ", ingredientId=" + ingredientId
                 + ", estimate=" + estimate
+                + ", unitPrice=" + unitPrice
                 + '}';
     }
 }

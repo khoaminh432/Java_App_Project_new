@@ -1,13 +1,37 @@
+*{
+    -fx-text-fill: #ffffff;
+}
+.root {
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
+    -fx-background-color: linear-gradient(
+        to bottom right,
+        #F7F5F2,
+        #EFEAE5
+    );
+    
+}
+
+.header {
+    -fx-background-color: linear-gradient(
+        to right,
+        #2E1B14,
+        #4E342E
+    );
+    
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18, 0, 0, 6);
+}
 .leftmenu{
-    -fx-background-color: #b5bfcf;
+    -fx-background-color: linear-gradient(
+        to bottom,
+        #3E2723,
+        #2E1B14
+    );
     
 }
 .header-leftmenu{
     -fx-background-color: #9499a6;
 }
-*{
-    -fx-text-fill: #1F2937;
-}
+
 .form-container {
     -fx-background-color: #ffffff;
     -fx-background-radius: 16;
@@ -16,24 +40,19 @@
 }
 
 .title-main {
-    -fx-font-size: 20px;
+    -fx-font-size: 25px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2d3436;
+}.title-button {
+    -fx-font-size: 15px;
 }
 .button-leftmenu {
     -fx-background-color: transparent;   /* không nền */
-    -fx-text-fill: #101c28;               /* màu chữ */
+                 /* màu chữ */
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-
-    
-    -fx-padding: 10 15 10 20;
-    
-    -fx-pref-width: 190px;
-
+    -fx-pref-width: 170px;
     -fx-border-width: 0 0 0 4;
     -fx-border-color: transparent;
-
     -fx-cursor: hand;
 }
 
