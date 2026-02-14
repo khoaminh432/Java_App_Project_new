@@ -1,13 +1,12 @@
 package my_app.controller.component.product;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.function.Function;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import my_app.controller.component.ProductController;
-import my_app.model.Ingredient;
 import my_app.model.IngredientProduct;
 import my_app.service.ConfigTextField;
 
@@ -23,16 +22,21 @@ public class handleIngredientController {
     private TextField tfEstimate;
 
     private IngredientProduct ingredient;
+    private Function removeFunction;
     private Function changeFunction;
 
     private void setlbText() {
         lbNameIngredient.setText(ingredient.getIngredient().getIngredientName());
-        lbCost.setText(String.valueOf(ingredient.getTotalPrice() != null ? ingredient.getTotalPrice().setScale(2, RoundingMode.HALF_UP) : "chưa có"));
+        lbCost.setText(String.valueOf(ingredient.getTotalPrice() != null ? ingredient.getTotalPrice().setScale(0, RoundingMode.HALF_UP) : "chưa có"));
     }
 
     public void setData(IngredientProduct ingredient) {
         this.ingredient = ingredient;
         setlbText();
+    }
+
+    public void setRemove(Function func) {
+        this.removeFunction = func;
     }
 
     public void setChange(Function func) {
@@ -49,12 +53,14 @@ public class handleIngredientController {
         ConfigTextField.AcceptOnlyNumber(tfEstimate);
         tfEstimate.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.isBlank()) {
+                lbCost.setText("chưa có");
+                ingredient.setTotalPrice(BigDecimal.ZERO);
                 return;
             }
             Integer estimate = Integer.parseInt(newValue);
-            Ingredient ingtemp = ingredient.getIngredient();
             ingredient.setEstimate(estimate);
             ingredient.setTotalPrice();
+            changeFunction.apply(null);
             setlbText();
         });
     }
@@ -63,8 +69,8 @@ public class handleIngredientController {
     private void handleDeleteIngredient() {
         // Implement the logic to delete the ingredient
         System.out.println("Deleting ingredient: " + ingredient.getIngredient().getIngredientName());
-        System.out.println(ProductController.ingredientTemp);
-        changeFunction.apply(null);
+        removeFunction.apply(null);
+
     }
 
 }

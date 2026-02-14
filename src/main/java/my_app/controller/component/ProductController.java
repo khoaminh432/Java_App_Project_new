@@ -1,7 +1,6 @@
 package my_app.controller.component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,10 +12,12 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -84,10 +85,10 @@ public class ProductController {
     private TableColumn<Ingredient, String> colNameIngredient;
 
     @FXML
-    private TableColumn<Ingredient, Integer> colQuantityIngredient;
+    private TableColumn<Ingredient, Integer> colTotalWeightIngredient;
 
     @FXML
-    private TableColumn<Ingredient, Double> colWeightIngredient;
+    private TableColumn<Ingredient, Double> colUnitPriceIngredient;
 
     @FXML
     private TableView<Ingredient> tbIngredient;
@@ -95,6 +96,18 @@ public class ProductController {
     // end dữ liệu nguyên liệu
     @FXML
     private TextField tfSearchProduct;
+
+    @FXML
+    private TextField tfNameProduct;
+
+    @FXML
+    private TextField tfPriceProduct;
+
+    @FXML
+    private TextField tfQuantityProduct;
+
+    @FXML
+    private TextField tfUnitProduct;
 
     // thống kê sản phẩm
     @FXML
@@ -108,6 +121,9 @@ public class ProductController {
 
     @FXML
     private Label lbQuantityProductWarning;
+
+    @FXML
+    private Label lbTotalAllIngredientProruct;
 
     // end thống kê sản phẩm
     @FXML
@@ -129,13 +145,18 @@ public class ProductController {
     @FXML
     private ComboBox<String> cbbPriceProduct;
 
+    // trạng thái sản phẩm
     @FXML
-    private ComboBox<String> cbbStatusProduct;
+    private ToggleGroup grradioStatusProduct;
+
+    @FXML
+    private RadioButton rdoActiveProduct;
+
+    @FXML
+    private RadioButton rdoUnactiveProduct;
 
     @FXML
     private VBox vbIngredientTemp;
-
-    public static ArrayList<IngredientProduct> ingredientTemp = new ArrayList<>();
     // end add product pane
     private Task<List<Product>> loadProductsTask;
 
@@ -159,7 +180,6 @@ public class ProductController {
         searchBarProducts();
         loadProductsAsync();
         setMouseClickTableIngredientEvent();
-
     }
 
     private void setTableData() {
@@ -167,6 +187,26 @@ public class ProductController {
         tableProduct.setItems(productBus.getProducts());
         configureColumnsIngredient();
         tbIngredient.setItems(ingredientBus.getIngredients());
+    }
+
+    private void clearAddFormProduct() {
+        tfNameProduct.clear();
+        tfPriceProduct.clear();
+        tfQuantityProduct.clear();
+        tfUnitProduct.clear();
+        cbbCategoryProduct.getSelectionModel().select(0);
+        cbbPriceProduct.getSelectionModel().select(0);
+        cbbUnitProduct.getSelectionModel().select(0);
+        rdoActiveProduct.setSelected(true);
+    }
+
+    private void addFormProduct() {
+
+    }
+
+    private void loadlabelTotalProductAllIngredientProduct() {
+        BigDecimal total = ingredientProductBus.calTotalPriceAll();
+        lbTotalAllIngredientProruct.setText(total != null ? String.valueOf(total) : "0");
     }
 
     private void loadProductsAsync() {
@@ -218,17 +258,15 @@ public class ProductController {
                 AlertInformation.showWarningAlert("Chú Ý", "Chưa Chọn Nguyên Liệu", "Vui lòng chọn nguyên liệu để thêm.");
                 return;
             }
-
-            if (!ingredientTemp.isEmpty() && ingredientTemp.stream().anyMatch(a -> a.getIngredient().getId().equals(ingredient.getId()))) {
-                AlertInformation.showWarningAlert("Chú Ý", "Nguyên Liệu Đã Tồn Tại", "Nguyên liệu đã được thêm trước đó.");
+            IngredientProduct ingprotemp = new IngredientProduct();
+            ingprotemp.setIngredientId(ingredient.getId());
+            ingprotemp.setIngredient(ingredient);
+            if (!ingredientProductBus.addtoList(ingprotemp)) {
                 return;
             }
-            LoadIngredientTemp(ingredientBus.getIngredientProductByThis(ingredient));
-            AlertInformation.showInfoAlert("Thành Công", "Đã Thêm Nguyên Liệu", "Nguyên liệu đã được thêm thành công.");
+            LoadIngredientTemp(ingprotemp);
+
             tbIngredient.getSelectionModel().clearSelection();
-            for (IngredientProduct ingredientProduct : ingredientTemp) {
-                System.out.println(ingredientProduct + " = " + ingredientProduct.getIngredient());
-            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -258,8 +296,9 @@ public class ProductController {
     private void configureColumnsIngredient() {
         colIDIngredient.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNameIngredient.setCellValueFactory(new PropertyValueFactory<>("ingredientName"));
-        colQuantityIngredient.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        colWeightIngredient.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(toDouble(cell.getValue().getNetWeight())));
+        colTotalWeightIngredient.setCellValueFactory(new PropertyValueFactory<>("totalWeight"));
+        colUnitPriceIngredient.setCellValueFactory(cell
+                -> new ReadOnlyObjectWrapper<>(toDouble(cell.getValue().getUnitPrice())));
     }
 
     // xử lí khi ấn vào table
@@ -287,10 +326,8 @@ public class ProductController {
         cbbUnitProduct.getSelectionModel().select(0);
         cbbCategoryProduct.getItems().addAll(productCategoryBus.getProductCategories().stream().map(s -> s.getCategoryName()).toList());
         cbbCategoryProduct.getSelectionModel().select(0);
-        cbbPriceProduct.getItems().addAll("Low to High", "High to Low");
+        cbbPriceProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getDefaultUnitPriceProduct()));
         cbbPriceProduct.getSelectionModel().select(0);
-        cbbStatusProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getStatusProduct()));
-        cbbStatusProduct.getSelectionModel().select(0);
     }
 
     private void LoadActionButtons() {
@@ -330,24 +367,30 @@ public class ProductController {
             handleIngredientController controller = loadGUI.getLoader().getController();
             controller.setData(ingredient);
             controller.setChange((obj) -> {
-                removeIngredientTemp(ingredient, node);
+                System.out.println("this is: " + obj);
+
+                loadlabelTotalProductAllIngredientProduct();
                 return null;
             });
-            addIngredientTemp(ingredient, node);
+            controller.setRemove((obj) -> {
+                System.out.println("this is: " + obj);
+                removeIngredientTemp(ingredient, node);
+                loadlabelTotalProductAllIngredientProduct();
+                return null;
+            });
+            addIngredientTemp(node);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void addIngredientTemp(IngredientProduct ingredient, Node node) {
-        ingredientTemp.add(ingredient);
+    private void addIngredientTemp(Node node) {
         vbIngredientTemp.getChildren().add(node);
-        vbIngredientTemp.layout();
     }
 
     private void removeIngredientTemp(IngredientProduct ingredient, Node node) {
-        ingredientTemp.remove(ingredient);
+        ingredientProductBus.removeFromList(ingredient);
         vbIngredientTemp.getChildren().remove(node);
     }
 

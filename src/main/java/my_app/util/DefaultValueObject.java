@@ -7,6 +7,7 @@ public class DefaultValueObject {
 
     private static final String UnitProduct = "UnitProduct";
     private static final String StatusProduct = "StatusProduct";
+    private static final String UnitPriceProductRaito = "UnitPriceProductRaito";
     private static HashMap<String, ArrayList<String>> defaultValues = new HashMap<>();
 
     static {
@@ -15,6 +16,15 @@ public class DefaultValueObject {
         UnitProductDefault.add("cái");
         UnitProductDefault.add("Phần");
         defaultValues.put(UnitProduct, UnitProductDefault);
+        ArrayList<String> UnitPriceProductRaitoDefault = new ArrayList<>();
+        UnitPriceProductRaitoDefault.add("0%");
+        UnitPriceProductRaitoDefault.add("10%");
+        UnitPriceProductRaitoDefault.add("20%");
+        UnitPriceProductRaitoDefault.add("30%");
+        UnitPriceProductRaitoDefault.add("50%");
+        UnitPriceProductRaitoDefault.add("70%");
+        UnitPriceProductRaitoDefault.add("100%");
+        defaultValues.put(UnitPriceProductRaito, UnitPriceProductRaitoDefault);
         ArrayList<String> StatusProductDefault = new ArrayList<>();
         StatusProductDefault.add("available");
         StatusProductDefault.add("unavailable");
@@ -24,6 +34,10 @@ public class DefaultValueObject {
 
     private static ArrayList<String> getDefaultValues(String key) {
         return defaultValues.get(key);
+    }
+
+    public static ArrayList<String> getDefaultUnitPriceProduct() {
+        return getDefaultValues(UnitPriceProductRaito);
     }
 
     public static ArrayList<String> getUnitProduct() {
