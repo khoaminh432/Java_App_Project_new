@@ -32,6 +32,7 @@ import my_app.model.Ingredient;
 import my_app.model.IngredientProduct;
 import my_app.model.Product;
 import my_app.service.AlertInformation;
+import my_app.service.ConfigTextField;
 import my_app.service.LoadFileGUI;
 import my_app.util.DefaultValueObject;
 
@@ -41,7 +42,7 @@ public class ProductController {
     private final static ProductCategoryBus productCategoryBus = new ProductCategoryBus();
     private final static IngredientBus ingredientBus = new IngredientBus();
     private final static ProductBus productBus = new ProductBus();
-    private static int QuantityProduct = 0;
+    private static BigDecimal calTotalPriceAll = BigDecimal.ZERO;
     private static HashMap<String, Integer> statisticProduct = new HashMap<>();
 
     static {
@@ -172,6 +173,7 @@ public class ProductController {
         ingredientBus.findAll();
         setTableData();
         LoadComboboxData();
+        setTextFieldNumeric();
     }
 
     // tải sự kiện
@@ -189,6 +191,11 @@ public class ProductController {
         tbIngredient.setItems(ingredientBus.getIngredients());
     }
 
+    private void setTextFieldNumeric() {
+        ConfigTextField.AcceptOnlyNumber(tfPriceProduct);
+        ConfigTextField.AcceptOnlyNumber(tfQuantityProduct);
+    }
+
     private void clearAddFormProduct() {
         tfNameProduct.clear();
         tfPriceProduct.clear();
@@ -200,13 +207,36 @@ public class ProductController {
         rdoActiveProduct.setSelected(true);
     }
 
-    private void addFormProduct() {
+    private boolean checkaddFormpProduct() {
+        if (tfNameProduct.getText().isBlank()) {
+            AlertInformation.showWarningAlert("Chú Ý", "Tên Sản Phẩm Trống", "Vui lòng nhập tên sản phẩm.");
+            return false;
+        }
+        if (tfPriceProduct.getText().isBlank()) {
+            AlertInformation.showWarningAlert("Chú Ý", "Giá Sản Phẩm Trống", "Vui lòng nhập giá sản phẩm.");
+            return false;
+        }
+        if (tfQuantityProduct.getText().isBlank()) {
+            AlertInformation.showWarningAlert("Chú Ý", "Số Lượng Sản Phẩm Trống", "Vui lòng nhập số lượng sản phẩm.");
+            return false;
+        }
+        if (tfUnitProduct.getText().isBlank()) {
+            AlertInformation.showWarningAlert("Chú Ý", "Đơn Vị Sản Phẩm Trống", "Vui lòng nhập đơn vị sản phẩm.");
+            return false;
+        }
+        return true;
+    }
 
+    @FXML
+    private void addFormProduct() {
+        if (!checkaddFormpProduct()) {
+            return;
+        }
     }
 
     private void loadlabelTotalProductAllIngredientProduct() {
-        BigDecimal total = ingredientProductBus.calTotalPriceAll();
-        lbTotalAllIngredientProruct.setText(total != null ? String.valueOf(total) : "0");
+        calTotalPriceAll = ingredientProductBus.calTotalPriceAll();
+        lbTotalAllIngredientProruct.setText(calTotalPriceAll != null ? calTotalPriceAll.toString() : "0");
     }
 
     private void loadProductsAsync() {

@@ -11,8 +11,14 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #cccccc;" stylesheets="@../../css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.indexController">
    <left>
-      <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="210.0" styleClass="leftmenu" stylesheets="@../../css/style.css" BorderPane.alignment="CENTER">
+         
+      <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="210.0" styleClass="leftmenu" BorderPane.alignment="CENTER">
          <children>
+            <VBox alignment="CENTER" spacing="5" styleClass="sidebar-header">
+    <Label styleClass="logo-icon" text="☕" />
+    <Label styleClass="logo-text" text="Coffee Admin" />
+</VBox>
+
             <VBox alignment="CENTER_LEFT" prefHeight="202.0" prefWidth="210.0" spacing="10.0">
                <children>
                   <HBox fx:id="btnHomePage" alignment="CENTER_LEFT" onMouseClicked="#loadHomePage" styleClass="button-leftmenu">
@@ -82,8 +88,14 @@
             </VBox>
             <VBox alignment="BOTTOM_LEFT" prefHeight="168.0" prefWidth="210.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="btnSignOut" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#loadCustomerPage" prefHeight="41.0" prefWidth="181.0" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="📤   Đăng Xuất" />
-               </children></VBox>
+                  <Button fx:id="btnSignOut" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#loadCustomerPage" prefHeight="42.0" prefWidth="227.0" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="📤   Đăng Xuất">
+                     <VBox.margin>
+                        <Insets right="10.0" />
+                     </VBox.margin></Button>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" />
+               </padding></VBox>
          </children>
          <padding>
             <Insets left="10.0" top="20.0" />
@@ -135,7 +147,7 @@
                      <children>
                         <Label prefHeight="18.0" text="Xin chào:" />
                         <Label text="You!" />
-                        <Label contentDisplay="TOP" prefHeight="47.0" prefWidth="33.0" styleClass="title-main" stylesheets="@../../css/style.css" text="👤" underline="true">
+                        <Label contentDisplay="TOP" prefHeight="47.0" prefWidth="33.0" styleClass="title-icon" stylesheets="@../../css/style.css" text="👤" underline="true">
                            <font>
                               <Font size="32.0" />
                            </font>
