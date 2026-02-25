@@ -29,6 +29,7 @@ public class StudentBus {
 
     public int add(StudentDTO student) {
         validate(student);
+        student.setId(studentDao.findNextID());
         studentsObservableCache.add(student);
         return studentDao.insert(student);
     }

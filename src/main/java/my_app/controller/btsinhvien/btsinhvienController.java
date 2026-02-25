@@ -1,5 +1,6 @@
 package my_app.controller.btsinhvien;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javafx.event.ActionEvent;
@@ -11,10 +12,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import my_app.bus.StudentBus;
 import my_app.model.StudentDTO;
+import my_app.service.AlertInformation;
+import my_app.service.ValidateObject;
 
 public class btsinhvienController {
 
     private StudentBus studentbus = new StudentBus();
+    private StudentDTO TempStudent = new StudentDTO();
 
     @FXML
     private TableColumn<StudentDTO, String> colBirthDate;
@@ -56,7 +60,6 @@ public class btsinhvienController {
     private TextField tfSurnameStudent;
 
     public void initialize() {
-
         setDataList();
         tblSinhVien.setItems(studentbus.filteredStudents);
         studentbus.viewAll();
@@ -71,23 +74,26 @@ public class btsinhvienController {
         tfSurnameStudent.clear();
         dpBirthStudent.setValue(null);
         tfHometownStudent.clear();
+        TempStudent = new StudentDTO();
     }
 
     private void setFormStudent(StudentDTO student) {
         tfCodeStudent.setText(String.valueOf(student.getId()));
         tfNameStudent.setText(student.getName());
         tfSurnameStudent.setText(student.getSurname());
-        dpBirthStudent.setValue(LocalDateTime.parse(student.getBirthdate()).toLocalDate());
+        dpBirthStudent.setValue(LocalDate.parse(student.getBirthdate()));
         tfHometownStudent.setText(student.getHometown());
+        TempStudent = student;
     }
 
-    private StudentDTO getFormStudent() {
-        StudentDTO student = new StudentDTO();
-        student.setName(tfNameStudent.getText());
-        student.setSurname(tfSurnameStudent.getText());
-        student.setBirthdate(dpBirthStudent.getValue().toString());
-        student.setHometown(tfHometownStudent.getText());
-        return student;
+    private void getFormStudent() {
+
+        TempStudent.setName(tfNameStudent.getText());
+        TempStudent.setSurname(tfSurnameStudent.getText());
+        if (dpBirthStudent.getValue() != null) {
+            TempStudent.setBirthdate(dpBirthStudent.getValue().toString());
+        }
+        TempStudent.setHometown(tfHometownStudent.getText());
     }
 
     private void ActionTableStudent() {
@@ -126,18 +132,25 @@ public class btsinhvienController {
 
     @FXML
     private void handleAddStudent(ActionEvent event) {
-        System.out.println("Add Student button clicked");
-        studentbus.add(getFormStudent());
-        System.out.println(studentbus.filteredStudents.size());
+        try {
+            getFormStudent();
+            TempStudent.setCreatetime(LocalDateTime.now().toString());
+            ValidateObject.isStudentDTOValid(TempStudent);
+            studentbus.add(TempStudent);
+            ClearFormStudent();
+        } catch (IllegalArgumentException e) {
+            AlertInformation.showErrorAlert("Lỗi dữ liệu", "Dữ liệu không hợp lệ", e.getMessage());
+        }
+
     }
 
     @FXML
-    void handleCancelStudent(ActionEvent event) {
+    private void handleCancelStudent(ActionEvent event) {
         ClearFormStudent();
     }
 
     @FXML
-    void handleDeleteStudent(ActionEvent event) {
+    private void handleDeleteStudent(ActionEvent event) {
         StudentDTO selectedStudent = tblSinhVien.getSelectionModel().getSelectedItem();
         if (selectedStudent != null) {
             studentbus.delete(selectedStudent.getId());
@@ -146,13 +159,19 @@ public class btsinhvienController {
     }
 
     @FXML
-    void handleEditStudent(ActionEvent event) {
+    private void handleEditStudent(ActionEvent event) {
         StudentDTO selectedStudent = tblSinhVien.getSelectionModel().getSelectedItem();
-        if (selectedStudent != null) {
-            StudentDTO updatedStudent = getFormStudent();
-            updatedStudent.setId(selectedStudent.getId());
-            studentbus.update(updatedStudent);
-            setAllList();
+        try {
+            if (selectedStudent == null) {
+                throw new IllegalArgumentException("Vui lòng chọn một học sinh để sửa");
+            }
+            getFormStudent();
+            ValidateObject.isStudentDTOValid(TempStudent);
+            TempStudent.setId(selectedStudent.getId());
+            System.out.println("Updated Student: " + TempStudent);
+            studentbus.update(TempStudent);
+        } catch (IllegalArgumentException e) {
+            AlertInformation.showErrorAlert("Lỗi dữ liệu", "Dữ liệu không hợp lệ", e.getMessage());
         }
     }
 }
