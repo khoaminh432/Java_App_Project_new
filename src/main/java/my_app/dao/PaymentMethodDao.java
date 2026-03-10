@@ -10,6 +10,7 @@ public class PaymentMethodDao implements GenericDao<PaymentMethod, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM payment_method";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "payment_method";
 
     @Override
     public PaymentMethod findById(Integer id) {
@@ -18,6 +19,11 @@ public class PaymentMethodDao implements GenericDao<PaymentMethod, Integer> {
         }
         ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
         return results.isEmpty() ? null : new PaymentMethod(results.get(0));
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
     }
 
     @Override

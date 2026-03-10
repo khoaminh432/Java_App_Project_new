@@ -27,7 +27,7 @@ public class handleIngredientController {
 
     private void setlbText() {
         lbNameIngredient.setText(ingredient.getIngredient().getIngredientName());
-        lbCost.setText(String.valueOf(ingredient.getTotalPrice() != null ? ingredient.getTotalPrice().setScale(2, RoundingMode.HALF_UP) : "chưa có"));
+        lbCost.setText(String.valueOf(ingredient.getTotalPrice() != null ? ingredient.getTotalPrice().setScale(0, RoundingMode.HALF_UP) : "chưa có"));
     }
 
     public void setData(IngredientProduct ingredient) {

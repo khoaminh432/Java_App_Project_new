@@ -10,6 +10,7 @@ public class InvoiceVoucherDetailDao implements GenericDao<InvoiceVoucherDetail,
 
     private static final String BASE_QUERY = "SELECT * FROM invoice_voucher_detail";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "invoice_voucher_detail";
 
     @Override
     public InvoiceVoucherDetail findById(Integer id) {
@@ -18,6 +19,11 @@ public class InvoiceVoucherDetailDao implements GenericDao<InvoiceVoucherDetail,
         }
         ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
         return results.isEmpty() ? null : new InvoiceVoucherDetail(results.get(0));
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
     }
 
     @Override
