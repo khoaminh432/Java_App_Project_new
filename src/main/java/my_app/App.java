@@ -1,4 +1,5 @@
-package  my_app;
+package my_app;
+
 import java.net.URL;
 
 import javafx.application.Application;
@@ -11,14 +12,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import my_app.service.ConfigProperties;
+
 public class App extends Application {
 
     private TextArea console;
-    private static final String FILE = "/fxml/admin/btsinhvien.fxml";
-    public URL checkclass(){
+    private static final String FILE = "/fxml/bt6_desktop.fxml";
+
+    public URL checkclass() {
         return getClass().getResource(FILE);
     }
-    private void testGUI(){
+
+    private void testGUI() {
         this.console = new TextArea();
         this.console.setEditable(false);
         console.setWrapText(true);
@@ -47,6 +51,7 @@ public class App extends Application {
         VBox root = new VBox(10, console, input, btnSend);
         root.setPadding(new Insets(10));
     }
+
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(
@@ -54,12 +59,11 @@ public class App extends Application {
         );
 
         Scene scene = new Scene(loader.load());
-        
+
         stage.setScene(scene);
         stage.setTitle("JavaFX App");
         stage.show();
 
-        
     }
 
     private void log(String text) {
@@ -68,6 +72,6 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch(args);
-    
+
     }
 }

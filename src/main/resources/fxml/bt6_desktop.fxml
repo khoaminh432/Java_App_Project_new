@@ -42,11 +42,7 @@
                   <RadioButton fx:id="rbCauE" mnemonicParsing="false" text="Câu E" toggleGroup="$rgroup" />
                </children>
             </HBox>
-            <StackPane fx:id="spPage" style="-fx-pref-height: 100%; -fx-border-color: red;" VBox.vgrow="ALWAYS">
-               <children>
-                  <VBox prefHeight="141.0" prefWidth="622.0" />
-               </children>
-            </StackPane>
+            <StackPane fx:id="spPage" style="-fx-border-color: red;" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </children>
