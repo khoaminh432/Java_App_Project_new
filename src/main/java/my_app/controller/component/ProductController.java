@@ -23,11 +23,10 @@ import my_app.controller.component.product.handleListController;
 import my_app.model.Product;
 import my_app.service.LoadFileGUI;
 
-public class ProductController {
+    public class ProductController {
 
-    private final ProductBus productBus = new ProductBus();
-    private static int QuantityProduct = 0;
-    private static HashMap<String, Integer> statisticProduct = new HashMap<>();
+        private final ProductBus productBus = new ProductBus();
+        private static HashMap<String, Integer> statisticProduct = new HashMap<>();
 
     static {
         statisticProduct.put("total", 0);

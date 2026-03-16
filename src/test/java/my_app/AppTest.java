@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import my_app.bus.CustomerBus;
 import my_app.util.DBConnection;
-import my_app.util.QueryExecutor;
 
 /**
  * * Using JUnit 3 (TestCase, TestSuite).
@@ -13,7 +12,7 @@ import my_app.util.QueryExecutor;
  */
 public class AppTest extends TestCase {
 
-    private QueryExecutor qe = new QueryExecutor();
+
 
     /**
      * Create the test case
