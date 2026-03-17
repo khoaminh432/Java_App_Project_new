@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import my_app.service.LoadFileGUI;
 import my_app.service.SwitchPage;
@@ -26,22 +27,25 @@ public class indexController extends SwitchPage {
     private AnchorPane apLoadPane;
 
     @FXML
-    private Button btnBillPage;
+    private HBox btnBillPage;
 
     @FXML
-    private Button btnCustomerPage;
+    private HBox btnCustomerPage;
 
     @FXML
-    private Button btnEmployeePage;
+    private HBox btnEmployeePage;
 
     @FXML
-    private Button btnHomePage;
+    private HBox btnHomePage;
 
     @FXML
-    private Button btnProductPage;
+    private HBox btnProductPage;
 
     @FXML
-    private Button btnSupplierPage;
+    private Button btnSignOut;
+
+    @FXML
+    private HBox btnSupplierPage;
 
     private void switchPage(Parent page) {
 

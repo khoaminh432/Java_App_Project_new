@@ -6,27 +6,43 @@ import java.util.List;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import my_app.bus.IngredientBus;
+import my_app.bus.IngredientProductBus;
 import my_app.bus.ProductBus;
+import my_app.bus.ProductCategoryBus;
+import my_app.controller.component.product.handleIngredientController;
 import my_app.controller.component.product.handleListController;
+import my_app.model.Ingredient;
+import my_app.model.IngredientProduct;
 import my_app.model.Product;
+import my_app.service.AlertInformation;
+import my_app.service.ConfigTextField;
 import my_app.service.LoadFileGUI;
+import my_app.util.DefaultValueObject;
 
 public class ProductController {
 
-    private final ProductBus productBus = new ProductBus();
-    private static int QuantityProduct = 0;
+    private final static IngredientProductBus ingredientProductBus = new IngredientProductBus();
+    private final static ProductCategoryBus productCategoryBus = new ProductCategoryBus();
+    private final static IngredientBus ingredientBus = new IngredientBus();
+    private final static ProductBus productBus = new ProductBus();
+    private static BigDecimal calTotalPriceAll = BigDecimal.ZERO;
     private static HashMap<String, Integer> statisticProduct = new HashMap<>();
 
     static {
@@ -35,6 +51,8 @@ public class ProductController {
         statisticProduct.put("sell", 0);
         statisticProduct.put("warning", 0);
     }
+
+    // dữ liệu sản phẩm
     @FXML
     private TableColumn<Product, Integer> colID;
 
@@ -58,22 +76,57 @@ public class ProductController {
 
     @FXML
     private TableView<Product> tableProduct;
+    // end dữ liệu sản phẩm
 
+    // dữ liệu nguyên liệu
+    @FXML
+    private TableColumn<Ingredient, Integer> colIDIngredient;
+
+    @FXML
+    private TableColumn<Ingredient, String> colNameIngredient;
+
+    @FXML
+    private TableColumn<Ingredient, Integer> colTotalWeightIngredient;
+
+    @FXML
+    private TableColumn<Ingredient, Double> colUnitPriceIngredient;
+
+    @FXML
+    private TableView<Ingredient> tbIngredient;
+
+    // end dữ liệu nguyên liệu
     @FXML
     private TextField tfSearchProduct;
 
     @FXML
-    private Label lbQuantiryProduct;
+    private TextField tfNameProduct;
 
     @FXML
-    private Label lbQuantiryProductRemain;
+    private TextField tfPriceProduct;
 
     @FXML
-    private Label lbQuantiryProductSell;
+    private TextField tfQuantityProduct;
 
     @FXML
-    private Label lbQuantiryProductWarning;
+    private TextField tfUnitProduct;
 
+    // thống kê sản phẩm
+    @FXML
+    private Label lbQuantityProduct;
+
+    @FXML
+    private Label lbQuantityProductRemain;
+
+    @FXML
+    private Label lbQuantityProductSell;
+
+    @FXML
+    private Label lbQuantityProductWarning;
+
+    @FXML
+    private Label lbTotalAllIngredientProruct;
+
+    // end thống kê sản phẩm
     @FXML
     private ImageView imgFilterProduct;
 
@@ -83,17 +136,107 @@ public class ProductController {
     @FXML
     private VBox vbManagementProduct;
 
+    // add product pane
+    @FXML
+    private ComboBox<String> cbbUnitProduct;
+
+    @FXML
+    private ComboBox<String> cbbCategoryProduct;
+
+    @FXML
+    private ComboBox<String> cbbPriceProduct;
+
+    // trạng thái sản phẩm
+    @FXML
+    private ToggleGroup grradioStatusProduct;
+
+    @FXML
+    private RadioButton rdoActiveProduct;
+
+    @FXML
+    private RadioButton rdoUnactiveProduct;
+
+    @FXML
+    private VBox vbIngredientTemp;
+    // end add product pane
     private Task<List<Product>> loadProductsTask;
 
     @FXML
     public void initialize() {
+        LoadData();
+        LoadEvent();
+    }
 
-        configureColumns();
-        tableProduct.setItems(productBus.getProducts());
-        setMouseClickEvent();
+    // tải dữ liệu
+    private void LoadData() {
+        productBus.findAll();
+        ingredientBus.findAll();
+        setTableData();
+        LoadComboboxData();
+        setTextFieldNumeric();
+    }
+
+    // tải sự kiện
+    private void LoadEvent() {
+        setMouseClickTableProductEvent();
         searchBarProducts();
         loadProductsAsync();
+        setMouseClickTableIngredientEvent();
+    }
 
+    private void setTableData() {
+        configureColumnsProduct();
+        tableProduct.setItems(productBus.getProducts());
+        configureColumnsIngredient();
+        tbIngredient.setItems(ingredientBus.getIngredients());
+    }
+
+    private void setTextFieldNumeric() {
+        ConfigTextField.AcceptOnlyNumber(tfPriceProduct);
+        ConfigTextField.AcceptOnlyNumber(tfQuantityProduct);
+    }
+
+    private void clearAddFormProduct() {
+        tfNameProduct.clear();
+        tfPriceProduct.clear();
+        tfQuantityProduct.clear();
+        tfUnitProduct.clear();
+        cbbCategoryProduct.getSelectionModel().select(0);
+        cbbPriceProduct.getSelectionModel().select(0);
+        cbbUnitProduct.getSelectionModel().select(0);
+        rdoActiveProduct.setSelected(true);
+    }
+
+    private boolean checkaddFormpProduct() {
+        if (tfNameProduct.getText().isBlank()) {
+            AlertInformation.showWarningAlert("Chú Ý", "Tên Sản Phẩm Trống", "Vui lòng nhập tên sản phẩm.");
+            return false;
+        }
+        if (tfPriceProduct.getText().isBlank()) {
+            AlertInformation.showWarningAlert("Chú Ý", "Giá Sản Phẩm Trống", "Vui lòng nhập giá sản phẩm.");
+            return false;
+        }
+        if (tfQuantityProduct.getText().isBlank()) {
+            AlertInformation.showWarningAlert("Chú Ý", "Số Lượng Sản Phẩm Trống", "Vui lòng nhập số lượng sản phẩm.");
+            return false;
+        }
+        if (tfUnitProduct.getText().isBlank()) {
+            AlertInformation.showWarningAlert("Chú Ý", "Đơn Vị Sản Phẩm Trống", "Vui lòng nhập đơn vị sản phẩm.");
+            return false;
+        }
+        return true;
+    }
+
+    @FXML
+    private void addFormProduct() {
+        if (!checkaddFormpProduct()) {
+            return;
+        }
+    }
+
+    private void loadlabelTotalProductAllIngredientProduct() {
+        calTotalPriceAll = ingredientProductBus.calTotalPriceAll();
+        lbTotalAllIngredientProruct.setText(calTotalPriceAll != null ? calTotalPriceAll.toString() : "0");
     }
 
     private void loadProductsAsync() {
@@ -137,6 +280,28 @@ public class ProductController {
         });
     }
 
+    @FXML
+    private void handleaddIngredient() {
+        try {
+            Ingredient ingredient = tbIngredient.getSelectionModel().getSelectedItem();
+            if (ingredient == null) {
+                AlertInformation.showWarningAlert("Chú Ý", "Chưa Chọn Nguyên Liệu", "Vui lòng chọn nguyên liệu để thêm.");
+                return;
+            }
+            IngredientProduct ingprotemp = new IngredientProduct();
+            ingprotemp.setIngredientId(ingredient.getId());
+            ingprotemp.setIngredient(ingredient);
+            if (!ingredientProductBus.addtoList(ingprotemp)) {
+                return;
+            }
+            LoadIngredientTemp(ingprotemp);
+
+            tbIngredient.getSelectionModel().clearSelection();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private void searchIDProducts(String keyword) {
         int id = Integer.parseInt(keyword);
         productBus.findById(id);
@@ -148,7 +313,7 @@ public class ProductController {
     }
 
     // dữ liệu của table
-    private void configureColumns() {
+    private void configureColumnsProduct() {
         colID.setCellValueFactory(new PropertyValueFactory<>("id"));
         colName.setCellValueFactory(new PropertyValueFactory<>("productName"));
         colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
@@ -158,12 +323,41 @@ public class ProductController {
         LoadActionButtons();
     }
 
+    private void configureColumnsIngredient() {
+        colIDIngredient.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colNameIngredient.setCellValueFactory(new PropertyValueFactory<>("ingredientName"));
+        colTotalWeightIngredient.setCellValueFactory(new PropertyValueFactory<>("totalWeight"));
+        colUnitPriceIngredient.setCellValueFactory(cell
+                -> new ReadOnlyObjectWrapper<>(toDouble(cell.getValue().getUnitPrice())));
+    }
+
     // xử lí khi ấn vào table
-    private void setMouseClickEvent() {
+    private void setMouseClickTableProductEvent() {
         tableProduct.setOnMouseClicked(e -> {
+
             Product selectedProduct = tableProduct.getSelectionModel().getSelectedItem();
             System.out.println(selectedProduct);
         });
+    }
+
+    //
+    private void setMouseClickTableIngredientEvent() {
+        tbIngredient.setOnMouseClicked(e -> {
+
+            Ingredient selectedIngredient = tbIngredient.getSelectionModel().getSelectedItem();
+            System.out.println(selectedIngredient);
+        });
+    }
+
+    private void LoadComboboxData() {
+        productCategoryBus.findAll();
+
+        cbbUnitProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getUnitProduct()));
+        cbbUnitProduct.getSelectionModel().select(0);
+        cbbCategoryProduct.getItems().addAll(productCategoryBus.getProductCategories().stream().map(s -> s.getCategoryName()).toList());
+        cbbCategoryProduct.getSelectionModel().select(0);
+        cbbPriceProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getDefaultUnitPriceProduct()));
+        cbbPriceProduct.getSelectionModel().select(0);
     }
 
     private void LoadActionButtons() {
@@ -196,11 +390,45 @@ public class ProductController {
         });
     }
 
+    private void LoadIngredientTemp(IngredientProduct ingredient) {
+        try {
+            LoadFileGUI loadGUI = new LoadFileGUI("/fxml/admin/component/product/ingredient.fxml");
+            Node node = loadGUI.getNode();
+            handleIngredientController controller = loadGUI.getLoader().getController();
+            controller.setData(ingredient);
+            controller.setChange((obj) -> {
+                System.out.println("this is: " + obj);
+
+                loadlabelTotalProductAllIngredientProduct();
+                return null;
+            });
+            controller.setRemove((obj) -> {
+                System.out.println("this is: " + obj);
+                removeIngredientTemp(ingredient, node);
+                loadlabelTotalProductAllIngredientProduct();
+                return null;
+            });
+            addIngredientTemp(node);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addIngredientTemp(Node node) {
+        vbIngredientTemp.getChildren().add(node);
+    }
+
+    private void removeIngredientTemp(IngredientProduct ingredient, Node node) {
+        ingredientProductBus.removeFromList(ingredient);
+        vbIngredientTemp.getChildren().remove(node);
+    }
+
     private void setLabelStatisticProduct() {
-        lbQuantiryProduct.setText(String.valueOf(statisticProduct.get("total")));
-        lbQuantiryProductRemain.setText(String.valueOf(statisticProduct.get("remain")));
-        lbQuantiryProductSell.setText(String.valueOf(statisticProduct.get("sell")));
-        lbQuantiryProductWarning.setText(String.valueOf(statisticProduct.get("warning")));
+        lbQuantityProduct.setText(String.valueOf(statisticProduct.get("total")));
+        lbQuantityProductRemain.setText(String.valueOf(statisticProduct.get("remain")));
+        lbQuantityProductSell.setText(String.valueOf(statisticProduct.get("sell")));
+        lbQuantityProductWarning.setText(String.valueOf(statisticProduct.get("warning")));
     }
 
     private void calculateStatisticProduct() {
@@ -213,7 +441,7 @@ public class ProductController {
             if (p.getQuantity() > 10) {
                 remain += 1;
             }
-            if (p.getStatus().equals(("available").toUpperCase())) {
+            if (p.getStatus().toLowerCase().equals(("available"))) {
                 sell += 1;
             }
             if (p.getQuantity() <= 5) {
@@ -231,18 +459,25 @@ public class ProductController {
         setLabelStatisticProduct();
     }
 
+    // convert dữ liệu
     private double toDouble(BigDecimal price) {
         return price == null ? 0d : price.doubleValue();
     }
 
+    private Double toDouble(Integer weight) {
+        return weight == null ? 0d : weight.doubleValue();
+    }
+    // sự kiện lọc sản phẩm
+
     @FXML
-    private void filteredProducts() throws Exception {
+    private void filteredProducts() {
         System.out.println("Filter Products");
     }
 
     @FXML
-    private void btnCancelAddProduct() throws Exception {
+    private void btnCancelAddProduct() {
         System.out.println("Cancel Add Product");
+        productBus.findAll();
         FadeTransition ft = new FadeTransition(Duration.millis(300), this.vbManagementProduct);
         ft.setFromValue(0);
         ft.setToValue(1);
@@ -254,9 +489,10 @@ public class ProductController {
     }
 
     @FXML
-    private void handleActionaddProduct() throws Exception {
-        System.out.println("Add Product"
-        );
+    private void handleActionaddProduct() {
+        System.out.println("Add Product");
+        ingredientBus.findAll();
+
         FadeTransition ft = new FadeTransition(Duration.millis(300), this.vbAddProduct);
         ft.setFromValue(0);
         ft.setToValue(1);

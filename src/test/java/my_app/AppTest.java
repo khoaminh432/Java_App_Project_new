@@ -3,7 +3,8 @@ package my_app;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import my_app.bus.CustomerBus;
+import my_app.bus.IngredientBus;
+import my_app.model.Ingredient;
 import my_app.util.DBConnection;
 import my_app.util.QueryExecutor;
 
@@ -60,12 +61,21 @@ public class AppTest extends TestCase {
     //     });
     //     DBConnection.close();
     // }
-    public void testMethodModel() {
-        CustomerBus customerBus = new CustomerBus();
-        assertNotNull(customerBus);
-        customerBus.findAll();
-        assertNotNull(customerBus.getCustomers());
-        System.out.println(customerBus.getCustomers());
+    // public void testMethodModel() {
+    //     CustomerBus customerBus = new CustomerBus();
+    //     assertNotNull(customerBus);
+    //     customerBus.findAll();
+    //     assertNotNull(customerBus.getCustomers());
+    //     System.out.println(customerBus.getCustomers());
+    //     DBConnection.close();
+    // }
+    public void testMethodvalue() {
+        IngredientBus ingredientBus = new IngredientBus();
+
+        assertNotNull(ingredientBus);
+        ingredientBus.findAll();
+        System.out.println(ingredientBus.getIngredientProductByThis(new Ingredient(ingredientBus.getIngredients().get(0))).getIngredient());
+        System.out.println();
         DBConnection.close();
     }
 

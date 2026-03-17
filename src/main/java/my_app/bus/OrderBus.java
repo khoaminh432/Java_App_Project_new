@@ -12,7 +12,7 @@ import my_app.model.Order;
 
 public class OrderBus implements GeneralConfig<Order> {
 
-    private final OrderDao orderDao = new OrderDao();
+    private static final OrderDao orderDao = new OrderDao();
     public static ArrayList<Order> listOrders = new ArrayList<>();
     private final ObservableList<Order> orders;
 
