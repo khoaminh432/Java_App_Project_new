@@ -12,17 +12,18 @@ public class Invoice {
     private Integer paymentMethodId;
     private LocalDateTime issuedDate;
     private BigDecimal totalAmount;
+    private String status; // Thêm trường status
     private Customer customer; // Reference to Customer object
     private Employee employee; // Reference to Employee object
     private Order order; // Reference to Order object
     private PaymentMethod paymentMethod; // Reference to PaymentMethod object
-    
+
     // Constructors
     public Invoice() {}
-    
+
     public Invoice(Integer id, Integer customerId, Integer employeeId,
-                  Integer orderId, Integer paymentMethodId, 
-                  LocalDateTime issuedDate, BigDecimal totalAmount) {
+                   Integer orderId, Integer paymentMethodId,
+                   LocalDateTime issuedDate, BigDecimal totalAmount, String status) {
         this.id = id;
         this.customerId = customerId;
         this.employeeId = employeeId;
@@ -30,25 +31,28 @@ public class Invoice {
         this.paymentMethodId = paymentMethodId;
         this.issuedDate = issuedDate;
         this.totalAmount = totalAmount;
+        this.status = status;
     }
 
     public Invoice(Integer customerId, Integer employeeId,
-                  Integer orderId, Integer paymentMethodId,
-                  LocalDateTime issuedDate, BigDecimal totalAmount) {
-        this(null, customerId, employeeId, orderId, paymentMethodId, issuedDate, totalAmount);
+                   Integer orderId, Integer paymentMethodId,
+                   LocalDateTime issuedDate, BigDecimal totalAmount, String status) {
+        this(null, customerId, employeeId, orderId, paymentMethodId, issuedDate, totalAmount, status);
     }
 
     public Invoice(Invoice other) {
         this(other.id, other.customerId, other.employeeId, other.orderId, other.paymentMethodId,
-             other.issuedDate, other.totalAmount);
+                other.issuedDate, other.totalAmount, other.status);
         this.customer = other.customer;
         this.employee = other.employee;
         this.order = other.order;
         this.paymentMethod = other.paymentMethod;
     }
+
     public Invoice(Map<String, Object> data) {
         applyFromMap(data);
     }
+
     public void applyFromMap(Map<String, Object> data) {
         if (data == null || data.isEmpty()) {
             return;
@@ -88,51 +92,60 @@ public class Invoice {
         if (newTotalAmount != null) {
             this.totalAmount = newTotalAmount;
         }
+
+        String newStatus = ModelMapperHelper.getString(data, "status");
+        if (newStatus != null) {
+            this.status = newStatus;
+        }
     }
-    
+
     // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
-    
+
     public Integer getCustomerId() { return customerId; }
     public void setCustomerId(Integer customerId) { this.customerId = customerId; }
-    
+
     public Integer getEmployeeId() { return employeeId; }
     public void setEmployeeId(Integer employeeId) { this.employeeId = employeeId; }
-    
+
     public Integer getOrderId() { return orderId; }
     public void setOrderId(Integer orderId) { this.orderId = orderId; }
-    
+
     public Integer getPaymentMethodId() { return paymentMethodId; }
     public void setPaymentMethodId(Integer paymentMethodId) { this.paymentMethodId = paymentMethodId; }
-    
+
     public LocalDateTime getIssuedDate() { return issuedDate; }
     public void setIssuedDate(LocalDateTime issuedDate) { this.issuedDate = issuedDate; }
-    
+
     public BigDecimal getTotalAmount() { return totalAmount; }
     public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
-    
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
     public Customer getCustomer() { return customer; }
     public void setCustomer(Customer customer) { this.customer = customer; }
-    
+
     public Employee getEmployee() { return employee; }
     public void setEmployee(Employee employee) { this.employee = employee; }
-    
+
     public Order getOrder() { return order; }
     public void setOrder(Order order) { this.order = order; }
-    
+
     public PaymentMethod getPaymentMethod() { return paymentMethod; }
     public void setPaymentMethod(PaymentMethod paymentMethod) { this.paymentMethod = paymentMethod; }
-    
+
     @Override
     public String toString() {
         return "Invoice{" +
-               "id=" + id +
-               ", customerId=" + customerId +
-               ", employeeId=" + employeeId +
-               ", orderId=" + orderId +
-               ", issuedDate=" + issuedDate +
-               ", totalAmount=" + totalAmount +
-               '}';
+                "id=" + id +
+                ", customerId=" + customerId +
+                ", employeeId=" + employeeId +
+                ", orderId=" + orderId +
+                ", issuedDate=" + issuedDate +
+                ", totalAmount=" + totalAmount +
+                ", status='" + status + '\'' +
+                '}';
     }
 }
