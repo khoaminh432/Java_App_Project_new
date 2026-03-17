@@ -23,7 +23,8 @@ public class handleIngredientController {
     private TextField tfEstimate;
 
     private IngredientProduct ingredient;
-    private Function changeFunction;
+    private Function DeleteFunction;
+    private Function ChangeFunction;
 
     private void setlbText() {
         lbNameIngredient.setText(ingredient.getIngredient().getIngredientName());
@@ -35,8 +36,12 @@ public class handleIngredientController {
         setlbText();
     }
 
+    public void setDeleteChange(Function func) {
+        this.DeleteFunction = func;
+    }
+
     public void setChange(Function func) {
-        this.changeFunction = func;
+        this.ChangeFunction = func;
     }
 
     @FXML
@@ -49,12 +54,18 @@ public class handleIngredientController {
         ConfigTextField.AcceptOnlyNumber(tfEstimate);
         tfEstimate.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.isBlank()) {
+                ingredient.setTotalPrice();
+                ingredient.setEstimate(0);
+                ChangeFunction.apply(null);
+
                 return;
             }
             Integer estimate = Integer.parseInt(newValue);
             Ingredient ingtemp = ingredient.getIngredient();
             ingredient.setEstimate(estimate);
+
             ingredient.setTotalPrice();
+            ChangeFunction.apply(null);
             setlbText();
         });
     }
@@ -64,7 +75,8 @@ public class handleIngredientController {
         // Implement the logic to delete the ingredient
         System.out.println("Deleting ingredient: " + ingredient.getIngredient().getIngredientName());
         System.out.println(ProductController.ingredientTemp);
-        changeFunction.apply(null);
+        DeleteFunction.apply(null);
+        ChangeFunction.apply(null);
     }
 
 }

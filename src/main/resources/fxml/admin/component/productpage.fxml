@@ -236,17 +236,20 @@
                                        <children>
                                           <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="436.0">
                                              <children>
-                                                <Label prefHeight="30.0" prefWidth="125.0" style="-fx-font-size: 20;" styleClass="label-subtitle" text="Nguyên Liệu">
+                                                <Label prefHeight="30.0" style="-fx-font-size: 20;" styleClass="label-subtitle" text="Nguyên Liệu">
                                                    <font>
                                                       <Font size="10.0" />
                                                    </font>
                                                 </Label>
-                                                <Separator opacity="0.0" prefHeight="18.0" prefWidth="4.0" HBox.hgrow="ALWAYS" />
+                                                <Separator opacity="0.0" prefHeight="12.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
+                                                <Label fx:id="lbTotalPriceIngredient" prefHeight="30.0" style="-fx-font-size: 16;" styleClass="label-subtitle" text="0" HBox.hgrow="ALWAYS">
+                                                   <font>
+                                                      <Font size="10.0" />
+                                                   </font>
+                                                </Label>
+                                                <Separator opacity="0.0" prefHeight="27.0" prefWidth="84.0" HBox.hgrow="ALWAYS" />
                                                 <Button mnemonicParsing="false" onAction="#handleaddIngredient" prefHeight="30.0" prefWidth="91.0" styleClass="btn-component" text="Thêm" />
                                              </children>
-                                             <padding>
-                                                <Insets left="20.0" />
-                                             </padding>
                                           </HBox>
                                           <AnchorPane prefHeight="211.0" prefWidth="478.0" VBox.vgrow="ALWAYS">
                                              <children>
@@ -296,7 +299,13 @@
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField fx:id="tfQuantityProduct" prefWidth="250.0" promptText="Số lượng" styleClass="text-field" stylesheets="@../../../css/product.css" HBox.hgrow="ALWAYS" />
+                                                      <TextField fx:id="tfQuantityProduct" prefHeight="21.0" prefWidth="130.0" promptText="Số lượng" styleClass="text-field" stylesheets="@../../../css/product.css" HBox.hgrow="ALWAYS" />
+                                                      <Label prefHeight="42.0" stylesheets="@../../../css/product.css" text="Tối Đa:">
+                                                         <font>
+                                                            <Font size="16.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Button fx:id="btnMaxQuantity" mnemonicParsing="false" prefHeight="30.0" prefWidth="91.0" styleClass="btn-component" text="0" />
                                                    </children>
                                                 </HBox>
                                                 <HBox spacing="20.0">

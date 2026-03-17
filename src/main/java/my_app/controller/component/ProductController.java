@@ -12,6 +12,8 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -52,6 +54,9 @@ public class ProductController {
         statisticProduct.put("sell", 0);
         statisticProduct.put("warning", 0);
     }
+
+    @FXML
+    private Button btnMaxQuantity;
 
     // dữ liệu sản phẩm
     @FXML
@@ -137,6 +142,9 @@ public class ProductController {
 
     @FXML
     private VBox vbIngredientTemp;
+
+    @FXML
+    private Label lbTotalPriceIngredient;
 
     public static ArrayList<IngredientProduct> ingredientTemp = new ArrayList<>();
     // end add product pane
@@ -330,14 +338,24 @@ public class ProductController {
         });
     }
 
+    private void setTotalPriceAllIngredientTemp() {
+        double totalPrice = (int) ingredientTemp.stream().mapToDouble(ip -> toDouble(ip.getTotalPrice())).sum();
+        lbTotalPriceIngredient.setText(String.valueOf(totalPrice));
+    }
+
     private void LoadIngredientTemp(IngredientProduct ingredient) {
         try {
             LoadFileGUI loadGUI = new LoadFileGUI("/fxml/admin/component/product/ingredient.fxml");
             Node node = loadGUI.getNode();
             handleIngredientController controller = loadGUI.getLoader().getController();
             controller.setData(ingredient);
-            controller.setChange((obj) -> {
+            controller.setDeleteChange((obj) -> {
                 removeIngredientTemp(ingredient, node);
+                return null;
+            });
+            controller.setChange((obj) -> {
+                setTotalPriceAllIngredientTemp();
+                updateMaxQuantityProduct();
                 return null;
             });
             addIngredientTemp(ingredient, node);
@@ -400,6 +418,11 @@ public class ProductController {
 
     private Double toDouble(Integer weight) {
         return weight == null ? 0d : weight.doubleValue();
+    }
+
+    private void updateMaxQuantityProduct() {
+
+        btnMaxQuantity.setText(productBus.getMaxQuantity(ingredientTemp) + "");
     }
     // sự kiện lọc sản phẩm
 
@@ -480,6 +503,11 @@ public class ProductController {
     private void btnAddProduct(ActionEvent event) {
         Product product = getProductFromInput();
         System.out.println("Product to add: " + product);
-
+        try {
+            ingredientProductBus.addListIngredientProducts(ingredientTemp);
+            ingredientProductBus.Validate();
+        } catch (Exception e) {
+            AlertInformation.showErrorAlert("Lỗi", "Lỗi nguyên liệu", e.getMessage());
+        }
     }
 }

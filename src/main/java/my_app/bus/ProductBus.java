@@ -8,6 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import my_app.dao.ProductDao;
+import my_app.model.Ingredient;
+import my_app.model.IngredientProduct;
 import my_app.model.Product;
 
 public class ProductBus implements GeneralConfig<Product> {
@@ -41,6 +43,10 @@ public class ProductBus implements GeneralConfig<Product> {
             return false;
         });
         System.out.println("Filtered products count: " + filteredProducts);
+    }
+
+    public int getMaxQuantity(ArrayList<IngredientProduct> ingredientProducts) {
+        return productDao.getMaxQuantity(ingredientProducts);
     }
 
     public ProductBus() {
