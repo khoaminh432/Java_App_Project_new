@@ -12,7 +12,7 @@ import my_app.model.Customer;
 
 public class CustomerBus implements GeneralConfig<Customer> {
 
-    private final CustomerDao customerDao = new CustomerDao();
+    private static final CustomerDao customerDao = new CustomerDao();
     public static ArrayList<Customer> listCustomers = new ArrayList<>();
     private final ObservableList<Customer> customers;
 

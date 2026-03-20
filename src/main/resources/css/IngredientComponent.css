@@ -1,0 +1,57 @@
+/* ===== Card component ===== */
+.ingredient-card {
+    -fx-background-color: rgb(224, 224, 224);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #202743;
+    -fx-border-width: 3;
+    -fx-padding: 5;
+    -fx-min-width: 360px;
+    /* Shadow nhẹ */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0.3, 0, 4);
+}
+
+/* Hover hiệu ứng */
+.ingredient-card:hover {
+    -fx-border-color: #8d6e63;
+    -fx-effect: dropshadow(gaussian, rgba(141,110,99,0.25), 16, 0.4, 0, 6);
+}
+
+/* ===== Label chung ===== */
+.label-actor {
+    -fx-font-family: "Segoe UI";
+    -fx-text-fill: #4e342e;
+}
+
+/* ===== Dòng tên sản phẩm ===== */
+.label-actor:first-child {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6d4c41;
+}
+
+.label-actor:last-child {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ===== Dòng thông tin phụ ===== */
+.label-actor {
+    -fx-font-size: 13px;
+}
+
+/* Giá trị */
+.label-actor:last-child {
+    -fx-text-fill: #3e2723;
+    -fx-font-weight: 600;
+}
+/* Chi phí nổi bật */
+.label-cost {
+    -fx-text-fill: #d84315;
+    -fx-font-weight: bold;
+}
+.btn-delete-ingredient {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: red;
+    -fx-font-size: 16px;
+}
