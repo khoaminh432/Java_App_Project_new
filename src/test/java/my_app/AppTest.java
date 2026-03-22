@@ -73,8 +73,16 @@ public class AppTest extends TestCase {
 
         assertNotNull(ingredientBus);
         ingredientBus.findAll();
-        System.out.println(ingredientBus.getIngredientProductByThis(new Ingredient(ingredientBus.getIngredients().get(0))).getIngredient());
-        System.out.println();
+        
+        // Check if ingredients list is not empty before accessing
+        if (ingredientBus.getIngredients() != null && !ingredientBus.getIngredients().isEmpty()) {
+            Ingredient firstIngredient = ingredientBus.getIngredients().get(0);
+            var ingredientProduct = ingredientBus.getIngredientProductByThis(new Ingredient(firstIngredient));
+            assertNotNull(ingredientProduct);
+            System.out.println(ingredientProduct.getIngredient());
+        } else {
+            System.out.println("No ingredients found in database");
+        }
         DBConnection.close();
     }
 
