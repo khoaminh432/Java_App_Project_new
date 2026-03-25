@@ -14,6 +14,7 @@ public class IngredientProduct {
     private Ingredient ingredient;
 
     public IngredientProduct() {
+        this.estimate = 0;
     }
 
     public IngredientProduct(Integer id, Integer productId, Integer ingredientId, Integer estimate) {

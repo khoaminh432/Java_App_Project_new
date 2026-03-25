@@ -1,0 +1,29 @@
+.root {
+    -fx-font-family: "Arial";
+    -fx-background-color: #f0f0f0;
+}
+
+.text-field, .password-field {
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 10;
+}
+
+.button {
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+    -fx-cursor: hand;
+}
+
+#loginButton, #registerButton {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+}
+
+#toggleButton {
+    -fx-text-fill: #2196F3;
+}
+
+.hyperlink {
+    -fx-text-fill: #666;
+}

@@ -11,6 +11,7 @@ public class GoodsReceiptDao implements GenericDao<GoodsReceipt, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM goods_receipt";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "goods_receipt";
 
     @Override
     public GoodsReceipt findById(Integer id) {
@@ -19,6 +20,11 @@ public class GoodsReceiptDao implements GenericDao<GoodsReceipt, Integer> {
         }
         ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
         return results.isEmpty() ? null : new GoodsReceipt(results.get(0));
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
     }
 
     @Override
