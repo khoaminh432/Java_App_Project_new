@@ -22,8 +22,8 @@ public class handleIngredientController {
     private TextField tfEstimate;
 
     private IngredientProduct ingredient;
-    private Function removeFunction;
-    private Function changeFunction;
+    private Function DeleteFunction;
+    private Function ChangeFunction;
 
     private void setlbText() {
         lbNameIngredient.setText(ingredient.getIngredient().getIngredientName());
@@ -35,12 +35,12 @@ public class handleIngredientController {
         setlbText();
     }
 
-    public void setRemove(Function func) {
-        this.removeFunction = func;
+    public void setDeleteChange(Function func) {
+        this.DeleteFunction = func;
     }
 
     public void setChange(Function func) {
-        this.changeFunction = func;
+        this.ChangeFunction = func;
     }
 
     @FXML
@@ -53,14 +53,17 @@ public class handleIngredientController {
         ConfigTextField.AcceptOnlyNumber(tfEstimate);
         tfEstimate.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.isBlank()) {
-                lbCost.setText("chưa có");
-                ingredient.setTotalPrice(BigDecimal.ZERO);
+                ingredient.setTotalPrice();
+                ingredient.setEstimate(0);
+                ChangeFunction.apply(null);
+
                 return;
             }
             Integer estimate = Integer.parseInt(newValue);
             ingredient.setEstimate(estimate);
+
             ingredient.setTotalPrice();
-            changeFunction.apply(null);
+            ChangeFunction.apply(null);
             setlbText();
         });
     }
@@ -69,8 +72,9 @@ public class handleIngredientController {
     private void handleDeleteIngredient() {
         // Implement the logic to delete the ingredient
         System.out.println("Deleting ingredient: " + ingredient.getIngredient().getIngredientName());
-        removeFunction.apply(null);
-
+        System.out.println(ProductController.ingredientTemp);
+        DeleteFunction.apply(null);
+        ChangeFunction.apply(null);
     }
 
 }

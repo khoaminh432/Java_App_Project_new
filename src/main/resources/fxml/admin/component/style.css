@@ -1,0 +1,44 @@
+.root {
+    -fx-background-color: #f5f7fa;
+}
+
+.header {
+    -fx-padding: 15;
+    -fx-background-color: linear-gradient(to right, #4facfe, #00f2fe);
+}
+
+.title {
+    -fx-font-size: 20px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.label {
+    -fx-font-size: 13px;
+}
+
+.table-view {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.btn-add {
+    -fx-background-color: #4caf50;
+    -fx-text-fill: white;
+}
+
+.btn-delete {
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+}
+
+.btn-save {
+    -fx-background-color: #2196f3;
+    -fx-text-fill: white;
+}
+
+.total {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}

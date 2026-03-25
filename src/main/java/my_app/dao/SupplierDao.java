@@ -7,8 +7,10 @@ import my_app.model.Supplier;
 import my_app.util.QueryExecutor;
 
 public class SupplierDao implements GenericDao<Supplier, Integer> {
+
     private static final String BASE_QUERY = "SELECT * FROM supplier";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "supplier";
 
     @Override
     public Supplier findById(Integer id) {
@@ -20,7 +22,12 @@ public class SupplierDao implements GenericDao<Supplier, Integer> {
     }
 
     @Override
-    public      ArrayList<Supplier> findAll() {
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
+    public ArrayList<Supplier> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
         ArrayList<Supplier> suppliers = new ArrayList<>(records.size());
         records.forEach(row -> suppliers.add(new Supplier(row)));

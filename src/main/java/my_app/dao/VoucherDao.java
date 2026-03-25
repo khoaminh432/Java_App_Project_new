@@ -11,6 +11,7 @@ public class VoucherDao implements GenericDao<Voucher, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM voucher";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "voucher";
 
     @Override
     public Voucher findById(Integer id) {
@@ -19,6 +20,11 @@ public class VoucherDao implements GenericDao<Voucher, Integer> {
         }
         ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
         return results.isEmpty() ? null : new Voucher(results.get(0));
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
     }
 
     @Override

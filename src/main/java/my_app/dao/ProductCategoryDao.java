@@ -10,6 +10,7 @@ public class ProductCategoryDao implements GenericDao<ProductCategory, Integer> 
 
     private static final String BASE_QUERY = "SELECT * FROM product_category";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "product_category";
 
     @Override
     public ProductCategory findById(Integer id) {
@@ -18,6 +19,11 @@ public class ProductCategoryDao implements GenericDao<ProductCategory, Integer> 
         }
         ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
         return results.isEmpty() ? null : new ProductCategory(results.get(0));
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
     }
 
     @Override
