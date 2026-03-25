@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="500" prefWidth="600" spacing="15" style="-fx-background-color: #f5f7fa;" stylesheets="@../../../css/ingredient.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="my_app.controller.AdminIngredientController">
+
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20" />
+    </padding>
+
+    <!-- TITLE -->
+    <Label style="-fx-font-size:20px; -fx-font-weight:bold; -fx-text-fill:#333;" text="Quản lý nguyên liệu" />
+
+    <!-- FORM CARD -->
+    <VBox spacing="10" style="-fx-background-color:white; -fx-padding:15; -fx-background-radius:10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1),10,0,0,2);">
+
+        <GridPane hgap="10" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="30" />
+                <ColumnConstraints percentWidth="70" />
+            </columnConstraints>
+
+            <Label text="Tên nguyên liệu:" />
+            <TextField fx:id="txtName" promptText="Nhập tên nguyên liệu" GridPane.columnIndex="1" />
+
+            <Label text="Khối lượng (g):" GridPane.rowIndex="1" />
+            <TextField fx:id="txtWeight" promptText="Nhập khối lượng" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label text="Số lượng:" GridPane.rowIndex="2" />
+            <TextField fx:id="txtQuantity" promptText="Nhập số lượng" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <Label text="Đơn giá:" GridPane.rowIndex="3" />
+            <TextField fx:id="txtPrice" promptText="Nhập đơn giá" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+        </GridPane>
+
+        <!-- BUTTONS -->
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Button fx:id="btnReset" style="-fx-background-color:#9e9e9e; -fx-text-fill:white;" text="Làm mới" />
+            <Button fx:id="btnAdd" style="-fx-background-color:#4caf50; -fx-text-fill:white;" text="Thêm" />
+            <Button fx:id="btnUpdate" style="-fx-background-color:#ff9800; -fx-text-fill:white;" text="Cập nhật" />
+            <Button fx:id="btnDelete" style="-fx-background-color:#f44336; -fx-text-fill:white;" text="Xóa" />
+        </HBox>
+
+    </VBox>
+
+    <!-- TABLE CARD -->
+    <VBox style="-fx-background-color:white; -fx-padding:10; -fx-background-radius:10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1),10,0,0,2);" VBox.vgrow="ALWAYS">
+
+        <TableView fx:id="tbIngredient" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId" prefWidth="50" text="ID" />
+                <TableColumn fx:id="colName" prefWidth="150" text="Tên" />
+                <TableColumn fx:id="colWeight" prefWidth="100" text="Khối lượng" />
+                <TableColumn fx:id="colQuantity" prefWidth="100" text="Số lượng" />
+                <TableColumn fx:id="colPrice" prefWidth="120" text="Đơn giá" />
+            </columns>
+        </TableView>
+
+    </VBox>
+
+</VBox>

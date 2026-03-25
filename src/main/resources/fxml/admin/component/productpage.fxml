@@ -242,11 +242,6 @@
                                                    </font>
                                                 </Label>
                                                 <Separator opacity="0.0" prefHeight="12.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
-                                                <Label fx:id="lbTotalPriceIngredient" prefHeight="30.0" style="-fx-font-size: 16;" styleClass="label-subtitle" text="0" HBox.hgrow="ALWAYS">
-                                                   <font>
-                                                      <Font size="10.0" />
-                                                   </font>
-                                                </Label>
                                                 <Separator opacity="0.0" prefHeight="27.0" prefWidth="84.0" HBox.hgrow="ALWAYS" />
                                                 <Button mnemonicParsing="false" onAction="#handleaddIngredient" prefHeight="30.0" prefWidth="91.0" styleClass="btn-component" text="Thêm" />
                                              </children>
@@ -264,6 +259,20 @@
                                                 </ScrollPane>
                                              </children>
                                           </AnchorPane>
+                                          <HBox spacing="10.0">
+                                             <children>
+                                                <Label prefHeight="0.0" style="-fx-font-size: 16;" styleClass="label-subtitle" text="Tổng giá:">
+                                                   <font>
+                                                      <Font size="10.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lbTotalPriceIngredient" prefHeight="0.0" style="-fx-font-size: 16;" styleClass="label-subtitle" text="0">
+                                                   <font>
+                                                      <Font size="10.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
                                        </children>
                                     </VBox>
                                     <VBox alignment="CENTER" prefHeight="0.0" prefWidth="437.0" spacing="10.0" styleClass="form-card-inner" VBox.vgrow="ALWAYS">
