@@ -19,6 +19,7 @@ public class AlertInformation {
     public static void showErrorAlert(String title, String header, String content) {
         setupAlert(alerterror, title, header, content);
         alerterror.show();
+
     }
 
     public static void showInfoAlert(String title, String header, String content) {
@@ -29,6 +30,7 @@ public class AlertInformation {
     public static void showWarningAlert(String title, String header, String content) {
         setupAlert(alertwarning, title, header, content);
         alertwarning.show();
+
     }
 
     public static void showConfirmationAlert(String title, String header, String content) {

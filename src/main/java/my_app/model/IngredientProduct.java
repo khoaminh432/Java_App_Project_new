@@ -125,7 +125,7 @@ public class IngredientProduct {
     public void setTotalPrice() {
         Ingredient ingtemp = getIngredient();
         double price = (double) (estimate * ingtemp.getUnitPrice().doubleValue()) / ingtemp.getNetWeight();
-
+        System.out.println("price: " + price);
         setTotalPrice(BigDecimal.valueOf(price));
     }
 
