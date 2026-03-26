@@ -40,7 +40,7 @@ public class handleIngredientController {
     }
 
     public void setChange(Function func) {
-        this.changeFunction = func;
+        this.ChangeFunction = func;
     }
 
     @FXML
@@ -59,6 +59,7 @@ public class handleIngredientController {
             }
             Integer estimate = Integer.parseInt(newValue);
             ingredient.setEstimate(estimate);
+
             ingredient.setTotalPrice();
             changeFunction.apply(null);
             setlbText();

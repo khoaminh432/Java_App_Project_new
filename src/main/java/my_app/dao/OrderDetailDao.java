@@ -10,6 +10,12 @@ public class OrderDetailDao implements GenericDao<OrderDetail, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM order_detail";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "order_detail";
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
 
     @Override
     public OrderDetail findById(Integer id) {

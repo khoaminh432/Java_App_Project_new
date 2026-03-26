@@ -76,7 +76,7 @@ public class indexController extends SwitchPage {
     @FXML
     private void loadHomePage() throws IOException {
         System.out.println("Load Home Page");
-        handleSwitchPage("Trang chủ", "/fxml/admin/component/homepage.fxml");
+        handleSwitchPage("Trang chủ", "/fxml/admin/component/ingredient/goodsreceipt.fxml");
     }
 
     @FXML

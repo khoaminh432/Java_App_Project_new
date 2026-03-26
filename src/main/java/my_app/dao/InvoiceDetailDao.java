@@ -6,10 +6,11 @@ import java.util.HashMap;
 import my_app.model.InvoiceDetail;
 import my_app.util.QueryExecutor;
 
-
 public class InvoiceDetailDao implements GenericDao<InvoiceDetail, Integer> {
+
     private static final String BASE_QUERY = "SELECT * FROM invoice_detail";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "invoice_detail";
 
     @Override
     public InvoiceDetail findById(Integer id) {
@@ -18,6 +19,11 @@ public class InvoiceDetailDao implements GenericDao<InvoiceDetail, Integer> {
         }
         ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
         return results.isEmpty() ? null : new InvoiceDetail(results.get(0));
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
     }
 
     @Override

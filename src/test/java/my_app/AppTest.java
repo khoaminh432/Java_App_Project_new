@@ -3,9 +3,8 @@ package my_app;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import my_app.bus.IngredientBus;
-import my_app.model.Ingredient;
-import my_app.util.DBConnection;
+import my_app.dao.IngredientProductDao;
+import my_app.dao.ProductDao;
 import my_app.util.QueryExecutor;
 
 /**
@@ -69,14 +68,21 @@ public class AppTest extends TestCase {
     //     System.out.println(customerBus.getCustomers());
     //     DBConnection.close();
     // }
-    public void testMethodvalue() {
-        IngredientBus ingredientBus = new IngredientBus();
+    // public void testMethodvalue() {
+    //     IngredientBus ingredientBus = new IngredientBus();
+    //     assertNotNull(ingredientBus);
+    //     ingredientBus.findAll();
+    //     System.out.println(ingredientBus.getIngredientProductByThis(new Ingredient(ingredientBus.getIngredients().get(0))).getIngredient());
+    //     System.out.println();
+    //     DBConnection.close();
+    // }
+    public void testDaoMethod() {
+        ProductDao productDao = new ProductDao();
+        assertNotNull(productDao);
+        IngredientProductDao productIngredientDao = new IngredientProductDao();
+        assertNotNull(productIngredientDao);
+        System.out.println(productDao.getMaxQuantity(productIngredientDao.findByProductId(4)));
 
-        assertNotNull(ingredientBus);
-        ingredientBus.findAll();
-        System.out.println(ingredientBus.getIngredientProductByThis(new Ingredient(ingredientBus.getIngredients().get(0))).getIngredient());
-        System.out.println();
-        DBConnection.close();
     }
 
     /**
