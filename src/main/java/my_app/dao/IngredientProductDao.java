@@ -12,6 +12,7 @@ public class IngredientProductDao implements GenericDao<IngredientProduct, Integ
 
     private static final String BASE_QUERY = "SELECT * FROM ingredient_product";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "ingredient_product";
 
     @Override
     public IngredientProduct findById(Integer id) {
@@ -25,6 +26,21 @@ public class IngredientProductDao implements GenericDao<IngredientProduct, Integ
     @Override
     public ArrayList<IngredientProduct> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<IngredientProduct> mappings = new ArrayList<>(records.size());
+        records.forEach(row -> mappings.add(new IngredientProduct(row)));
+        return mappings;
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    public ArrayList<IngredientProduct> findByProductId(Integer productId) {
+        if (productId == null) {
+            throw new IllegalArgumentException("Product id must not be null");
+        }
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE product_id=?", productId);
         ArrayList<IngredientProduct> mappings = new ArrayList<>(records.size());
         records.forEach(row -> mappings.add(new IngredientProduct(row)));
         return mappings;

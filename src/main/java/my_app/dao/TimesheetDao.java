@@ -11,6 +11,7 @@ public class TimesheetDao implements GenericDao<Timesheet, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM timesheet";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "timesheet";
 
     @Override
     public Timesheet findById(Integer id) {
@@ -27,6 +28,11 @@ public class TimesheetDao implements GenericDao<Timesheet, Integer> {
         ArrayList<Timesheet> timesheets = new ArrayList<>(records.size());
         records.forEach(row -> timesheets.add(new Timesheet(row)));
         return timesheets;
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
     }
 
     @Override
