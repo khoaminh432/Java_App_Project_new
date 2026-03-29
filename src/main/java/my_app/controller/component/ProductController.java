@@ -3,6 +3,7 @@ package my_app.controller.component;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -59,6 +60,9 @@ public class ProductController {
 
     @FXML
     private Button btnMaxQuantity;
+
+    @FXML
+    private ComboBox<String> cbbUnitProduct;
 
     // dữ liệu sản phẩm
     @FXML
@@ -146,9 +150,6 @@ public class ProductController {
 
     // add product pane
     @FXML
-    private ComboBox<String> cbbUnitProduct;
-
-    @FXML
     private ComboBox<ProductCategory> cbbCategoryProduct;
 
     @FXML
@@ -213,7 +214,6 @@ public class ProductController {
         tfUnitProduct.clear();
         cbbCategoryProduct.getSelectionModel().select(0);
         cbbPriceProduct.getSelectionModel().select(0);
-        cbbUnitProduct.getSelectionModel().select(0);
         rdoActiveProduct.setSelected(true);
     }
 
@@ -247,32 +247,6 @@ public class ProductController {
     private void loadlabelTotalProductAllIngredientProduct() {
         calTotalPriceAll = ingredientProductBus.calTotalPriceAll();
         lbTotalAllIngredientProruct.setText(calTotalPriceAll != null ? calTotalPriceAll.toString() : "0");
-    }
-
-    private void loadProductsAsync() {
-        if (loadProductsTask != null && loadProductsTask.isRunning()) {
-            return;
-        }
-
-        loadProductsTask = new Task<>() {
-            @Override
-            protected List<Product> call() {
-                return productBus.fetchAllFromDb();
-            }
-        };
-
-        loadProductsTask.setOnSucceeded(event -> {
-            List<Product> data = loadProductsTask.getValue();
-            productBus.replaceAll(data);
-            updateStatisticProduct();
-            setLabelStatisticProduct();
-        });
-
-        loadProductsTask.setOnFailed(event -> loadProductsTask.getException().printStackTrace());
-
-        Thread worker = new Thread(loadProductsTask, "product-loader");
-        worker.setDaemon(true);
-        worker.start();
     }
 
     private void searchBarProducts() {
@@ -348,8 +322,7 @@ public class ProductController {
         colTotalWeightIngredient.setCellValueFactory(new PropertyValueFactory<>("totalWeight"));
         colUnitPriceIngredient.setCellValueFactory(cell
                 -> new ReadOnlyObjectWrapper<>(toDouble(cell.getValue().getUnitPrice())));
-        colQuantityIngredient.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
-        colWeightIngredient.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(toDouble(cell.getValue().getTotalWeight())));
+
     }
 
     // xử lí khi ấn vào table
@@ -397,12 +370,13 @@ public class ProductController {
 
     private void LoadComboboxData() {
         productCategoryBus.findAll();
-        cbbUnitProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getUnitProduct()));
-        cbbUnitProduct.getSelectionModel().select(0);
+
         cbbCategoryProduct.getItems().addAll(productCategoryBus.getProductCategories());
         cbbCategoryProduct.getSelectionModel().select(0);
         cbbPriceProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getDefaultUnitPriceProduct()));
         cbbPriceProduct.getSelectionModel().select(0);
+        cbbUnitProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getUnitProduct()));
+        cbbUnitProduct.getSelectionModel().select(0);
     }
 
     private void LoadActionButtons() {
@@ -561,9 +535,8 @@ public class ProductController {
         String name = ((TextField) vbAddProduct.lookup("#tfNameProduct")).getText();
         String priceStr = ((TextField) vbAddProduct.lookup("#tfPriceProduct")).getText();
         String quantityStr = ((TextField) vbAddProduct.lookup("#tfQuantityProduct")).getText();
-        String unit = cbbUnitProduct.getSelectionModel().getSelectedItem();
+
         ProductCategory categoryTemp = cbbCategoryProduct.getSelectionModel().getSelectedItem();
-        String status = cbbStatusProduct.getSelectionModel().getSelectedItem();
 
         if (name.isBlank() || priceStr.isBlank() || quantityStr.isBlank()) {
             AlertInformation.showWarningAlert("Chú Ý", "Thiếu Thông Tin", "Vui lòng điền đầy đủ thông tin sản phẩm.");
@@ -590,8 +563,6 @@ public class ProductController {
         product.setProductName(name);
         product.setUnitPrice(BigDecimal.valueOf(price));
         product.setQuantity(quantity);
-        product.setUnit(unit);
-        product.setStatus(status);
         product.setCategoryId(categoryId);
 
         return product;

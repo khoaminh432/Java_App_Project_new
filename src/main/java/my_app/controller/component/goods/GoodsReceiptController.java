@@ -64,6 +64,7 @@ public class GoodsReceiptController extends BaseController {
     private void setComboBoxData() {
         ComboBoxService<Supplier> comboBoxService = new ComboBoxService<>(cbSupplier);
         comboBoxService.setData(supplierBus.getSuppliers());
+        cbSupplier.getSelectionModel().select(0);
     }
 
     private void RenderData() {
@@ -71,11 +72,22 @@ public class GoodsReceiptController extends BaseController {
         supplierBus.findAll();
     }
 
+    @FXML
+    private void EmptyForm() {
+
+    }
+
+    private void setInputData() {
+        txtEmployee.setText("Nhân viên 1");
+        dpDate.setValue(java.time.LocalDate.now());
+    }
+
     @Override
     protected void initData() {
         RenderData();
         setTable();
         setComboBoxData();
+        setInputData();
 
     }
 
@@ -115,6 +127,7 @@ public class GoodsReceiptController extends BaseController {
                 vbIngredientItems.getChildren().add(node);
                 controller.setData(ing);
                 controller.setDeleteEvent((e) -> {
+                    System.out.println("e: " + e);
                     handleDeleteIngredient(ing, node);
                     return null;
                 });
@@ -140,9 +153,19 @@ public class GoodsReceiptController extends BaseController {
         }
     }
 
+    private void EmptyIngredient() {
+        vbIngredientItems.getChildren().clear();
+        GoodsReceiveItems.getIngredients().clear();
+    }
+
     @FXML
     private void handleCanceIngredient(ActionEvent event) {
-
+        RenderData();
+        setComboBoxData();
+        dpDate.setValue(java.time.LocalDate.now());
+        txtNote.clear();
+        txtEmployee.setText("Nhân viên 1");
+        EmptyIngredient();
     }
 
 }

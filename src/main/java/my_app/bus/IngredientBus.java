@@ -122,7 +122,6 @@ public class IngredientBus implements GeneralConfig<Ingredient> {
             return null;
         }
         IngProTemp.setIngredient(ingredienttemp);
-
         return IngProTemp;
     }
 }

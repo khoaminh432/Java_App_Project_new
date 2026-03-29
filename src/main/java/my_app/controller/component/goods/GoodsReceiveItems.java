@@ -1,5 +1,6 @@
 package my_app.controller.component.goods;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.function.Function;
 
@@ -9,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import my_app.controller.BaseController;
 import my_app.model.Ingredient;
+import my_app.service.ConfigTextField;
 import my_app.service.FormatBigDecimal;
 
 public class GoodsReceiveItems extends BaseController {
@@ -43,12 +45,29 @@ public class GoodsReceiveItems extends BaseController {
         this.deleteEvent = deleteEvent;
     }
 
+    private void setIngredient() throws IllegalArgumentException {
+        try {
+            ing.setUnitPrice(new BigDecimal(Double.parseDouble(tfUnitPriceUpdate.getText())));
+            ing.setQuantity(Integer.parseInt(tfQuantityUpdate.getText()));
+            ing.setNetWeight(Integer.parseInt(tfNetWeightUpdate.getText()));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Thông tin nhập không hợp lệ! ");
+            // Handle the exception, e.g., show an error message
+        }
+
+    }
+
+    private Ingredient getIngredient() {
+        return ing;
+    }
+
     @FXML
     private void handleDeleteIngredient(MouseEvent event) {
         if (deleteEvent != null) {
+
             ingredients.remove(ing);
             deleteEvent.apply(null);
-            System.out.println(ingredients.size());
+
         }
     }
 
@@ -64,7 +83,9 @@ public class GoodsReceiveItems extends BaseController {
 
     @Override
     protected void initEvent() {
-
+        ConfigTextField.AcceptOnlyNumber(tfNetWeightUpdate);
+        ConfigTextField.AcceptOnlyNumber(tfQuantityUpdate);
+        ConfigTextField.AcceptOnlyNumber(tfUnitPriceUpdate);
     }
 
     @Override

@@ -36,6 +36,10 @@ public class GoodsReceiptBus implements GeneralConfig<GoodsReceipt> {
         syncObservable();
     }
 
+    public int getNextId() {
+        return goodsReceiptDao.getNextID();
+    }
+
     private void syncObservable() {
         goodsReceipts.setAll(listGoodsReceipts);
     }

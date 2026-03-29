@@ -40,9 +40,10 @@ public class GoodsReceiptDao implements GenericDao<GoodsReceipt, Integer> {
         if (entity == null) {
             throw new IllegalArgumentException("Goods receipt entity must not be null");
         }
-        final String insertSql = "INSERT INTO goods_receipt (received_date, supplier_id, total_quantity, total_price) VALUES (?,?,?,?)";
+        final String insertSql = "INSERT INTO goods_receipt (id, received_date, supplier_id, total_quantity, total_price) VALUES (?,?,?,?,?)";
         Timestamp receivedDate = entity.getReceivedDate() != null ? Timestamp.valueOf(entity.getReceivedDate()) : null;
         return qe.ExecuteUpdate(insertSql,
+                entity.getId(),
                 receivedDate,
                 entity.getSupplierId(),
                 entity.getTotalQuantity(),
