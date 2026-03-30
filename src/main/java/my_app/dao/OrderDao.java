@@ -5,11 +5,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 import my_app.dto.OrderDTO;
 import my_app.util.DBConnection;
 
-public class OrderDAO {
+public class OrderDao implements GenericDao<Order, Integer> {
+
+    private static final String BASE_QUERY = "SELECT * FROM `order`";
+    private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "order";
 
     public List<OrderDTO> getAll() {
         List<OrderDTO> list = new ArrayList<>();

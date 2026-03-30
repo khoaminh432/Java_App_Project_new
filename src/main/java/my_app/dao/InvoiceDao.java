@@ -3,14 +3,15 @@ package my_app.dao;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import my_app.model.Invoice;
 import my_app.util.QueryExecutor;
 
 public class InvoiceDao implements GenericDao<Invoice, Integer> {
+
     private static final String BASE_QUERY = "SELECT * FROM invoice";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "invoice";
 
     @Override
     public Invoice findById(Integer id) {
@@ -22,9 +23,14 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
     }
 
     @Override
-    public List<Invoice> findAll() {
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
+    public ArrayList<Invoice> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        List<Invoice> invoices = new ArrayList<>(records.size());
+        ArrayList<Invoice> invoices = new ArrayList<>(records.size());
         records.forEach(row -> invoices.add(new Invoice(row)));
         return invoices;
     }

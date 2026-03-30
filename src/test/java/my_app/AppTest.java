@@ -5,10 +5,23 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import my_app.dao.CustomerDao;
 import my_app.util.DBConnection;
+import my_app.dao.IngredientProductDao;
+import my_app.dao.ProductDao;
+import my_app.util.QueryExecutor;
 /*** Sử dụng JUnit 3 (TestCase, TestSuite).
  * 
  */
 public class AppTest extends TestCase {
+
+
+/**
+ * * Using JUnit 3 (TestCase, TestSuite).
+ *
+ */
+public class AppTest extends TestCase {
+
+    private QueryExecutor qe = new QueryExecutor();
+
     /**
      * Create the test case
      *
@@ -26,7 +39,7 @@ public class AppTest extends TestCase {
     }
 
     /**
-     * Kiểm tra class App tồn tại và có thể khởi tạo.
+     * Verify that the App class exists and can be instantiated.
      */
     public void testAppClassExists() {
         assertNotNull(App.class);
@@ -34,14 +47,14 @@ public class AppTest extends TestCase {
     // public void testUserServiceMethod() {
     //     UserService userService = new UserService();
     //     assertNotNull(userService);
-    //     userService.someServiceMethod(); // Gọi phương thức để kiểm tra nó hoạt động
+    //     userService.someServiceMethod(); // Call the method to ensure it works
     // }
     // public void testcheckConnectDB(){
     //     DBConnection dbConnection = DBConnection.getInstance();
     //     assertNotNull(dbConnection);
     //     dbConnection.close();
     // }
-    
+
     // public void testDBConnectionSingleton() {
     //     List<Object> instances = new ArrayList<>();
     //     QueryExecutor qe = new QueryExecutor();
@@ -62,11 +75,34 @@ public class AppTest extends TestCase {
             System.err.println("Database not ready: " + e.getMessage());
         } finally {
             DBConnection.close();
-        }
+        }}
+    // public void testMethodModel() {
+    //     CustomerBus customerBus = new CustomerBus();
+    //     assertNotNull(customerBus);
+    //     customerBus.findAll();
+    //     assertNotNull(customerBus.getCustomers());
+    //     System.out.println(customerBus.getCustomers());
+    //     DBConnection.close();
+    // }
+    // public void testMethodvalue() {
+    //     IngredientBus ingredientBus = new IngredientBus();
+    //     assertNotNull(ingredientBus);
+    //     ingredientBus.findAll();
+    //     System.out.println(ingredientBus.getIngredientProductByThis(new Ingredient(ingredientBus.getIngredients().get(0))).getIngredient());
+    //     System.out.println();
+    //     DBConnection.close();
+    // }
+    public void testDaoMethod() {
+        ProductDao productDao = new ProductDao();
+        assertNotNull(productDao);
+        IngredientProductDao productIngredientDao = new IngredientProductDao();
+        assertNotNull(productIngredientDao);
+        System.out.println(productDao.getMaxQuantity(productIngredientDao.findByProductId(4)));
+
     }
-    
+
     /**
-     * Kiểm tra model User có thể khởi tạo bằng constructor mặc định.
+     * Run the test suite from the command line.
      */
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());

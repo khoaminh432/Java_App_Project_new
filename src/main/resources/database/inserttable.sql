@@ -1,122 +1,301 @@
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+use jdbc_demo;
 
--- Product Category
-INSERT INTO Product_Category (category_name, description) VALUES
-('Electronics', 'Gadgets, phones, and laptops'),
-('Beverages', 'Soft drinks, coffee, and tea'),
-('Foods', 'Snacks and instant meals'),
-('Home Appliances', 'Fridge, microwave, and fans'),
-('Stationery', 'Pens, notebooks, and office supplies');
+-- Ensure ingredient.total_weight exists before seeding (works on MySQL < 8.0)
+SET @ingredient_total_weight_exists := (
+	SELECT COUNT(*)
+	FROM information_schema.columns
+	WHERE table_schema = DATABASE()
+		AND table_name = 'ingredient'
+		AND column_name = 'total_weight'
+);
 
--- Supplier
-INSERT INTO Supplier (supplier_name, address, phone_number) VALUES
-('Global Tech Inc', '123 Silicon Valley, USA', '0123456789'),
-('Fresh Drinks Co', '45 Highland Road, VN', '0987654321'),
-('Foodie Distribution', '78 Street Food, Thailand', '0222333444'),
-('Home Living Ltd', '12 Furniture Ave, China', '0555666777'),
-('Office World', '90 Business Park, VN', '0888999000');
+SET @ingredient_alter_sql := IF(
+	@ingredient_total_weight_exists = 0,
+	'ALTER TABLE ingredient ADD COLUMN total_weight INT DEFAULT 0 AFTER quantity',
+	'SELECT 1'
+);
 
--- Role
-INSERT INTO Role (role_name, hourly_rate) VALUES
-('Manager', 50.00),
-('Sales Staff', 20.00),
-('Warehouse Keeper', 18.00),
-('Shipper', 15.00),
-('Security', 12.00);
+PREPARE ingredient_stmt FROM @ingredient_alter_sql;
+EXECUTE ingredient_stmt;
+DEALLOCATE PREPARE ingredient_stmt;
 
--- Customer
-INSERT INTO Customer (full_name, phone_number, email, password, status) VALUES
-('Nguyen Van A', '0901234567', 'ana@example.com', 'hashed_pass_1', 'Active'),
-('Le Thi B', '0902345678', 'beethib@example.com', 'hashed_pass_2', 'Active'),
-('Tran Van C', '0903456789', 'ceev@example.com', 'hashed_pass_3', 'Inactive'),
-('Pham Thi D', '0904567890', 'deept@example.com', 'hashed_pass_4', 'Active'),
-('Hoang Van E', '0905678901', 'eehv@example.com', 'hashed_pass_5', 'Active');
+-- Backfill total_weight for any existing rows
+UPDATE ingredient
+SET total_weight = COALESCE(net_weight, 0) * COALESCE(quantity, 0)
+WHERE total_weight IS NULL;
 
--- Payment Method
-INSERT INTO Payment_Method (method_name) VALUES
-('Cash'),
-('Credit Card'),
-('E-Wallet (Momo)'),
-('Bank Transfer'),
-('VNPAY');
+-- 1. product_category
+INSERT INTO product_category (category_name, description) VALUES
+('Ca phe', 'Cac loai ca phe nguyen chat va pha che'),
+('Tra', 'Tra cac loai: tra sua, tra trai cay, tra thao moc'),
+('Nuoc ep & Sinh to', 'Nuoc ep trai cay tuoi va sinh to'),
+('Banh ngot', 'Cac loai banh ngot, banh mi, banh kem'),
+('Do an nhe', 'Do an vat, snack'),
+('Do uong dac biet', 'Cac loai do uong dac biet cua quan'),
+('Combo', 'Cac goi combo tiet kiem'),
+('Do uong lanh', 'Cac loai do uong lanh'),
+('Do uong nong', 'Cac loai do uong nong'),
+('Topping', 'Cac loai topping them');
 
--- Voucher
-INSERT INTO Voucher (promotion_name, start_date, end_date) VALUES
-('New Year Sale', '2026-01-01', '2026-01-15'),
-('Black Friday', '2026-11-20', '2026-11-30'),
-('Member Discount', '2026-01-01', '2026-12-31'),
-('Summer Deal', '2026-06-01', '2026-08-31'),
-('Flash Sale 12.12', '2026-12-12', '2026-12-13');
--- Employee
-INSERT INTO Employee (first_name, last_name, phone_number, dob, address, basic_salary, status, role_id) VALUES
-('John', 'Smith', '0111222333', '1990-05-15', 'New York', 5000.00, 'Working', 1),
-('Minh', 'Hoang', '0222333444', '1995-10-20', 'Hanoi', 2000.00, 'Working', 2),
-('Lan', 'Anh', '0333444555', '1998-02-28', 'HCM City', 1800.00, 'Working', 3),
-('Cuong', 'Do', '0444555666', '1992-12-12', 'Da Nang', 1500.00, 'Working', 4),
-('Bao', 'Quoc', '0555666777', '1988-07-07', 'Can Tho', 1200.00, 'Working', 5);
+-- 2. supplier
+INSERT INTO supplier (supplier_name, address, phone_number, status) VALUES
+('Công ty Cà phê Trung Nguyên', '123 Nguyễn Văn Linh, Q.7, TP.HCM', '0281234567', 1),
+('Nhà cung cấp sữa Vinamilk', '456 Lý Thường Kiệt, Q.10, TP.HCM', '0282345678', 1),
+('Công ty Trà Lipton', '789 Cách Mạng Tháng 8, Q.3, TP.HCM', '0283456789', 1),
+('Nhà cung cấp trái cây tươi', '321 Nguyễn Tri Phương, Q.5, TP.HCM', '0284567890', 1),
+('Công ty Bánh kẹo Hải Hà', '654 Lê Lợi, Q.1, TP.HCM', '0285678901', 1),
+('Nhà cung cấp đường Biên Hòa', '987 Hai Bà Trưng, Q.1, TP.HCM', '0286789012', 1),
+('Công ty Đá viên sạch', '147 Pasteur, Q.1, TP.HCM', '0287890123', 1),
+('Nhà cung cấp cốc ly Minh Long', '258 Nguyễn Thị Minh Khai, Q.1, TP.HCM', '0288901234', 1),
+('Công ty Topping Richy', '369 Phạm Ngũ Lão, Q.1, TP.HCM', '0289012345', 1),
+('Nhà cung cấp nước suối La Vie', '741 Nguyễn Văn Cừ, Q.5, TP.HCM', '0280123456', 1);
 
--- Product
-INSERT INTO Product (product_name, unit_price, unit, quantity, status, category_id) VALUES
-('iPhone 15', 1000.00, 'Unit', 50, 'Available', 1),
-('Coca Cola', 0.50, 'Can', 500, 'Available', 2),
-('Oreo Cookies', 1.20, 'Pack', 200, 'Available', 3),
-('Ceiling Fan', 45.00, 'Unit', 30, 'Available', 4),
-('A4 Paper', 5.00, 'Ream', 100, 'Available', 5);
+-- 3. role
+INSERT INTO role (role_name, hourly_rate) VALUES
+('Quan ly', 50000.00),
+('Nhan vien pha che', 35000.00),
+('Nhan vien thu ngan', 30000.00),
+('Nhan vien phuc vu', 25000.00),
+('Shipper', 20000.00),
+('Quan ly kho', 40000.00),
+('Truong ca', 45000.00),
+('Nhan vien ve sinh', 20000.00),
+('Pha che chinh', 40000.00),
+('Nhan vien ban hang online', 30000.00);
 
--- Shipper (ID mapping from Employee table)
-INSERT INTO Shipper (id, vehicle_plate_number, current_status) VALUES
-(4, '29-A1 12345', 'Busy'),
-(1, '29-B1 67890', 'Idle'), -- Example of a manager who can ship
-(2, '29-C1 55555', 'Idle'),
-(3, '29-D1 99999', 'Busy'),
-(5, '29-E1 11111', 'Idle');
+-- 4. customer
+INSERT INTO customer (full_name, phone_number, email, password, status) VALUES
+('Nguyen Van An', '0901111111', 'nguyenvanan@gmail.com', 'password123', 'active'),
+('Tran Thi Binh', '0902222222', 'tranthibinh@gmail.com', 'password123', 'active'),
+('Le Minh Chau', '0903333333', 'leminhchau@gmail.com', 'password123', 'active'),
+('Pham Van Duc', '0904444444', 'phamvanduc@gmail.com', 'password123', 'active'),
+('Hoang Thi Em', '0905555555', 'hoangthiem@gmail.com', 'password123', 'inactive'),
+('Vu Van Phong', '0906666666', 'vuvanphong@gmail.com', 'password123', 'active'),
+('Dang Thi Quynh', '0907777777', 'dangthiquynh@gmail.com', 'password123', 'active'),
+('Bui Van Hai', '0908888888', 'buivanhai@gmail.com', 'password123', 'active'),
+('Do Thi Lan', '0909999999', 'dothilan@gmail.com', 'password123', 'active'),
+('Ngo Van Minh', '0900000000', 'ngovanminh@gmail.com', 'password123', 'inactive');
 
--- Timesheet
-INSERT INTO Timesheet (employee_id, hours_worked, work_date) VALUES
-(1, 8.0, '2026-01-10'),
-(2, 7.5, '2026-01-10'),
-(3, 8.0, '2026-01-10'),
-(4, 10.0, '2026-01-10'),
-(5, 8.0, '2026-01-10');
--- Goods Receipt
-INSERT INTO Goods_Receipt (supplier_id, total_quantity, total_price) VALUES
-(1, 10, 10000.00),
-(2, 100, 50.00),
-(3, 50, 60.00),
-(4, 5, 225.00),
-(5, 20, 100.00);
+-- 5. payment_method
+INSERT INTO payment_method (method_name) VALUES
+('Tien mat'),
+('Chuyen khoan ngan hang'),
+('Visa/Mastercard'),
+('MoMo'),
+('ZaloPay'),
+('VNPay'),
+('ShopeePay'),
+('The thanh vien'),
+('Vi dien tu'),
+('QR Code');
 
--- Order
-INSERT INTO `Order` (customer_id, sub_total, total_amount, status) VALUES
-(1, 1000.00, 1000.00, 'Completed'),
-(2, 0.50, 0.50, 'Processing'),
-(3, 1.20, 1.20, 'Completed'),
-(4, 45.00, 50.00, 'Shipping'),
-(5, 10.00, 10.00, 'Cancelled');
+-- 6. voucher
+INSERT INTO voucher (promotion_name, start_date, end_date) VALUES
+('Giam 20% cho don dau tien', '2024-01-01 00:00:00', '2024-12-31 23:59:59'),
+('Giam 30K cho don tu 150K', '2024-02-01 00:00:00', '2024-06-30 23:59:59'),
+('Mua 1 tang 1', '2024-03-01 00:00:00', '2024-03-31 23:59:59'),
+('Giam 15% tat ca do uong', '2024-04-01 00:00:00', '2024-04-30 23:59:59'),
+('Freeship 5KM', '2024-05-01 00:00:00', '2024-05-31 23:59:59'),
+('Giam 50% sinh to', '2024-06-01 00:00:00', '2024-06-15 23:59:59'),
+('Combo gia dinh 199K', '2024-07-01 00:00:00', '2024-07-31 23:59:59'),
+('Tich diem 2x', '2024-08-01 00:00:00', '2024-08-31 23:59:59'),
+('Giam 25K banh ngot', '2024-09-01 00:00:00', '2024-09-30 23:59:59'),
+('Do uong thu 2 chi 50K', '2024-10-01 00:00:00', '2024-10-31 23:59:59');
 
--- Online Order (ID mapping from Order table)
-INSERT INTO Online_Order (id, customer_id, shipper_id, receiver_name, phone_number, address, shipping_fee, status, total_amount) VALUES
-(4, 4, 4, 'Pham Thi D', '0904567890', 'Hanoi Sector 1', 5.00, 'Shipping', 50.00),
-(2, 2, 4, 'Le Thi B', '0902345678', 'HCM City District 3', 0.00, 'Processing', 0.50);
+-- 7. employee
+INSERT INTO employee (first_name, last_name, phone_number, dob, address, basic_salary, status, role_id) VALUES
+('Mai', 'Van Hung', '0911111111', '1990-05-15', '12 Le Loi, Q.1, TP.HCM', 15000000.00, 'active', 1),
+('Le', 'Thi Mai', '0912222222', '1995-08-20', '34 Nguyen Hue, Q.1, TP.HCM', 12000000.00, 'active', 2),
+('Tran', 'Van Nam', '0913333333', '1998-03-10', '56 Pasteur, Q.3, TP.HCM', 10000000.00, 'active', 3),
+('Nguyen', 'Thi Huong', '0914444444', '1997-11-25', '78 CMT8, Q.10, TP.HCM', 9000000.00, 'active', 4),
+('Pham', 'Van Tai', '0915555555', '1996-07-30', '90 Ly Tu Trong, Q.1, TP.HCM', 8000000.00, 'active', 5),
+('Hoang', 'Thi Thu', '0916666666', '1994-02-14', '112 Nguyen Thi Minh Khai, Q.3, TP.HCM', 11000000.00, 'active', 6),
+('Vu', 'Van Son', '0917777777', '1993-09-05', '134 Hai Ba Trung, Q.1, TP.HCM', 13000000.00, 'active', 7),
+('Dang', 'Thi Nga', '0918888888', '1999-12-12', '156 Dien Bien Phu, Q.3, TP.HCM', 7000000.00, 'active', 8),
+('Bui', 'Van Dat', '0919999999', '1992-06-18', '178 Tran Hung Dao, Q.5, TP.HCM', 11500000.00, 'active', 9),
+('Do', 'Thi Hoa', '0910000000', '2000-04-22', '190 Nguyen Van Cu, Q.5, TP.HCM', 9500000.00, 'active', 10);
 
--- Order Detail
-INSERT INTO Order_Detail (order_id, product_id, quantity, unit_price) VALUES
-(1, 1, 1, 1000.00),
-(2, 2, 1, 0.50),
-(3, 3, 1, 1.20),
-(4, 4, 1, 45.00),
-(5, 5, 2, 5.00);
+-- 8. product
+INSERT INTO product (product_name, unit_price, unit, quantity, status, category_id) VALUES
+('Ca phe den da', 25000.00, 'ly', 100, 'available', 1),
+('Ca phe sua da', 30000.00, 'ly', 150, 'available', 1),
+('Tra sua tran chau', 45000.00, 'ly', 200, 'available', 2),
+('Tra dao cam sa', 40000.00, 'ly', 180, 'available', 2),
+('Sinh to bo', 50000.00, 'ly', 120, 'available', 3),
+('Nuoc ep cam', 35000.00, 'ly', 90, 'available', 3),
+('Banh su kem', 20000.00, 'cai', 50, 'available', 4),
+('Banh mi sandwich', 15000.00, 'cai', 80, 'available', 4),
+('Khoai tay chien', 30000.00, 'phan', 60, 'available', 5),
+('Ca phe caramel macchiato', 55000.00, 'ly', 130, 'available', 6);
 
--- Invoice
-INSERT INTO Invoice (customer_id, employee_id, order_id, payment_method_id, total_amount) VALUES
-(1, 2, 1, 2, 1000.00),
-(3, 2, 3, 1, 1.20);
+-- 9. shipper
+INSERT INTO shipper (id, vehicle_plate_number, current_status) VALUES
+(5, '51A-12345', 'available'),
+(6, '51A-23456', 'busy'),
+(7, '51A-34567', 'available'),
+(8, '51A-45678', 'available'),
+(9, '51A-56789', 'busy'),
+(10, '51A-67890', 'available'),
+(1, '51A-78901', 'available'),
+(2, '51A-89012', 'offline'),
+(3, '51A-90123', 'available'),
+(4, '51A-01234', 'busy');
 
--- Invoice Detail
-INSERT INTO Invoice_Detail (invoice_id, product_id, quantity, unit_price) VALUES
-(1, 1, 1, 1000.00),
-(2, 3, 1, 1.20);
+-- 10. timesheet
+INSERT INTO timesheet (employee_id, hours_worked, work_date) VALUES
+(1, 8.0, '2024-03-01'),
+(2, 7.5, '2024-03-01'),
+(3, 8.0, '2024-03-01'),
+(4, 6.0, '2024-03-01'),
+(5, 9.0, '2024-03-01'),
+(6, 8.0, '2024-03-01'),
+(7, 7.0, '2024-03-01'),
+(8, 8.5, '2024-03-01'),
+(9, 8.0, '2024-03-01'),
+(10, 7.5, '2024-03-01');
 
--- Invoice Voucher Detail
-INSERT INTO Invoice_Voucher_Detail (invoice_id, voucher_id, discount_value) VALUES
-(1, 1, 50.00),
-(2, 3, 0.20);       
+-- 11. goods_receipt
+INSERT INTO goods_receipt (received_date, supplier_id, total_quantity, total_price) VALUES
+('2024-03-01 08:00:00', 1, 100, 5000000.00),
+('2024-03-01 09:30:00', 2, 50, 2500000.00),
+('2024-03-02 10:00:00', 3, 200, 6000000.00),
+('2024-03-02 14:00:00', 4, 150, 4500000.00),
+('2024-03-03 08:30:00', 5, 80, 3200000.00),
+('2024-03-03 11:00:00', 6, 300, 9000000.00),
+('2024-03-04 09:00:00', 7, 1000, 2000000.00),
+('2024-03-04 13:30:00', 8, 500, 5000000.00),
+('2024-03-05 10:30:00', 9, 200, 4000000.00),
+('2024-03-05 15:00:00', 10, 100, 1500000.00);
+
+-- 12. ingredient
+INSERT INTO ingredient (ingredient_name, net_weight, quantity) VALUES
+('Ca phe Arabica', 1000, 5),
+('Sua dac co duong', 380, 10),
+('Tra den', 500, 8),
+('Dao tuoi', 1000, 3),
+('Bo', 500, 20),
+('Cam tuoi', 1000, 4),
+('Bot mi', 1000, 2),
+('Khoai tay', 1000, 1),
+('Duong trang', 1000, 20),
+('Caramel syrup', 1000, 5);
+
+
+-- 13. goods_receipt_detail
+INSERT INTO goods_receipt_detail (receipt_id, ingredient_id, quantity, unit_price,net_weight) VALUES
+(1, 1, 5, 100000.00, 1000),
+(1, 9, 5, 50000.00, 1000),
+(2, 2, 10, 25000.00, 380),
+(3, 3, 2, 30000.00, 500),
+(4, 4, 15, 30000.00, 1000),
+(5, 7, 8, 40000.00, 1000),
+(6, 9, 30, 30000.00, 1000),
+(7, 10, 10, 2000.00, 1000),
+(8, 8, 50, 10000.00, 1000),
+(9, 5, 20, 20000.00, 500);
+
+-- 14. ingredient_product
+INSERT INTO ingredient_product (product_id, ingredient_id, estimate, total_price) VALUES
+(1, 1, 20,  100000.00),
+(1, 2, 10,  25000.00),
+(1, 9, 10,  50000.00),
+(2, 1, 20, 100000.00),
+(2, 2, 15, 25000.00),
+(2, 9, 10, 50000.00),
+(3, 3, 30, 30000.00),
+(3, 2, 20, 25000.00),
+(3, 9, 15, 20000.00),
+(4, 3, 25, 30000.00),
+(4, 4, 20, 30000.00),
+(1, 1, 20,  100000.00),
+(1, 2, 10,  25000.00),
+(1, 9, 10,  50000.00),
+(2, 1, 20, 100000.00),
+(2, 2, 15, 25000.00),
+(2, 9, 10, 50000.00),
+(3, 3, 30, 30000.00),
+(3, 2, 20, 25000.00),
+(3, 9, 15, 20000.00),
+(4, 3, 25, 30000.00),
+(4, 4, 20, 30000.00);
+
+-- 15. order
+INSERT INTO `order` (customer_id, order_date, sub_total, total_amount, status) VALUES
+(1, '2024-03-01 08:30:00', 75000.00, 75000.00, 'completed'),
+(2, '2024-03-01 09:15:00', 120000.00, 120000.00, 'completed'),
+(3, '2024-03-01 10:00:00', 85000.00, 85000.00, 'completed'),
+(4, '2024-03-01 11:30:00', 150000.00, 150000.00, 'processing'),
+(5, '2024-03-01 12:45:00', 95000.00, 95000.00, 'completed'),
+(6, '2024-03-01 14:00:00', 180000.00, 180000.00, 'completed'),
+(7, '2024-03-01 15:30:00', 65000.00, 65000.00, 'processing'),
+(8, '2024-03-01 16:15:00', 140000.00, 140000.00, 'completed'),
+(9, '2024-03-01 17:45:00', 110000.00, 110000.00, 'completed'),
+(10, '2024-03-01 18:30:00', 80000.00, 80000.00, 'cancelled');
+
+-- 16. online_order
+INSERT INTO online_order (id, customer_id, shipper_id, receiver_name, phone_number, address, shipping_fee, estimated_delivery_time, completed_time, status, total_amount) VALUES
+(4, 4, 5, 'Pham Van Duc', '0904444444', '123 Nguyen Van Linh, Q.7, TP.HCM', 15000.00, '2024-03-01 12:30:00', NULL, 'delivering', 165000.00),
+(7, 7, 6, 'Dang Thi Quynh', '0907777777', '456 Le Van Sy, Q.3, TP.HCM', 10000.00, '2024-03-01 16:00:00', NULL, 'preparing', 75000.00),
+(10, 10, 7, 'Ngo Van Minh', '0900000000', '789 Ly Thuong Kiet, Q.10, TP.HCM', 20000.00, '2024-03-01 19:00:00', NULL, 'cancelled', 100000.00);
+
+-- 17. order_detail
+INSERT INTO order_detail (order_id, product_id, quantity, unit_price) VALUES
+(1, 1, 2, 25000.00),
+(1, 7, 1, 20000.00),
+(2, 3, 2, 45000.00),
+(2, 8, 2, 15000.00),
+(3, 2, 1, 30000.00),
+(3, 5, 1, 50000.00),
+(4, 4, 3, 40000.00),
+(4, 9, 1, 30000.00),
+(5, 6, 2, 35000.00),
+(5, 7, 1, 20000.00);
+
+-- 18. invoice
+INSERT INTO invoice (customer_id, employee_id, order_id, payment_method_id, issued_date, total_amount) VALUES
+(1, 3, 1, 1, '2024-03-01 08:35:00', 75000.00),
+(2, 3, 2, 2, '2024-03-01 09:20:00', 120000.00),
+(3, 3, 3, 3, '2024-03-01 10:05:00', 85000.00),
+(5, 4, 5, 4, '2024-03-01 12:50:00', 95000.00),
+(6, 3, 6, 1, '2024-03-01 14:05:00', 180000.00),
+(8, 4, 8, 5, '2024-03-01 16:20:00', 140000.00),
+(9, 3, 9, 6, '2024-03-01 17:50:00', 110000.00);
+
+-- 19. invoice_detail
+INSERT INTO invoice_detail (invoice_id, product_id, quantity, unit_price) VALUES
+(1, 1, 2, 25000.00),
+(1, 7, 1, 20000.00),
+(2, 3, 2, 45000.00),
+(2, 8, 2, 15000.00),
+(3, 2, 1, 30000.00),
+(3, 5, 1, 50000.00),
+(4, 6, 2, 35000.00),
+(4, 7, 1, 20000.00),
+(5, 10, 2, 55000.00),
+(5, 9, 2, 30000.00);
+
+-- 20. invoice_voucher_detail
+INSERT INTO invoice_voucher_detail (invoice_id, voucher_id, discount_value) VALUES
+(2, 1, 24000.00),
+(3, 2, 30000.00),
+(5, 3, 90000.00),
+(6, 4, 21000.00),
+(7, 5, 15000.00);
+
+
+
+DELIMITER $$
+-- 
+CREATE TRIGGER IF NOT EXISTS trg_ingredient_product_after_insert
+AFTER INSERT ON ingredient_product
+FOR EACH ROW
+BEGIN
+    UPDATE ingredient ing
+    SET ing.total_weight = COALESCE(ing.total_weight,0) - (COALESCE(NEW.estimate,0))
+    WHERE ing.id = NEW.ingredient_id;
+END$$
+
+DELIMITER ;
+

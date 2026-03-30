@@ -1,0 +1,109 @@
+
+.root {
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
+    -fx-background-color: linear-gradient(
+        to bottom right,
+        #F7F5F2,
+        #EFEAE5
+    );
+    
+}
+.fill-white{
+    -fx-text-fill: white;
+}
+.container{
+    -fx-background-color: rgba(255, 253, 250, 0.95);
+    -fx-drop-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    -fx-background-color: #ffffffdd;
+}
+.highlight-icon{
+    -fx-text-fill: #b48c5c;
+    -fx-background-color: #f0e5d8;
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+    -fx-font-size: 1.5em;
+}
+.header {
+    -fx-background-color: linear-gradient(
+        to right,
+        #2E1B14,
+        #4E342E
+    );
+    
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18, 0, 0, 6);
+}
+.sidebar-header {
+    -fx-padding: 20 10 30 10;
+}
+
+.logo-icon {
+    -fx-font-size: 40px;
+}
+
+.logo-text {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.leftmenu {
+    -fx-background-color: linear-gradient(to bottom, #1f2937, #111827);
+    -fx-background-radius: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0.5, 2, 0);
+}
+.title-icon{
+    -fx-font-size: 25px;}
+
+.header-leftmenu{
+    -fx-background-color: #9499a6;
+}
+
+.form-container {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-padding: 35;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 6);
+}
+
+.title-main {
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}.title-button {
+    -fx-font-size: 15px;
+    -fx-text-fill: white;
+}
+.button-leftmenu {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 10 10 10 15;
+}
+
+.button-leftmenu:hover {
+    -fx-background-color: #374151;
+}
+.button-active {
+    -fx-background-color: #2563eb;
+}
+.button-active:hover {
+    -fx-background-color: #1d4ed8;
+}
+.title-main {
+    -fx-font-size: 18px;
+}
+
+.title-button {
+    -fx-text-fill: #e5e7eb;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+}
+#btnSignOut {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+#btnSignOut:hover {
+    -fx-background-color: #b91c1c;
+}

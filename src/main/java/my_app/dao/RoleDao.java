@@ -2,14 +2,15 @@ package my_app.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import my_app.model.Role;
 import my_app.util.QueryExecutor;
 
 public class RoleDao implements GenericDao<Role, Integer> {
+
     private static final String BASE_QUERY = "SELECT * FROM role";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "role";
 
     @Override
     public Role findById(Integer id) {
@@ -21,9 +22,14 @@ public class RoleDao implements GenericDao<Role, Integer> {
     }
 
     @Override
-    public List<Role> findAll() {
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
+    public ArrayList<Role> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        List<Role> roles = new ArrayList<>(records.size());
+        ArrayList<Role> roles = new ArrayList<>(records.size());
         records.forEach(row -> roles.add(new Role(row)));
         return roles;
     }

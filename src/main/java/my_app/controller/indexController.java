@@ -1,0 +1,123 @@
+package my_app.controller;
+
+import java.io.IOException;
+import java.time.LocalDate;
+
+import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import my_app.service.LoadFileGUI;
+import my_app.service.SwitchPage;
+
+public class indexController extends SwitchPage {
+
+    private final LocalDate dateNow = LocalDate.now();
+    private static String ClickPage = "Trang chủ";
+    @FXML
+    private VBox mainVBox;
+
+    @FXML
+    private Label lbTimeNow;
+
+    @FXML
+    private AnchorPane apLoadPane;
+
+    @FXML
+    private HBox btnBillPage;
+
+    @FXML
+    private HBox btnCustomerPage;
+
+    @FXML
+    private HBox btnEmployeePage;
+
+    @FXML
+    private HBox btnHomePage;
+
+    @FXML
+    private HBox btnProductPage;
+
+    @FXML
+    private Button btnSignOut;
+
+    @FXML
+    private HBox btnSupplierPage;
+
+    private void switchPage(Parent page) {
+
+        SwitchPage(apLoadPane, page);
+    }
+
+    private LoadFileGUI createPage(String location) {
+        return new LoadFileGUI(location);
+    }
+
+    private void loadPage(Parent page) throws IOException {
+        SwitchPage(apLoadPane, page);
+    }
+
+    // private void initpage() {
+    //     HomePage = createPage("/fxml/admin/component/homepage.fxml");
+    //     ProductPage = createPage("/fxml/admin/component/productpage.fxml");
+    //     CustomerPage = createPage("/fxml/admin/component/product/addproduct.fxml");
+    // }
+    private void handleSwitchPage(String pageName, String url) throws IOException {
+        if (!pageName.equals(ClickPage)) {
+            LoadFileGUI page = createPage(url);
+            loadPage(page.load());
+        }
+        this.ClickPage = pageName;
+    }
+
+    @FXML
+    private void loadHomePage() throws IOException {
+        System.out.println("Load Home Page");
+        handleSwitchPage("Trang chủ", "/fxml/admin/component/ingredient/goodsreceipt.fxml");
+    }
+
+    @FXML
+    private void loadProductPage() throws IOException {
+
+        System.out.println("Load Product Page");
+        handleSwitchPage("Sản phẩm", "/fxml/admin/component/productpage.fxml");
+    }
+
+    @FXML
+    private void loadCustomerPage() throws IOException {
+
+        System.out.println("Load Customer Page");
+        handleSwitchPage("Khách hàng", "/fxml/admin/component/product/addproduct.fxml");
+    }
+
+    @FXML
+    private void loadEmployeePage() throws IOException {
+        System.out.println("Load Employee Page");
+        handleSwitchPage("Nhân viên", "/fxml/employee.fxml");
+    }
+    private void loadSupplierPage() throws IOException {
+        System.out.println("Load Supplier Page");
+        handleSwitchPage("Nha cung cap", "/fxml/admin/supplier/Supplier.fxml");
+    }
+
+    private void loadLabel() {
+        lbTimeNow.setText(dateNow.toString());
+    }
+
+    @FXML
+    public void initialize() {
+        try {
+            ClickPage = "null";
+            loadHomePage();
+            loadLabel();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // Initialization code here
+
+    }
+
+}
