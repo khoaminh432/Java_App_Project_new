@@ -1,6 +1,9 @@
 package my_app.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Customer {
     private Integer id;
@@ -100,7 +103,7 @@ public class Customer {
             this.status = newStatus;
         }
     }
-    
+
     @Override
     public String toString() {
         return "Customer{" +
