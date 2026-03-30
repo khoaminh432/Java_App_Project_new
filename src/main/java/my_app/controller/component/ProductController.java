@@ -62,6 +62,9 @@ public class ProductController {
     @FXML
     private Button btnMaxQuantity;
 
+    @FXML
+    private ComboBox<String> cbbUnitProduct;
+
     // dữ liệu sản phẩm
     @FXML
     private TableColumn<Product, Integer> colID;
@@ -148,9 +151,6 @@ public class ProductController {
 
     // add product pane
     @FXML
-    private ComboBox<String> cbbUnitProduct;
-
-    @FXML
     private ComboBox<ProductCategory> cbbCategoryProduct;
 
     @FXML
@@ -215,7 +215,6 @@ public class ProductController {
         tfUnitProduct.clear();
         cbbCategoryProduct.getSelectionModel().select(0);
         cbbPriceProduct.getSelectionModel().select(0);
-        cbbUnitProduct.getSelectionModel().select(0);
         rdoActiveProduct.setSelected(true);
     }
 
@@ -367,12 +366,13 @@ public class ProductController {
 
     private void LoadComboboxData() {
         productCategoryBus.findAll();
-        cbbUnitProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getUnitProduct()));
-        cbbUnitProduct.getSelectionModel().select(0);
+
         cbbCategoryProduct.getItems().addAll(productCategoryBus.getProductCategories());
         cbbCategoryProduct.getSelectionModel().select(0);
         cbbPriceProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getDefaultUnitPriceProduct()));
         cbbPriceProduct.getSelectionModel().select(0);
+        cbbUnitProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getUnitProduct()));
+        cbbUnitProduct.getSelectionModel().select(0);
     }
 
     private void LoadActionButtons() {
@@ -531,7 +531,7 @@ public class ProductController {
         String name = ((TextField) vbAddProduct.lookup("#tfNameProduct")).getText();
         String priceStr = ((TextField) vbAddProduct.lookup("#tfPriceProduct")).getText();
         String quantityStr = ((TextField) vbAddProduct.lookup("#tfQuantityProduct")).getText();
-        String unit = cbbUnitProduct.getSelectionModel().getSelectedItem();
+
         ProductCategory categoryTemp = cbbCategoryProduct.getSelectionModel().getSelectedItem();
 
         if (name.isBlank() || priceStr.isBlank() || quantityStr.isBlank()) {

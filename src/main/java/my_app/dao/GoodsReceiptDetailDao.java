@@ -35,6 +35,18 @@ public class GoodsReceiptDetailDao implements GenericDao<GoodsReceiptDetail, Int
     }
 
     @Override
+    public ArrayList<GoodsReceiptDetail> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<GoodsReceiptDetail> details = new ArrayList<>(records.size());
+        records.forEach(row -> details.add(new GoodsReceiptDetail(row)));
+        return details;
+    }
+
+    @Override
     public int create(GoodsReceiptDetail entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Goods receipt detail entity must not be null");

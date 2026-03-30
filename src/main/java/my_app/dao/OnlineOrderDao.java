@@ -41,6 +41,18 @@ public class OnlineOrderDao implements GenericDao<OnlineOrder, Integer> {
     }
 
     @Override
+    public ArrayList<OnlineOrder> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE o.id > ? LIMIT ?", offset, limit);
+        ArrayList<OnlineOrder> orders = new ArrayList<>(records.size());
+        records.forEach(row -> orders.add(new OnlineOrder(row)));
+        return orders;
+    }
+
+    @Override
     public int create(OnlineOrder entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Online order entity must not be null");

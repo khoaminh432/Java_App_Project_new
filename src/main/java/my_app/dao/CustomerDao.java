@@ -27,6 +27,20 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
     }
 
     @Override
+    public ArrayList<Customer> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<Customer> list = new ArrayList<Customer>();
+        qe.ExecuteQuery(QUERYALL + " WHERE id > ? LIMIT ?", offset, limit).forEach(action -> {
+            Customer cus = new Customer(action);
+            list.add(cus);
+        });
+        return list;
+    }
+
+    @Override
     public ArrayList<Customer> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
         ArrayList<Customer> customers = new ArrayList<>(records.size());

@@ -35,6 +35,18 @@ public class RoleDao implements GenericDao<Role, Integer> {
     }
 
     @Override
+    public ArrayList<Role> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<Role> roles = new ArrayList<>(records.size());
+        records.forEach(row -> roles.add(new Role(row)));
+        return roles;
+    }
+
+    @Override
     public int create(Role entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Role entity must not be null");

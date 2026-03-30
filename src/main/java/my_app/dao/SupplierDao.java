@@ -38,6 +38,18 @@ public class SupplierDao implements GenericDao<Supplier, Integer> {
     }
 
     @Override
+    public ArrayList<Supplier> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<Supplier> suppliers = new ArrayList<>(records.size());
+        records.forEach(row -> suppliers.add(new Supplier(row)));
+        return suppliers;
+    }
+
+    @Override
     public int create(Supplier entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Supplier entity must not be null");

@@ -300,7 +300,7 @@ FOR EACH ROW
 BEGIN
     UPDATE ingredient ing
     SET ing.net_weight = COALESCE(new.net_weight,0),
-        ing.quantity = COALESCE(NEW.quantity,0),
+        ing.quantity = COALESCE(ing.quantity, 0) + COALESCE(NEW.quantity, 0),
         ing.unit_price = COALESCE(NEW.unit_price, ing.unit_price),
         ing.total_weight = COALESCE(ing.total_weight,0)+(COALESCE(NEW.net_weight,0) * COALESCE(NEW.quantity,0))
     WHERE ing.id = NEW.ingredient_id;

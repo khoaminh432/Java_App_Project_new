@@ -40,6 +40,10 @@ public class DefaultValueObject {
         return getDefaultValues(UnitPriceProductRaito);
     }
 
+    public static ArrayList<String> getDefaultUnitProduct() {
+        return getDefaultValues(UnitProduct);
+    }
+
     public static ArrayList<String> getUnitProduct() {
         return getDefaultValues(UnitProduct);
     }
