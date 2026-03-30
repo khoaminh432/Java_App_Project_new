@@ -20,6 +20,11 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
     }
 
     @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
     public ArrayList<Customer> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
         ArrayList<Customer> customers = new ArrayList<>(records.size());
