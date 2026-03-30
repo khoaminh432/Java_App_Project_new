@@ -36,6 +36,18 @@
       <artifactId>mysql-connector-j</artifactId>
       <version>${mysql.version}</version>
     </dependency>
+     <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>5.2.5</version>
+    </dependency>
+
+    <!-- Apache POI cho Excel .xlsx -->
+    <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>5.2.5</version>
+    </dependency>
 
   </dependencies>
 

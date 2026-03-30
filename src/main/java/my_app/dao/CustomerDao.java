@@ -7,8 +7,10 @@ import my_app.model.Customer;
 import my_app.util.QueryExecutor;
 
 public class CustomerDao implements GenericDao<Customer, Integer> {
+
     private static final String BASE_QUERY = "SELECT * FROM customer";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "customer";
 
     @Override
     public Customer findById(Integer id) {

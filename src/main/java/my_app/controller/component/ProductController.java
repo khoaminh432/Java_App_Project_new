@@ -3,6 +3,7 @@ package my_app.controller.component;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -40,6 +41,7 @@ import my_app.service.AlertInformation;
 import my_app.service.ConfigTextField;
 import my_app.service.LoadFileGUI;
 import my_app.util.DefaultValueObject;
+import my_app.util.QueryExecutor;
 
 public class ProductController {
 
@@ -249,36 +251,10 @@ public class ProductController {
         lbTotalAllIngredientProruct.setText(calTotalPriceAll != null ? calTotalPriceAll.toString() : "0");
     }
 
-    private void loadProductsAsync() {
-        if (loadProductsTask != null && loadProductsTask.isRunning()) {
-            return;
-        }
-        
-        loadProductsTask = new Task<List<Product>>() {
-            @Override
-            protected List<Product> call() {
-                return productBus.fetchAllFromDb();
-            }
-        };
-
-        loadProductsTask.setOnSucceeded(event -> {
-            List<Product> data = loadProductsTask.getValue();
-            productBus.replaceAll(data);
-            updateStatisticProduct();
-            setLabelStatisticProduct();
-        });
-
-        loadProductsTask.setOnFailed(event -> loadProductsTask.getException().printStackTrace());
-
-        Thread worker = new Thread(loadProductsTask, "product-loader");
-        worker.setDaemon(true);
-        worker.start();
-    }
-
     private void searchBarProducts() {
         tfSearchProduct.textProperty().addListener((obs, oldval, newval) -> {
             if (newval == null || newval.isEmpty()) {
-                loadProductsAsync();
+                productBus.findAll();
             } else
              try {
                 searchIDProducts(newval);
@@ -343,8 +319,7 @@ public class ProductController {
         colTotalWeightIngredient.setCellValueFactory(new PropertyValueFactory<>("totalWeight"));
         colUnitPriceIngredient.setCellValueFactory(cell
                 -> new ReadOnlyObjectWrapper<>(toDouble(cell.getValue().getUnitPrice())));
-        colQuantityIngredient.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
-        colWeightIngredient.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(toDouble(cell.getValue().getTotalWeight())));
+
     }
 
     // xử lí khi ấn vào table
@@ -558,7 +533,6 @@ public class ProductController {
         String quantityStr = ((TextField) vbAddProduct.lookup("#tfQuantityProduct")).getText();
         String unit = cbbUnitProduct.getSelectionModel().getSelectedItem();
         ProductCategory categoryTemp = cbbCategoryProduct.getSelectionModel().getSelectedItem();
-        String status = cbbStatusProduct.getSelectionModel().getSelectedItem();
 
         if (name.isBlank() || priceStr.isBlank() || quantityStr.isBlank()) {
             AlertInformation.showWarningAlert("Chú Ý", "Thiếu Thông Tin", "Vui lòng điền đầy đủ thông tin sản phẩm.");
@@ -586,7 +560,7 @@ public class ProductController {
         product.setUnitPrice(BigDecimal.valueOf(price));
         product.setQuantity(quantity);
         product.setUnit(unit);
-        product.setStatus(status);
+
         product.setCategoryId(categoryId);
 
         return product;
