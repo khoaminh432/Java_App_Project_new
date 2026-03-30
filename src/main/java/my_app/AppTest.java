@@ -12,7 +12,6 @@ import my_app.service.ConfigProperties;
 import my_app.util.DBConnection;
 public class AppTest extends Application {
     private static final String APP_NAME = "JavaFX Console Application";
-    private static final String APP_PATH = "resources/fxml/homepage.fxml";
     private TextArea console;
 
     @Override
@@ -55,7 +54,7 @@ public class AppTest extends Application {
         stage.show();
         stage.setOnCloseRequest(e ->
         {
-            dbConn.close();
+            DBConnection.close();
         }
         );
     }

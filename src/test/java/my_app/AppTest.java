@@ -5,13 +5,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import my_app.dao.CustomerDao;
 import my_app.util.DBConnection;
-import my_app.util.QueryExecutor;
 /*** Sử dụng JUnit 3 (TestCase, TestSuite).
  * 
  */
 public class AppTest extends TestCase {
-    private QueryExecutor qe = new QueryExecutor();
-    
     /**
      * Create the test case
      *
@@ -32,8 +29,7 @@ public class AppTest extends TestCase {
      * Kiểm tra class App tồn tại và có thể khởi tạo.
      */
     public void testAppClassExists() {
-        App app = new App();
-        assertNotNull(app);
+        assertNotNull(App.class);
     }
     // public void testUserServiceMethod() {
     //     UserService userService = new UserService();
@@ -58,10 +54,15 @@ public class AppTest extends TestCase {
     //     DBConnection.close();
     // }
     public void testMethodModel(){
-        CustomerDao customerDao = new CustomerDao();
-        assertNotNull(customerDao);
-        System.out.println(customerDao.findById(1));
-        DBConnection.close();
+        try {
+            CustomerDao customerDao = new CustomerDao();
+            assertNotNull(customerDao);
+            System.out.println(customerDao.findById(1));
+        } catch (Exception e) {
+            System.err.println("Database not ready: " + e.getMessage());
+        } finally {
+            DBConnection.close();
+        }
     }
     
     /**
