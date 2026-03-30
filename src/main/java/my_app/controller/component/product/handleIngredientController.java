@@ -62,7 +62,6 @@ public class handleIngredientController {
             }
             Integer estimate = Integer.parseInt(newValue);
             ingredient.setEstimate(estimate);
-
             ingredient.setTotalPrice();
             changeFunction.apply(null);
             setlbText();

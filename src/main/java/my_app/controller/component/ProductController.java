@@ -41,6 +41,7 @@ import my_app.service.AlertInformation;
 import my_app.service.ConfigTextField;
 import my_app.service.LoadFileGUI;
 import my_app.util.DefaultValueObject;
+import my_app.util.QueryExecutor;
 
 public class ProductController {
 
@@ -251,18 +252,13 @@ public class ProductController {
 
     private void searchBarProducts() {
         tfSearchProduct.textProperty().addListener((obs, oldval, newval) -> {
-            System.out.println("Search Product: " + newval);
-            if (newval == null || newval.isBlank() || newval == "") {
+            if (newval == null || newval.isEmpty()) {
                 productBus.findAll();
-
-            } else {
-                try {
-                    searchIDProducts(newval);
-                } catch (NumberFormatException e) {
-                    searchNameProducts(newval);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+            } else
+             try {
+                searchIDProducts(newval);
+            } catch (NumberFormatException e) {
+                searchNameProducts(newval);
             }
 
             updateStatisticProduct();
@@ -563,6 +559,8 @@ public class ProductController {
         product.setProductName(name);
         product.setUnitPrice(BigDecimal.valueOf(price));
         product.setQuantity(quantity);
+        product.setUnit(unit);
+
         product.setCategoryId(categoryId);
 
         return product;
