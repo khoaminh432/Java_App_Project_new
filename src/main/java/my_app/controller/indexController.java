@@ -98,9 +98,11 @@ public class indexController extends SwitchPage {
         System.out.println("Load Employee Page");
         handleSwitchPage("Nhân viên", "/fxml/employee.fxml");
     }
+
+    @FXML
     private void loadSupplierPage() throws IOException {
         System.out.println("Load Supplier Page");
-        handleSwitchPage("Nha cung cap", "/fxml/admin/supplier/Supplier.fxml");
+        handleSwitchPage("Nha cung cap", "/fxml/admin/supplier/supplier.fxml");
     }
 
     private void loadLabel() {
