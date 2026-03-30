@@ -11,7 +11,7 @@ import my_app.util.DBConnection;
 public class App extends Application {
 
     private static final String APP_NAME = "JavaFX Console Application";
-    private static final String APP_PATH = "/fxml/admin/index.fxml";
+    private static final String APP_PATH = "/fxml/employee.fxml";
     private LoadFileGUI loader;
     private DBConnection dbConn;
 

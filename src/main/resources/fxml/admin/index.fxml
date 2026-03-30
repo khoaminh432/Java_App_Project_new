@@ -66,9 +66,9 @@
                         <Insets left="20.0" />
                      </padding>
                   </HBox>
-                  <HBox fx:id="btnEmployeePage" alignment="CENTER_LEFT" styleClass="button-leftmenu">
+                  <HBox fx:id="btnEmployeePage" alignment="CENTER_LEFT" onMouseClicked="#loadEmployeePage" styleClass="button-leftmenu">
                      <children>
-                        <Label alignment="CENTER" prefHeight="36.0" prefWidth="34.0" styleClass="title-main" stylesheets="@../../css/style.css" text="🛃" />
+                        <Label alignment="CENTER" prefHeight="36.0" prefWidth="34.0" styleClass="title-main" stylesheets="@../../css/style.css" text="👤" />
                         <Label alignment="BOTTOM_LEFT" prefHeight="33.0" prefWidth="122.0" styleClass="title-button" stylesheets="@../../css/style.css" text="Nhân Viên" />
                      </children>
                      <padding>

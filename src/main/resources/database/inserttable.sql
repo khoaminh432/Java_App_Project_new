@@ -26,107 +26,107 @@ WHERE total_weight IS NULL;
 
 -- 1. product_category
 INSERT INTO product_category (category_name, description) VALUES
-('Cà phê', 'Các loại cà phê nguyên chất và pha chế'),
-('Trà', 'Trà các loại: trà sữa, trà trái cây, trà thảo mộc'),
-('Nước ép & Sinh tố', 'Nước ép trái cây tươi và sinh tố'),
-('Bánh ngọt', 'Các loại bánh ngọt, bánh mì, bánh kem'),
-('Đồ ăn nhẹ', 'Đồ ăn vặt, snack'),
-('Đồ uống đặc biệt', 'Các loại đồ uống đặc biệt của quán'),
-('Combo', 'Các gói combo tiết kiệm'),
-('Đồ uống lạnh', 'Các loại đồ uống lạnh'),
-('Đồ uống nóng', 'Các loại đồ uống nóng'),
-('Topping', 'Các loại topping thêm');
+('Ca phe', 'Cac loai ca phe nguyen chat va pha che'),
+('Tra', 'Tra cac loai: tra sua, tra trai cay, tra thao moc'),
+('Nuoc ep & Sinh to', 'Nuoc ep trai cay tuoi va sinh to'),
+('Banh ngot', 'Cac loai banh ngot, banh mi, banh kem'),
+('Do an nhe', 'Do an vat, snack'),
+('Do uong dac biet', 'Cac loai do uong dac biet cua quan'),
+('Combo', 'Cac goi combo tiet kiem'),
+('Do uong lanh', 'Cac loai do uong lanh'),
+('Do uong nong', 'Cac loai do uong nong'),
+('Topping', 'Cac loai topping them');
 
 -- 2. supplier
 INSERT INTO supplier (supplier_name, address, phone_number) VALUES
-('Công ty Cà phê Trung Nguyên', '123 Nguyễn Văn Linh, Q.7, TP.HCM', '0281234567'),
-('Nhà cung cấp sữa Vinamilk', '456 Lý Thường Kiệt, Q.10, TP.HCM', '0282345678'),
-('Công ty Trà Lipton', '789 Cách Mạng Tháng 8, Q.3, TP.HCM', '0283456789'),
-('Nhà cung cấp trái cây tươi', '321 Nguyễn Tri Phương, Q.5, TP.HCM', '0284567890'),
-('Công ty Bánh kẹo Hải Hà', '654 Lê Lợi, Q.1, TP.HCM', '0285678901'),
-('Nhà cung cấp đường Biên Hòa', '987 Hai Bà Trưng, Q.1, TP.HCM', '0286789012'),
-('Công ty Đá viên sạch', '147 Pasteur, Q.1, TP.HCM', '0287890123'),
-('Nhà cung cấp cốc ly Minh Long', '258 Nguyễn Thị Minh Khai, Q.1, TP.HCM', '0288901234'),
-('Công ty Topping Richy', '369 Phạm Ngũ Lão, Q.1, TP.HCM', '0289012345'),
-('Nhà cung cấp nước suối La Vie', '741 Nguyễn Văn Cừ, Q.5, TP.HCM', '0280123456');
+('Cong ty Ca phe Trung Nguyen', '123 Nguyen Van Linh, Q.7, TP.HCM', '0281234567'),
+('Nha cung cap sua Vinamilk', '456 Ly Thuong Kiet, Q.10, TP.HCM', '0282345678'),
+('Cong ty Tra Lipton', '789 Cach Mang Thang 8, Q.3, TP.HCM', '0283456789'),
+('Nha cung cap trai cay tuoi', '321 Nguyen Tri Phuong, Q.5, TP.HCM', '0284567890'),
+('Cong ty Banh keo Hai Ha', '654 Le Loi, Q.1, TP.HCM', '0285678901'),
+('Nha cung cap duong Bien Hoa', '987 Hai Ba Trung, Q.1, TP.HCM', '0286789012'),
+('Cong ty Da vien sach', '147 Pasteur, Q.1, TP.HCM', '0287890123'),
+('Nha cung cap coc ly Minh Long', '258 Nguyen Thi Minh Khai, Q.1, TP.HCM', '0288901234'),
+('Cong ty Topping Richy', '369 Pham Ngu Lao, Q.1, TP.HCM', '0289012345'),
+('Nha cung cap nuoc suoi La Vie', '741 Nguyen Van Cu, Q.5, TP.HCM', '0280123456');
 
 -- 3. role
 INSERT INTO role (role_name, hourly_rate) VALUES
-('Quản lý', 50000.00),
-('Nhân viên pha chế', 35000.00),
-('Nhân viên thu ngân', 30000.00),
-('Nhân viên phục vụ', 25000.00),
+('Quan ly', 50000.00),
+('Nhan vien pha che', 35000.00),
+('Nhan vien thu ngan', 30000.00),
+('Nhan vien phuc vu', 25000.00),
 ('Shipper', 20000.00),
-('Quản lý kho', 40000.00),
-('Trưởng ca', 45000.00),
-('Nhân viên vệ sinh', 20000.00),
-('Pha chế chính', 40000.00),
-('Nhân viên bán hàng online', 30000.00);
+('Quan ly kho', 40000.00),
+('Truong ca', 45000.00),
+('Nhan vien ve sinh', 20000.00),
+('Pha che chinh', 40000.00),
+('Nhan vien ban hang online', 30000.00);
 
 -- 4. customer
 INSERT INTO customer (full_name, phone_number, email, password, status) VALUES
-('Nguyễn Văn An', '0901111111', 'nguyenvanan@gmail.com', 'password123', 'active'),
-('Trần Thị Bình', '0902222222', 'tranthibinh@gmail.com', 'password123', 'active'),
-('Lê Minh Châu', '0903333333', 'leminhchau@gmail.com', 'password123', 'active'),
-('Phạm Văn Đức', '0904444444', 'phamvanduc@gmail.com', 'password123', 'active'),
-('Hoàng Thị Em', '0905555555', 'hoangthiem@gmail.com', 'password123', 'inactive'),
-('Vũ Văn Phong', '0906666666', 'vuvanphong@gmail.com', 'password123', 'active'),
-('Đặng Thị Quỳnh', '0907777777', 'dangthiquynh@gmail.com', 'password123', 'active'),
-('Bùi Văn Hải', '0908888888', 'buivanhai@gmail.com', 'password123', 'active'),
-('Đỗ Thị Lan', '0909999999', 'dothilan@gmail.com', 'password123', 'active'),
-('Ngô Văn Minh', '0900000000', 'ngovanminh@gmail.com', 'password123', 'inactive');
+('Nguyen Van An', '0901111111', 'nguyenvanan@gmail.com', 'password123', 'active'),
+('Tran Thi Binh', '0902222222', 'tranthibinh@gmail.com', 'password123', 'active'),
+('Le Minh Chau', '0903333333', 'leminhchau@gmail.com', 'password123', 'active'),
+('Pham Van Duc', '0904444444', 'phamvanduc@gmail.com', 'password123', 'active'),
+('Hoang Thi Em', '0905555555', 'hoangthiem@gmail.com', 'password123', 'inactive'),
+('Vu Van Phong', '0906666666', 'vuvanphong@gmail.com', 'password123', 'active'),
+('Dang Thi Quynh', '0907777777', 'dangthiquynh@gmail.com', 'password123', 'active'),
+('Bui Van Hai', '0908888888', 'buivanhai@gmail.com', 'password123', 'active'),
+('Do Thi Lan', '0909999999', 'dothilan@gmail.com', 'password123', 'active'),
+('Ngo Van Minh', '0900000000', 'ngovanminh@gmail.com', 'password123', 'inactive');
 
 -- 5. payment_method
 INSERT INTO payment_method (method_name) VALUES
-('Tiền mặt'),
-('Chuyển khoản ngân hàng'),
+('Tien mat'),
+('Chuyen khoan ngan hang'),
 ('Visa/Mastercard'),
 ('MoMo'),
 ('ZaloPay'),
 ('VNPay'),
 ('ShopeePay'),
-('Thẻ thành viên'),
-('Ví điện tử'),
+('The thanh vien'),
+('Vi dien tu'),
 ('QR Code');
 
 -- 6. voucher
 INSERT INTO voucher (promotion_name, start_date, end_date) VALUES
-('Giảm 20% cho đơn đầu tiên', '2024-01-01 00:00:00', '2024-12-31 23:59:59'),
-('Giảm 30K cho đơn từ 150K', '2024-02-01 00:00:00', '2024-06-30 23:59:59'),
-('Mua 1 tặng 1', '2024-03-01 00:00:00', '2024-03-31 23:59:59'),
-('Giảm 15% tất cả đồ uống', '2024-04-01 00:00:00', '2024-04-30 23:59:59'),
+('Giam 20% cho don dau tien', '2024-01-01 00:00:00', '2024-12-31 23:59:59'),
+('Giam 30K cho don tu 150K', '2024-02-01 00:00:00', '2024-06-30 23:59:59'),
+('Mua 1 tang 1', '2024-03-01 00:00:00', '2024-03-31 23:59:59'),
+('Giam 15% tat ca do uong', '2024-04-01 00:00:00', '2024-04-30 23:59:59'),
 ('Freeship 5KM', '2024-05-01 00:00:00', '2024-05-31 23:59:59'),
-('Giảm 50% sinh tố', '2024-06-01 00:00:00', '2024-06-15 23:59:59'),
-('Combo gia đình 199K', '2024-07-01 00:00:00', '2024-07-31 23:59:59'),
-('Tích điểm 2x', '2024-08-01 00:00:00', '2024-08-31 23:59:59'),
-('Giảm 25K bánh ngọt', '2024-09-01 00:00:00', '2024-09-30 23:59:59'),
-('Đồ uống thứ 2 chỉ 50K', '2024-10-01 00:00:00', '2024-10-31 23:59:59');
+('Giam 50% sinh to', '2024-06-01 00:00:00', '2024-06-15 23:59:59'),
+('Combo gia dinh 199K', '2024-07-01 00:00:00', '2024-07-31 23:59:59'),
+('Tich diem 2x', '2024-08-01 00:00:00', '2024-08-31 23:59:59'),
+('Giam 25K banh ngot', '2024-09-01 00:00:00', '2024-09-30 23:59:59'),
+('Do uong thu 2 chi 50K', '2024-10-01 00:00:00', '2024-10-31 23:59:59');
 
 -- 7. employee
 INSERT INTO employee (first_name, last_name, phone_number, dob, address, basic_salary, status, role_id) VALUES
-('Mai', 'Văn Hùng', '0911111111', '1990-05-15', '12 Lê Lợi, Q.1, TP.HCM', 15000000.00, 'active', 1),
-('Lê', 'Thị Mai', '0912222222', '1995-08-20', '34 Nguyễn Huệ, Q.1, TP.HCM', 12000000.00, 'active', 2),
-('Trần', 'Văn Nam', '0913333333', '1998-03-10', '56 Pasteur, Q.3, TP.HCM', 10000000.00, 'active', 3),
-('Nguyễn', 'Thị Hương', '0914444444', '1997-11-25', '78 CMT8, Q.10, TP.HCM', 9000000.00, 'active', 4),
-('Phạm', 'Văn Tài', '0915555555', '1996-07-30', '90 Lý Tự Trọng, Q.1, TP.HCM', 8000000.00, 'active', 5),
-('Hoàng', 'Thị Thu', '0916666666', '1994-02-14', '112 Nguyễn Thị Minh Khai, Q.3, TP.HCM', 11000000.00, 'active', 6),
-('Vũ', 'Văn Sơn', '0917777777', '1993-09-05', '134 Hai Bà Trưng, Q.1, TP.HCM', 13000000.00, 'active', 7),
-('Đặng', 'Thị Nga', '0918888888', '1999-12-12', '156 Điện Biên Phủ, Q.3, TP.HCM', 7000000.00, 'active', 8),
-('Bùi', 'Văn Đạt', '0919999999', '1992-06-18', '178 Trần Hưng Đạo, Q.5, TP.HCM', 11500000.00, 'active', 9),
-('Đỗ', 'Thị Hoa', '0910000000', '2000-04-22', '190 Nguyễn Văn Cừ, Q.5, TP.HCM', 9500000.00, 'active', 10);
+('Mai', 'Van Hung', '0911111111', '1990-05-15', '12 Le Loi, Q.1, TP.HCM', 15000000.00, 'active', 1),
+('Le', 'Thi Mai', '0912222222', '1995-08-20', '34 Nguyen Hue, Q.1, TP.HCM', 12000000.00, 'active', 2),
+('Tran', 'Van Nam', '0913333333', '1998-03-10', '56 Pasteur, Q.3, TP.HCM', 10000000.00, 'active', 3),
+('Nguyen', 'Thi Huong', '0914444444', '1997-11-25', '78 CMT8, Q.10, TP.HCM', 9000000.00, 'active', 4),
+('Pham', 'Van Tai', '0915555555', '1996-07-30', '90 Ly Tu Trong, Q.1, TP.HCM', 8000000.00, 'active', 5),
+('Hoang', 'Thi Thu', '0916666666', '1994-02-14', '112 Nguyen Thi Minh Khai, Q.3, TP.HCM', 11000000.00, 'active', 6),
+('Vu', 'Van Son', '0917777777', '1993-09-05', '134 Hai Ba Trung, Q.1, TP.HCM', 13000000.00, 'active', 7),
+('Dang', 'Thi Nga', '0918888888', '1999-12-12', '156 Dien Bien Phu, Q.3, TP.HCM', 7000000.00, 'active', 8),
+('Bui', 'Van Dat', '0919999999', '1992-06-18', '178 Tran Hung Dao, Q.5, TP.HCM', 11500000.00, 'active', 9),
+('Do', 'Thi Hoa', '0910000000', '2000-04-22', '190 Nguyen Van Cu, Q.5, TP.HCM', 9500000.00, 'active', 10);
 
 -- 8. product
 INSERT INTO product (product_name, unit_price, unit, quantity, status, category_id) VALUES
-('Cà phê đen đá', 25000.00, 'ly', 100, 'available', 1),
-('Cà phê sữa đá', 30000.00, 'ly', 150, 'available', 1),
-('Trà sữa trân châu', 45000.00, 'ly', 200, 'available', 2),
-('Trà đào cam sả', 40000.00, 'ly', 180, 'available', 2),
-('Sinh tố bơ', 50000.00, 'ly', 120, 'available', 3),
-('Nước ép cam', 35000.00, 'ly', 90, 'available', 3),
-('Bánh su kem', 20000.00, 'cái', 50, 'available', 4),
-('Bánh mì sandwich', 15000.00, 'cái', 80, 'available', 4),
-('Khoai tây chiên', 30000.00, 'phần', 60, 'available', 5),
-('Cà phê caramel macchiato', 55000.00, 'ly', 130, 'available', 6);
+('Ca phe den da', 25000.00, 'ly', 100, 'available', 1),
+('Ca phe sua da', 30000.00, 'ly', 150, 'available', 1),
+('Tra sua tran chau', 45000.00, 'ly', 200, 'available', 2),
+('Tra dao cam sa', 40000.00, 'ly', 180, 'available', 2),
+('Sinh to bo', 50000.00, 'ly', 120, 'available', 3),
+('Nuoc ep cam', 35000.00, 'ly', 90, 'available', 3),
+('Banh su kem', 20000.00, 'cai', 50, 'available', 4),
+('Banh mi sandwich', 15000.00, 'cai', 80, 'available', 4),
+('Khoai tay chien', 30000.00, 'phan', 60, 'available', 5),
+('Ca phe caramel macchiato', 55000.00, 'ly', 130, 'available', 6);
 
 -- 9. shipper
 INSERT INTO shipper (id, vehicle_plate_number, current_status) VALUES
@@ -169,15 +169,15 @@ INSERT INTO goods_receipt (received_date, supplier_id, total_quantity, total_pri
 
 -- 12. ingredient
 INSERT INTO ingredient (ingredient_name, net_weight, quantity) VALUES
-('Cà phê Arabica', 1000, 5),
-('Sữa đặc có đường', 380, 10),
-('Trà đen', 500, 8),
-('Đào tươi', 1000, 3),
-('Bơ', 500, 20),
-('Cam tươi', 1000, 4),
-('Bột mì', 1000, 2),
-('Khoai tây', 1000, 1),
-('Đường trắng', 1000, 20),
+('Ca phe Arabica', 1000, 5),
+('Sua dac co duong', 380, 10),
+('Tra den', 500, 8),
+('Dao tuoi', 1000, 3),
+('Bo', 500, 20),
+('Cam tuoi', 1000, 4),
+('Bot mi', 1000, 2),
+('Khoai tay', 1000, 1),
+('Duong trang', 1000, 20),
 ('Caramel syrup', 1000, 5);
 
 
@@ -234,9 +234,9 @@ INSERT INTO `order` (customer_id, order_date, sub_total, total_amount, status) V
 
 -- 16. online_order
 INSERT INTO online_order (id, customer_id, shipper_id, receiver_name, phone_number, address, shipping_fee, estimated_delivery_time, completed_time, status, total_amount) VALUES
-(4, 4, 5, 'Phạm Văn Đức', '0904444444', '123 Nguyễn Văn Linh, Q.7, TP.HCM', 15000.00, '2024-03-01 12:30:00', NULL, 'delivering', 165000.00),
-(7, 7, 6, 'Đặng Thị Quỳnh', '0907777777', '456 Lê Văn Sỹ, Q.3, TP.HCM', 10000.00, '2024-03-01 16:00:00', NULL, 'preparing', 75000.00),
-(10, 10, 7, 'Ngô Văn Minh', '0900000000', '789 Lý Thường Kiệt, Q.10, TP.HCM', 20000.00, '2024-03-01 19:00:00', NULL, 'cancelled', 100000.00);
+(4, 4, 5, 'Pham Van Duc', '0904444444', '123 Nguyen Van Linh, Q.7, TP.HCM', 15000.00, '2024-03-01 12:30:00', NULL, 'delivering', 165000.00),
+(7, 7, 6, 'Dang Thi Quynh', '0907777777', '456 Le Van Sy, Q.3, TP.HCM', 10000.00, '2024-03-01 16:00:00', NULL, 'preparing', 75000.00),
+(10, 10, 7, 'Ngo Van Minh', '0900000000', '789 Ly Thuong Kiet, Q.10, TP.HCM', 20000.00, '2024-03-01 19:00:00', NULL, 'cancelled', 100000.00);
 
 -- 17. order_detail
 INSERT INTO order_detail (order_id, product_id, quantity, unit_price) VALUES
