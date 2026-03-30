@@ -15,12 +15,19 @@ public class SupplierDao implements GenericDao<Supplier, Integer> {
         if (id == null) {
             throw new IllegalArgumentException("Supplier id must not be null");
         }
-        ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
+        ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE status =1 AND id=?", id);
         return results.isEmpty() ? null : new Supplier(results.get(0));
     }
 
     @Override
     public      ArrayList<Supplier> findAll() {
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE status = 1");
+        ArrayList<Supplier> suppliers = new ArrayList<>(records.size());
+        records.forEach(row -> suppliers.add(new Supplier(row)));
+        return suppliers;
+    }
+
+    public      ArrayList<Supplier> All() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
         ArrayList<Supplier> suppliers = new ArrayList<>(records.size());
         records.forEach(row -> suppliers.add(new Supplier(row)));
@@ -32,7 +39,7 @@ public class SupplierDao implements GenericDao<Supplier, Integer> {
         if (entity == null) {
             throw new IllegalArgumentException("Supplier entity must not be null");
         }
-        final String insertSql = "INSERT INTO supplier (supplier_name, address, phone_number) VALUES (?,?,?)";
+        final String insertSql = "INSERT INTO supplier (supplier_name, address, phone_number, status) VALUES (?,?,?,1)";
         return qe.ExecuteUpdate(insertSql,
                 entity.getSupplierName(),
                 entity.getAddress(),
@@ -44,7 +51,7 @@ public class SupplierDao implements GenericDao<Supplier, Integer> {
         if (entity == null || entity.getId() == null) {
             throw new IllegalArgumentException("Supplier entity and id must not be null");
         }
-        final String updateSql = "UPDATE supplier SET supplier_name=?, address=?, phone_number=? WHERE id=?";
+        final String updateSql = "UPDATE supplier SET supplier_name=?, address=?, phone_number=? WHERE status=1 AND id=?";
         return qe.ExecuteUpdate(updateSql,
                 entity.getSupplierName(),
                 entity.getAddress(),
@@ -52,11 +59,18 @@ public class SupplierDao implements GenericDao<Supplier, Integer> {
                 entity.getId());
     }
 
+    public int hardDelete(Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Supplier id must not be null");
+        }
+        return qe.ExecuteUpdate("DELETE FROM supplier WHERE id=?", id);
+    }
+    
     @Override
     public int delete(Integer id) {
         if (id == null) {
             throw new IllegalArgumentException("Supplier id must not be null");
         }
-        return qe.ExecuteUpdate("DELETE FROM supplier WHERE id=?", id);
+        return qe.ExecuteUpdate("UPDATE supplier SET status = 0 WHERE id = ?", id);
     }
 }

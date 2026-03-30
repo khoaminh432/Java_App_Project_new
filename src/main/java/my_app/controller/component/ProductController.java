@@ -100,8 +100,8 @@ public class ProductController {
         if (loadProductsTask != null && loadProductsTask.isRunning()) {
             return;
         }
-
-        loadProductsTask = new Task<>() {
+        
+        loadProductsTask = new Task<List<Product>>() {
             @Override
             protected List<Product> call() {
                 return productBus.fetchAllFromDb();
@@ -124,7 +124,7 @@ public class ProductController {
 
     private void searchBarProducts() {
         tfSearchProduct.textProperty().addListener((obs, oldval, newval) -> {
-            if (newval == null || newval.isBlank()) {
+            if (newval == null || newval.isEmpty()) {
                 loadProductsAsync();
             } else
              try {

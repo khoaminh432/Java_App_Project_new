@@ -44,7 +44,7 @@ public class CustomerBus implements GeneralConfig<Customer> {
         if (source == null || source.isEmpty()) {
             return Collections.emptyList();
         }
-        if (name == null || name.isBlank()) {
+        if (name == null || name.trim().isEmpty()) {
             return new ArrayList<>(source);
         }
         String keyword = name.toLowerCase();
