@@ -31,7 +31,7 @@
                <children>
                   <Button fx:id="btnHomePage" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#loadHomePage" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Trang Chủ" />
                   <Button fx:id="btnProductPage" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#loadProductPage" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Sản Phẩm" />
-                  <Button fx:id="btnSupplierPage" alignment="TOP_LEFT" mnemonicParsing="false" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Nhà Cung Cấp" />
+                  <Button fx:id="btnSupplierPage" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#loadSupplierPage" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Nhà Cung Cấp" />
                   <Button fx:id="btnEmployeePage" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="41.0" prefWidth="939.0" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Nhân Viên" />
                   <Button fx:id="btnCustomerPage" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#loadCustomerPage" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Khách Hàng" />
                   <Button fx:id="btnBillPage" alignment="TOP_LEFT" mnemonicParsing="false" styleClass="button-leftmenu" stylesheets="@../../css/style.css" text="Hóa Đơn" />

@@ -12,7 +12,7 @@ import my_app.model.Employee;
 
 public class EmployeeBus implements GeneralConfig<Employee> {
 
-    private final EmployeeDao employeeDao = new EmployeeDao();
+    private static final EmployeeDao employeeDao = new EmployeeDao();
     public static ArrayList<Employee> listEmployees = new ArrayList<>();
     private final ObservableList<Employee> employees;
 
