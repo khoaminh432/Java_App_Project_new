@@ -3,6 +3,7 @@ package my_app.model;
 import java.util.Map;
 
 public class Supplier {
+
     private Integer id;
     private String supplierName;
     private String address;
@@ -10,8 +11,9 @@ public class Supplier {
     private int status;
     
     // Constructors
-    public Supplier() {}
-    
+    public Supplier() {
+    }
+
     public Supplier(Integer id, String supplierName, String address, String phoneNumber) {
         this.id = id;
         this.supplierName = supplierName;
@@ -29,9 +31,11 @@ public class Supplier {
         this(other.id, other.supplierName, other.address, other.phoneNumber);
         this.status = 1;
     }
+
     public Supplier(Map<String, Object> data) {
         applyFromMap(data);
     }
+
     public void applyFromMap(Map<String, Object> data) {
         if (data == null || data.isEmpty()) {
             return;
@@ -62,7 +66,7 @@ public class Supplier {
             this.status = newStatus;
         }
     }
-    
+
     // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -81,11 +85,6 @@ public class Supplier {
     
     @Override
     public String toString() {
-        return "Supplier{" +
-               "id=" + id +
-               ", supplierName='" + supplierName + '\'' +
-               ", address='" + address + '\'' +
-               ", phoneNumber='" + phoneNumber + '\'' +
-               '}';
+        return supplierName;
     }
 }

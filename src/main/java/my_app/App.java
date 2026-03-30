@@ -4,23 +4,25 @@ import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import my_app.service.LoadFileGUI;
 import my_app.util.DBConnection;
 
 public class App extends Application {
+
     private static final String APP_NAME = "JavaFX Console Application";
     private static final String APP_PATH = "/fxml/admin/index.fxml";
-    private TextArea console;
     private LoadFileGUI loader;
     private DBConnection dbConn;
-    private void initDB(){
+
+    private void initDB() {
         dbConn = DBConnection.getInstance();
     }
-    private void DesktopRoot(){
+
+    private void DesktopRoot() {
         loader = new LoadFileGUI(APP_PATH);
     }
+
     @Override
     public void start(Stage stage) {
         initDB();
@@ -35,16 +37,15 @@ public class App extends Application {
         stage.setTitle(APP_NAME);
         stage.setScene(scene);
         stage.show();
-        stage.setOnCloseRequest(e ->
-        {
+        stage.setOnCloseRequest(e
+                -> {
             dbConn.close();
         }
         );
     }
-    
 
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }

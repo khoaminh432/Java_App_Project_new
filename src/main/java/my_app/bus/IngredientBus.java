@@ -116,7 +116,8 @@ public class IngredientBus implements GeneralConfig<Ingredient> {
     }
 
     public IngredientProduct getIngredientProductByThis(Ingredient ingredienttemp) {
-        IngredientProduct IngProTemp = ingredientProductDao.findByIngredientId(ingredienttemp.getId());
+        IngredientProduct IngProTemp = new IngredientProduct();
+        IngProTemp.setIngredientId(ingredienttemp.getId());
         if (IngProTemp == null) {
             return null;
         }

@@ -23,6 +23,34 @@ public class IngredientProductBus extends AlertInformation implements GeneralCon
         this.ingredientProducts = FXCollections.observableArrayList();
     }
 
+    public void addListIngredientProducts(ArrayList<IngredientProduct> newMappings) {
+        if (newMappings != null) {
+            listIngredientProducts.addAll(newMappings);
+            ingredientProducts.addAll(newMappings);
+        }
+    }
+
+    public void addIngredientProduct(IngredientProduct newMapping) {
+        if (newMapping != null) {
+            listIngredientProducts.add(newMapping);
+            ingredientProducts.add(newMapping);
+        }
+    }
+
+    public void Validate() throws Exception {
+        ingredientProducts.forEach(ip -> {
+            if (ip.getEstimate() == null || ip.getEstimate() <= 0) {
+                throw new IllegalArgumentException("Số lượng ước tính" + ip.getIngredient().getIngredientName() + " phải lớn hơn 0");
+            }
+        });
+    }
+
+    public void addtoDB() {
+        ingredientProducts.forEach(ip -> {
+            ingredientProductDao.create(ip);
+        });
+    }
+
     public ObservableList<IngredientProduct> getIngredientProducts() {
         return ingredientProducts;
     }
