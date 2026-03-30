@@ -76,7 +76,7 @@ public class indexController extends SwitchPage {
     @FXML
     private void loadHomePage() throws IOException {
         System.out.println("Load Home Page");
-        handleSwitchPage("Trang chủ", "/fxml/admin/component/homepage.fxml");
+        handleSwitchPage("Trang chủ", "/fxml/admin/component/ingredient/goodsreceipt.fxml");
     }
 
     @FXML
@@ -97,6 +97,10 @@ public class indexController extends SwitchPage {
     private void loadEmployeePage() throws IOException {
         System.out.println("Load Employee Page");
         handleSwitchPage("Nhân viên", "/fxml/employee.fxml");
+    }
+    private void loadSupplierPage() throws IOException {
+        System.out.println("Load Supplier Page");
+        handleSwitchPage("Nha cung cap", "/fxml/admin/supplier/Supplier.fxml");
     }
 
     private void loadLabel() {

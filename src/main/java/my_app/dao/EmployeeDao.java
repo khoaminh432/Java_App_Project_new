@@ -3,26 +3,32 @@ package my_app.dao;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import my_app.model.Employee;
 import my_app.util.QueryExecutor;
 
 public class EmployeeDao implements GenericDao<Employee, Integer> {
+
     private static final String BASE_QUERY = "SELECT * FROM employee";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "employee";
 
     @Override
     public Employee findById(Integer id) {
         if (id == null) {
             throw new IllegalArgumentException("Employee id must not be null");
         }
-        Employee employee = new Employee(qe.ExecuteQuery(BASE_QUERY+ " WHERE id=?", id).get(0));
+        Employee employee = new Employee(qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id).get(0));
         return employee;
     }
 
     @Override
-    public  ArrayList<Employee> findAll() {
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
+    public ArrayList<Employee> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
         ArrayList<Employee> employees = new ArrayList<>(records.size());
         records.forEach(row -> employees.add(new Employee(row)));

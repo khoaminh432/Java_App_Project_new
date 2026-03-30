@@ -1,0 +1,15 @@
+<HBox spacing="10" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="my_app.controller.ItemRowController"
+      alignment="CENTER_LEFT">
+
+    <ComboBox fx:id="cbIngredient" prefWidth="180"/>
+
+    <TextField fx:id="txtQuantity" promptText="Số lượng"/>
+
+    <TextField fx:id="txtPrice" promptText="Đơn giá"/>
+
+    <Label fx:id="lbTotal" text="0"/>
+
+    <Button text="X" styleClass="btn-delete" onAction="#handleRemove"/>
+
+</HBox>

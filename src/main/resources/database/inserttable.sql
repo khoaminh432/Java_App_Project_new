@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
 use jdbc_demo;
 
 -- Ensure ingredient.total_weight exists before seeding (works on MySQL < 8.0)
@@ -38,17 +40,17 @@ INSERT INTO product_category (category_name, description) VALUES
 ('Topping', 'Cac loai topping them');
 
 -- 2. supplier
-INSERT INTO supplier (supplier_name, address, phone_number) VALUES
-('Cong ty Ca phe Trung Nguyen', '123 Nguyen Van Linh, Q.7, TP.HCM', '0281234567'),
-('Nha cung cap sua Vinamilk', '456 Ly Thuong Kiet, Q.10, TP.HCM', '0282345678'),
-('Cong ty Tra Lipton', '789 Cach Mang Thang 8, Q.3, TP.HCM', '0283456789'),
-('Nha cung cap trai cay tuoi', '321 Nguyen Tri Phuong, Q.5, TP.HCM', '0284567890'),
-('Cong ty Banh keo Hai Ha', '654 Le Loi, Q.1, TP.HCM', '0285678901'),
-('Nha cung cap duong Bien Hoa', '987 Hai Ba Trung, Q.1, TP.HCM', '0286789012'),
-('Cong ty Da vien sach', '147 Pasteur, Q.1, TP.HCM', '0287890123'),
-('Nha cung cap coc ly Minh Long', '258 Nguyen Thi Minh Khai, Q.1, TP.HCM', '0288901234'),
-('Cong ty Topping Richy', '369 Pham Ngu Lao, Q.1, TP.HCM', '0289012345'),
-('Nha cung cap nuoc suoi La Vie', '741 Nguyen Van Cu, Q.5, TP.HCM', '0280123456');
+INSERT INTO supplier (supplier_name, address, phone_number, status) VALUES
+('Công ty Cà phê Trung Nguyên', '123 Nguyễn Văn Linh, Q.7, TP.HCM', '0281234567', 1),
+('Nhà cung cấp sữa Vinamilk', '456 Lý Thường Kiệt, Q.10, TP.HCM', '0282345678', 1),
+('Công ty Trà Lipton', '789 Cách Mạng Tháng 8, Q.3, TP.HCM', '0283456789', 1),
+('Nhà cung cấp trái cây tươi', '321 Nguyễn Tri Phương, Q.5, TP.HCM', '0284567890', 1),
+('Công ty Bánh kẹo Hải Hà', '654 Lê Lợi, Q.1, TP.HCM', '0285678901', 1),
+('Nhà cung cấp đường Biên Hòa', '987 Hai Bà Trưng, Q.1, TP.HCM', '0286789012', 1),
+('Công ty Đá viên sạch', '147 Pasteur, Q.1, TP.HCM', '0287890123', 1),
+('Nhà cung cấp cốc ly Minh Long', '258 Nguyễn Thị Minh Khai, Q.1, TP.HCM', '0288901234', 1),
+('Công ty Topping Richy', '369 Phạm Ngũ Lão, Q.1, TP.HCM', '0289012345', 1),
+('Nhà cung cấp nước suối La Vie', '741 Nguyễn Văn Cừ, Q.5, TP.HCM', '0280123456', 1);
 
 -- 3. role
 INSERT INTO role (role_name, hourly_rate) VALUES

@@ -6,26 +6,35 @@ import my_app.model.Customer;
 import my_app.util.QueryExecutor;
 
 public class CustomerDao implements GenericDao<Customer, Integer> {
+
     private final QueryExecutor qe = new QueryExecutor();
     private final String QUERYALL = "SELECT * FROM customer "; // Example query
+    private final static String TABLE_NAME = "customer";
+
     @Override
     public Customer findById(Integer id) {
-        Customer customer = new Customer(qe.ExecuteQuery(QUERYALL+" where id=?",id).get(0));
+        Customer customer = new Customer(qe.ExecuteQuery(QUERYALL + " where id=?", id).get(0));
         return customer;
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
     }
 
     @Override
     public ArrayList<Customer> findAll() {
         ArrayList<Customer> list = new ArrayList<Customer>();
-        qe.ExecuteQuery(QUERYALL).forEach(action->{
+        qe.ExecuteQuery(QUERYALL).forEach(action -> {
             Customer cus = new Customer(action);
             list.add(cus);
         });
         return list;
     }
-    public ArrayList<Customer> findAll(String status){
-        ArrayList<Customer> list  = new ArrayList<Customer>();
-        qe.ExecuteQuery(QUERYALL+" WHERE status = ?", status).forEach(action->{
+
+    public ArrayList<Customer> findAll(String status) {
+        ArrayList<Customer> list = new ArrayList<Customer>();
+        qe.ExecuteQuery(QUERYALL + " WHERE status = ?", status).forEach(action -> {
             Customer cus = new Customer(action);
             list.add(cus);
         });
@@ -45,6 +54,7 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
                 entity.getPassword(),
                 entity.getStatus());
     }
+
     @Override
     public int update(Customer entity) {
         if (entity == null || entity.getId() == null) {
