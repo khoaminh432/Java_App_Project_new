@@ -93,6 +93,12 @@ public class indexController extends SwitchPage {
         handleSwitchPage("Khách hàng", "/fxml/admin/component/product/addproduct.fxml");
     }
 
+    @FXML
+    private void loadSupplierPage() throws IOException {
+        System.out.println("Load Supplier Page");
+        handleSwitchPage("Nha cung cap", "/fxml/admin/supplier/Supplier.fxml");
+    }
+
     private void loadLabel() {
         lbTimeNow.setText(dateNow.toString());
     }

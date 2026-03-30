@@ -253,8 +253,8 @@ public class ProductController {
         if (loadProductsTask != null && loadProductsTask.isRunning()) {
             return;
         }
-
-        loadProductsTask = new Task<>() {
+        
+        loadProductsTask = new Task<List<Product>>() {
             @Override
             protected List<Product> call() {
                 return productBus.fetchAllFromDb();
@@ -277,18 +277,13 @@ public class ProductController {
 
     private void searchBarProducts() {
         tfSearchProduct.textProperty().addListener((obs, oldval, newval) -> {
-            System.out.println("Search Product: " + newval);
-            if (newval == null || newval.isBlank() || newval == "") {
-                productBus.findAll();
-
-            } else {
-                try {
-                    searchIDProducts(newval);
-                } catch (NumberFormatException e) {
-                    searchNameProducts(newval);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+            if (newval == null || newval.isEmpty()) {
+                loadProductsAsync();
+            } else
+             try {
+                searchIDProducts(newval);
+            } catch (NumberFormatException e) {
+                searchNameProducts(newval);
             }
 
             updateStatisticProduct();
