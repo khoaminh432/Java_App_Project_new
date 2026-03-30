@@ -1,19 +1,21 @@
 package my_app.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import my_app.model.Customer;
 import my_app.util.QueryExecutor;
 
 public class CustomerDao implements GenericDao<Customer, Integer> {
-
+    private static final String BASE_QUERY = "SELECT * FROM customer";
     private final QueryExecutor qe = new QueryExecutor();
-    private final String QUERYALL = "SELECT * FROM customer "; // Example query
-    private final static String TABLE_NAME = "customer";
 
     @Override
     public Customer findById(Integer id) {
-        Customer customer = new Customer(qe.ExecuteQuery(QUERYALL + " where id=?", id).get(0));
+        if (id == null) {
+            throw new IllegalArgumentException("Customer id must not be null");
+        }
+        Customer customer = new Customer(qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id).get(0));
         return customer;
     }
 
@@ -24,21 +26,21 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
 
     @Override
     public ArrayList<Customer> findAll() {
-        ArrayList<Customer> list = new ArrayList<Customer>();
-        qe.ExecuteQuery(QUERYALL).forEach(action -> {
-            Customer cus = new Customer(action);
-            list.add(cus);
-        });
-        return list;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<Customer> customers = new ArrayList<>(records.size());
+        records.forEach(row -> customers.add(new Customer(row)));
+        return customers;
     }
 
-    public ArrayList<Customer> findAll(String status) {
-        ArrayList<Customer> list = new ArrayList<Customer>();
-        qe.ExecuteQuery(QUERYALL + " WHERE status = ?", status).forEach(action -> {
-            Customer cus = new Customer(action);
-            list.add(cus);
-        });
-        return list;
+    public ArrayList<Customer> findByName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Customer name must not be null or empty");
+        }
+        String searchQuery = BASE_QUERY + " WHERE full_name LIKE ?";
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(searchQuery, "%" + name + "%");
+        ArrayList<Customer> customers = new ArrayList<>(records.size());
+        records.forEach(row -> customers.add(new Customer(row)));
+        return customers;
     }
 
     @Override
@@ -75,7 +77,6 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         if (id == null) {
             throw new IllegalArgumentException("Customer id must not be null");
         }
-        final String deleteSql = "DELETE FROM customer WHERE id=?";
-        return qe.ExecuteUpdate(deleteSql, id);
+        return qe.ExecuteUpdate("DELETE FROM customer WHERE id=?", id);
     }
 }
