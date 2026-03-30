@@ -35,6 +35,18 @@ public class PaymentMethodDao implements GenericDao<PaymentMethod, Integer> {
     }
 
     @Override
+    public ArrayList<PaymentMethod> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<PaymentMethod> methods = new ArrayList<>(records.size());
+        records.forEach(row -> methods.add(new PaymentMethod(row)));
+        return methods;
+    }
+
+    @Override
     public int create(PaymentMethod entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Payment method entity must not be null");

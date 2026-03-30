@@ -3,12 +3,14 @@ package my_app.controller.component.goods;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import my_app.controller.BaseController;
+import my_app.model.GoodsReceiptDetail;
 import my_app.model.Ingredient;
 import my_app.service.ConfigTextField;
 import my_app.service.FormatBigDecimal;
@@ -16,7 +18,7 @@ import my_app.service.FormatBigDecimal;
 public class GoodsReceiveItems extends BaseController {
 
     private Function deleteEvent;
-    private static ArrayList<Ingredient> ingredients = new ArrayList<>();
+    private static ArrayList<GoodsReceiveItems> Arrayingredients = new ArrayList<>();
     @FXML
     private Label lbIngredientName;
 
@@ -31,13 +33,20 @@ public class GoodsReceiveItems extends BaseController {
 
     private Ingredient ing;
 
-    public static ArrayList<Ingredient> getIngredients() {
-        return ingredients;
+    private int getIndex() {
+        return IntStream.range(0, Arrayingredients.size())
+                .filter(i -> Arrayingredients.get(i).ing.getId() == ing.getId())
+                .findFirst()
+                .orElse(-1);
+    }
+
+    public static ArrayList<GoodsReceiveItems> getArrayIngredients() {
+        return Arrayingredients;
     }
 
     public void setData(Ingredient ing) {
         this.ing = ing;
-        ingredients.add(ing);
+        Arrayingredients.add(this);
         setLabelText();
     }
 
@@ -45,29 +54,39 @@ public class GoodsReceiveItems extends BaseController {
         this.deleteEvent = deleteEvent;
     }
 
-    private void setIngredient() throws IllegalArgumentException {
+    protected void validateData() throws IllegalArgumentException {
         try {
             ing.setUnitPrice(new BigDecimal(Double.parseDouble(tfUnitPriceUpdate.getText())));
             ing.setQuantity(Integer.parseInt(tfQuantityUpdate.getText()));
             ing.setNetWeight(Integer.parseInt(tfNetWeightUpdate.getText()));
+            Arrayingredients.set(getIndex(), this);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Thông tin nhập không hợp lệ! ");
+            throw new IllegalArgumentException(ing.getIngredientName() + ": Các trường dữ liệu không hợp lệ! ");
             // Handle the exception, e.g., show an error message
         }
 
     }
 
-    private Ingredient getIngredient() {
+    protected Ingredient getIngredient() {
         return ing;
+    }
+
+    protected GoodsReceiptDetail getGoodsReceiptDetail(int receiptId) {
+        GoodsReceiptDetail detail = new GoodsReceiptDetail();
+        detail.setReceiptId(receiptId);
+        detail.setIngredient(ing);
+        detail.setIngredientId(ing.getId());
+        detail.setNetWeight(ing.getNetWeight());
+        detail.setQuantity(ing.getQuantity());
+        detail.setUnitPrice(ing.getUnitPrice());
+        return detail;
     }
 
     @FXML
     private void handleDeleteIngredient(MouseEvent event) {
         if (deleteEvent != null) {
-
-            ingredients.remove(ing);
+            Arrayingredients.remove(getIndex());
             deleteEvent.apply(null);
-
         }
     }
 

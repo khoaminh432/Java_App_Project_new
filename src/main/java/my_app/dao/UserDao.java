@@ -36,7 +36,20 @@ public class UserDao implements GenericDao<User, Integer> {
     }
 
     @Override
-    public int create(User entity) {
+    public ArrayList<User> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<User> users = new ArrayList<>(records.size());
+        records.forEach(row -> users.add(mapToUser(row)));
+        return users;
+    }
+
+    @Override
+    public int create(User entity
+    ) {
         Map<String, Object> attrs = requireAttributes(entity);
         Object username = resolveAttribute(attrs, "username", "user_name");
         Object password = resolveAttribute(attrs, "password");
@@ -51,7 +64,8 @@ public class UserDao implements GenericDao<User, Integer> {
     }
 
     @Override
-    public int update(User entity) {
+    public int update(User entity
+    ) {
         Map<String, Object> attrs = requireAttributes(entity);
         Object idValue = resolveAttribute(attrs, "id");
         if (!(idValue instanceof Number)) {
@@ -73,7 +87,8 @@ public class UserDao implements GenericDao<User, Integer> {
     }
 
     @Override
-    public int delete(Integer id) {
+    public int delete(Integer id
+    ) {
         if (id == null) {
             throw new IllegalArgumentException("User id must not be null");
         }

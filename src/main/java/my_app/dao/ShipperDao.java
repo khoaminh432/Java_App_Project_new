@@ -39,6 +39,18 @@ public class ShipperDao implements GenericDao<Shipper, Integer> {
     }
 
     @Override
+    public ArrayList<Shipper> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE e.id > ? LIMIT ?", offset, limit);
+        ArrayList<Shipper> shippers = new ArrayList<>(records.size());
+        records.forEach(row -> shippers.add(new Shipper(row)));
+        return shippers;
+    }
+
+    @Override
     public int create(Shipper entity) {
         if (entity == null || entity.getId() == null) {
             throw new IllegalArgumentException("Shipper entity and id must not be null (employee row required)");

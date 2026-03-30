@@ -6,6 +6,8 @@ public interface GenericDao<T, ID> {
 
     T findById(ID id);
 
+    ArrayList<T> findAll(int limit, int page);
+
     ArrayList<T> findAll();
 
     int create(T entity);

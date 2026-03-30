@@ -32,6 +32,18 @@ public class IngredientProductDao implements GenericDao<IngredientProduct, Integ
     }
 
     @Override
+    public ArrayList<IngredientProduct> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<IngredientProduct> mappings = new ArrayList<>(records.size());
+        records.forEach(row -> mappings.add(new IngredientProduct(row)));
+        return mappings;
+    }
+
+    @Override
     public int getNextID() {
         return qe.NextID(TABLE_NAME);
     }
