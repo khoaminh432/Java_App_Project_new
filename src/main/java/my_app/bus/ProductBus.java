@@ -11,7 +11,7 @@ import my_app.model.Product;
 
 public class ProductBus implements GeneralConfig<Product> {
 
-    private ProductDao productDao = new ProductDao();
+    private static final ProductDao productDao = new ProductDao();
     public static ArrayList<Product> listProducts = new ArrayList<>();
     private final ObservableList<Product> products;
 

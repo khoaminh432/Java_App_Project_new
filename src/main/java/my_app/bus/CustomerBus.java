@@ -12,7 +12,7 @@ import my_app.model.Customer;
 
 public class CustomerBus implements GeneralConfig<Customer> {
 
-    private final CustomerDao customerDao = new CustomerDao();
+    private static final CustomerDao customerDao = new CustomerDao();
     public static ArrayList<Customer> listCustomers = new ArrayList<>();
     private final ObservableList<Customer> customers;
 
@@ -44,7 +44,7 @@ public class CustomerBus implements GeneralConfig<Customer> {
         if (source == null || source.isEmpty()) {
             return Collections.emptyList();
         }
-        if (name == null || name.trim().isEmpty()) {
+        if (name == null || name.isBlank()) {
             return new ArrayList<>(source);
         }
         String keyword = name.toLowerCase();

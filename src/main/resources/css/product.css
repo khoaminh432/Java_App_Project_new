@@ -1,0 +1,93 @@
+
+
+
+/* add product.css styles here */
+/* ================= ROOT ================= */
+.root {
+    -fx-font-family: "Segoe UI", "Inter";
+    -fx-background-color: linear-gradient(to bottom right, #EEF2F7, #F9FBFD);
+}
+
+/* ================= CARD ================= */
+.form-card {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-padding: 30;
+    -fx-spacing: 20;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 30, 0.15, 0, 10);
+}
+
+/* ================= TITLE ================= */
+.form-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #1F2937;
+}
+
+/* ================= LABEL ================= */
+.label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #4B5563;
+}
+
+/* ================= INPUT ================= */
+.text-field,
+.combo-box {
+    -fx-pref-height: 42;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1;
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 0 14;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused,
+.combo-box:focused {
+    -fx-border-color: #6366F1;
+    -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.35), 10, 0.2, 0, 0);
+}
+
+/* Placeholder text */
+.text-field .text {
+    -fx-fill: #111827;
+}
+
+/* ================= BUTTON ================= */
+.btn-primary {
+    -fx-background-radius: 12;
+    -fx-padding: 10 26;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to right, #6366F1, #4F46E5);
+    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.45), 12, 0.3, 0, 6);
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to right, #4F46E5, #4338CA);
+}
+
+.btn-danger {
+    -fx-background-radius: 12;
+    -fx-padding: 10 26;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to right, #EF4444, #DC2626);
+    -fx-effect: dropshadow(gaussian, rgba(220,38,38,0.4), 12, 0.3, 0, 6);
+}
+
+.btn-danger:hover {
+    -fx-background-color: linear-gradient(to right, #DC2626, #B91C1C);
+}
+
+/* ================= GRID ================= */
+.grid-pane {
+    -fx-hgap: 14;
+    -fx-vgap: 14;
+}
+

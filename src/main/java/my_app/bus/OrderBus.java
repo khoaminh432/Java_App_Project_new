@@ -12,7 +12,7 @@ import my_app.model.Order;
 
 public class OrderBus implements GeneralConfig<Order> {
 
-    private final OrderDao orderDao = new OrderDao();
+    private static final OrderDao orderDao = new OrderDao();
     public static ArrayList<Order> listOrders = new ArrayList<>();
     private final ObservableList<Order> orders;
 
@@ -52,7 +52,7 @@ public class OrderBus implements GeneralConfig<Order> {
         if (source == null || source.isEmpty()) {
             return Collections.emptyList();
         }
-        if (keyword == null || keyword.isEmpty()) {
+        if (keyword == null || keyword.isBlank()) {
             return new ArrayList<>(source);
         }
         String needle = keyword.toLowerCase();
