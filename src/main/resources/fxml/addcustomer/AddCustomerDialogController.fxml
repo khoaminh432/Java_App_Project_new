@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17" 
+      xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="my_app.controller.AddCustomerDialogController"
+      spacing="12" 
+      style="-fx-padding: 20;">
+    
+    <GridPane hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints prefWidth="100"/>
+            <ColumnConstraints prefWidth="250"/>
+        </columnConstraints>
+        
+        <!-- ID -->
+        <Label text="ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtId" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        
+        <!-- Họ và Tên -->
+        <Label text="Họ và Tên:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtFullName" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        
+        <!-- Số Điện Thoại -->
+        <Label text="Số Điện Thoại:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtPhoneNumber" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        
+        <!-- Email -->
+        <Label text="Email:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtEmail" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        
+        <!-- Mật Khẩu -->
+        <Label text="Mật Khẩu:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <PasswordField fx:id="txtPassword" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+        
+        <!-- Trạng Thái -->
+        <Label text="Trạng Thái:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="cbStatus" GridPane.rowIndex="5" GridPane.columnIndex="1">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="active"/>
+                    <String fx:value="inactive"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </GridPane>
+    
+    <!-- Nút OK và Cancel -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="btnOK" text="Thêm" style="-fx-padding: 8 30; -fx-font-size: 12;"/>
+        <Button fx:id="btnCancel" text="Hủy" style="-fx-padding: 8 30; -fx-font-size: 12;"/>
+    </HBox>
+</VBox>
