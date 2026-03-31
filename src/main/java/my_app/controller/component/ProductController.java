@@ -559,7 +559,6 @@ public class ProductController {
         product.setProductName(name);
         product.setUnitPrice(BigDecimal.valueOf(price));
         product.setQuantity(quantity);
-        product.setUnit(unit);
 
         product.setCategoryId(categoryId);
 
