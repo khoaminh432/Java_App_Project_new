@@ -33,7 +33,7 @@ public class DBConnection  {
     }
     public static void close() {
         try {
-            if (instance.conn != null && !instance.conn.isClosed()) {
+            if (instance != null && instance.conn != null && !instance.conn.isClosed()) {
                 instance.conn.close();
                 System.out.println("Đóng kết nối DB thành công!");
             }
@@ -45,8 +45,8 @@ public class DBConnection  {
     public static void main(String[] args) {
         DBConnection dbConn = DBConnection.getInstance();
         // Sử dụng kết nối
-        Connection conn = dbConn.connect();
+        dbConn.connect();
         // Đóng kết nối khi không còn sử dụng
-        dbConn.close();
+        DBConnection.close();
     }
 }

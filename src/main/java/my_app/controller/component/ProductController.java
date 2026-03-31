@@ -43,7 +43,7 @@ import my_app.service.LoadFileGUI;
 import my_app.util.DefaultValueObject;
 import my_app.util.QueryExecutor;
 
-public class ProductController {
+    public class ProductController {
 
     private final static IngredientProductBus ingredientProductBus = new IngredientProductBus();
     private final static ProductCategoryBus productCategoryBus = new ProductCategoryBus();
@@ -533,6 +533,7 @@ public class ProductController {
         String quantityStr = ((TextField) vbAddProduct.lookup("#tfQuantityProduct")).getText();
 
         ProductCategory categoryTemp = cbbCategoryProduct.getSelectionModel().getSelectedItem();
+        String unit = cbbUnitProduct.getSelectionModel().getSelectedItem();
 
         if (name.isBlank() || priceStr.isBlank() || quantityStr.isBlank()) {
             AlertInformation.showWarningAlert("Chú Ý", "Thiếu Thông Tin", "Vui lòng điền đầy đủ thông tin sản phẩm.");
@@ -559,6 +560,7 @@ public class ProductController {
         product.setProductName(name);
         product.setUnitPrice(BigDecimal.valueOf(price));
         product.setQuantity(quantity);
+        product.setUnit(unit);
 
         product.setCategoryId(categoryId);
 

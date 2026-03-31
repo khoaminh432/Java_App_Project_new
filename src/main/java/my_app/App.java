@@ -25,7 +25,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        initDB();
         DesktopRoot();
         Scene scene;
         try {
@@ -37,9 +36,9 @@ public class App extends Application {
         stage.setTitle(APP_NAME);
         stage.setScene(scene);
         stage.show();
-        stage.setOnCloseRequest(e
-                -> {
-            dbConn.close();
+        stage.setOnCloseRequest(e ->
+        {
+            DBConnection.close();
         }
         );
     }

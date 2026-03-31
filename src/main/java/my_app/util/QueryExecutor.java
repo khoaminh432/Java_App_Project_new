@@ -33,6 +33,8 @@ public class QueryExecutor {
             preteble.close();
             return list;
         } catch (Exception e) {
+            System.err.println("Chi tiết lỗi truy vấn: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Lỗi khi thực thi truy vấn", e);
         }
     }
@@ -55,6 +57,8 @@ public class QueryExecutor {
             }
             return list;
         } catch (Exception e) {
+            System.err.println("Chi tiết lỗi truy vấn (với params): " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Lỗi khi thực thi truy vấn", e);
         }
     }

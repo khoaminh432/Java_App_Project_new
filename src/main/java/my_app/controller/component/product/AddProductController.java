@@ -31,12 +31,6 @@ public class AddProductController {
         cbbStatusProduct.getSelectionModel().select(0);
     }
 
-    private boolean CheckForm(){
-        
-        return true;
-    }
-    
-
     @FXML
     private void handleAddProduct(ActionEvent event) {
 

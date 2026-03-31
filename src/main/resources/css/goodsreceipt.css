@@ -43,7 +43,7 @@
 }
 
 /* BUTTON */
-.button-base {
+.button {
     -fx-background-radius: 8;
     -fx-font-size: 13px;
     -fx-padding: 7 16;

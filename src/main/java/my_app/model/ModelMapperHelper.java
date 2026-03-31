@@ -69,10 +69,13 @@ public final class ModelMapperHelper {
 		}
 		if (value instanceof Timestamp) {
 			Timestamp timestamp = (Timestamp) value;
+			// Convert Timestamp to LocalDateTime with system timezone
+			// serverTimezone=Asia/Ho_Chi_Minh is set in config.properties
 			return timestamp.toLocalDateTime();
 		}
 		if (value instanceof Date) {
 			Date date = (Date) value;
+			// Use system default timezone (set to Asia/Ho_Chi_Minh)
 			return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
 		}
 		if (value instanceof String) {

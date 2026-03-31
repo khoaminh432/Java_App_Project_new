@@ -2,7 +2,6 @@ package my_app.controller.component.goods;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,7 +13,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import my_app.bus.GoodsReceiptBus;
 import my_app.bus.GoodsReceiptDetailBus;
@@ -34,12 +32,6 @@ public class GoodsReceiptController extends BaseController {
     private final static IngredientBus ingredientBus = new IngredientBus();
     private final static GoodsReceiptBus goodsReceiptBus = new GoodsReceiptBus();
     private final static GoodsReceiptDetailBus goodsReceiptDetailBus = new GoodsReceiptDetailBus();
-    private static HashMap<String, Integer> pageIndex = new HashMap<>();
-    private static int currentPageIndex = 1;
-    private static int limit = 10;
-    @FXML
-    private Label lbTotalIngredient;
-
     @FXML
     private ComboBox<Supplier> cbSupplier;
 
@@ -79,14 +71,6 @@ public class GoodsReceiptController extends BaseController {
     @FXML
     private TextField tfIngredientName;
 
-    private void calculateTotal() {
-        lbTotalIngredient.setText(String.format(ingredientBus.count() + " nguyên liệu"));
-    }
-
-    private int calculateTotalPage() {
-        return (int) Math.ceil((double) ingredientBus.count() / limit);
-    }
-
     private GoodsReceipt getGoodsReceiptbyForm() {
         GoodsReceipt receipt = new GoodsReceipt();
         receipt.setReceivedDate(LocalDateTime.of(dpDate.getValue(), java.time.LocalTime.now()));
@@ -104,7 +88,6 @@ public class GoodsReceiptController extends BaseController {
     private void RenderData() {
         ingredientBus.findAll();
         supplierBus.findAll();
-        calculateTotal();
     }
 
     @FXML
@@ -194,7 +177,6 @@ public class GoodsReceiptController extends BaseController {
         ing.setNetWeight(0);
         ingredientBus.create(ing);
         tfIngredientName.clear();
-        calculateTotal();
     }
 
     @FXML
@@ -248,17 +230,5 @@ public class GoodsReceiptController extends BaseController {
         });
         handleCanceIngredient(null);
         AlertInformation.showInfoAlert("Thành công", "Lưu phiếu nhập thành công", "Phiếu nhập đã được lưu vào hệ thống.");
-    }
-
-    @FXML
-    void lbHandleAfterPage(MouseEvent event) {
-        currentPageIndex++;
-    }
-
-    @FXML
-    void lbHandleBeforePage(MouseEvent event) {
-        if (currentPageIndex > 1) {
-            currentPageIndex--;
-        }
     }
 }

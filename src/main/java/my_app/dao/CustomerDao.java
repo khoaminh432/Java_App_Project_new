@@ -48,15 +48,20 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         return customers;
     }
 
-    public ArrayList<Customer> findByName(String name) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Customer name must not be null or empty");
+    // Tìm khách hàng theo tên
+    public Customer findByName(String fullName) {
+        if (fullName == null || fullName.trim().isEmpty()) {
+            return null;
         }
-        String searchQuery = BASE_QUERY + " WHERE full_name LIKE ?";
-        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(searchQuery, "%" + name + "%");
-        ArrayList<Customer> customers = new ArrayList<>(records.size());
-        records.forEach(row -> customers.add(new Customer(row)));
-        return customers;
+        try {
+            ArrayList<Customer> results = new ArrayList<>();
+            qe.ExecuteQuery(BASE_QUERY + " WHERE full_name = ?", fullName.trim())
+                    .forEach(row -> results.add(new Customer(row)));
+            return results.isEmpty() ? null : results.get(0);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tìm khách hàng theo tên: " + e.getMessage());
+            return null;
+        }
     }
 
     @Override

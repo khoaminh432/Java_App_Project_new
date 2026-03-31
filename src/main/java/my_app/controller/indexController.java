@@ -47,36 +47,36 @@ public class indexController extends SwitchPage {
     @FXML
     private HBox btnSupplierPage;
 
-    private void switchPage(Parent page) {
-
-        SwitchPage(apLoadPane, page);
-    }
-
     private LoadFileGUI createPage(String location) {
         return new LoadFileGUI(location);
     }
 
     private void loadPage(Parent page) throws IOException {
-        SwitchPage(apLoadPane, page);
+        SwitchPage.switchPage(apLoadPane, page);
     }
 
     // private void initpage() {
     //     HomePage = createPage("/fxml/admin/component/homepage.fxml");
     //     ProductPage = createPage("/fxml/admin/component/productpage.fxml");
     //     CustomerPage = createPage("/fxml/admin/component/product/addproduct.fxml");
+    //     BillPage = createPage("/fxml/admin/component/invoicepage.fxml");
     // }
     private void handleSwitchPage(String pageName, String url) throws IOException {
         if (!pageName.equals(ClickPage)) {
             LoadFileGUI page = createPage(url);
-            loadPage(page.load());
+            try {
+                loadPage(page.load());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        this.ClickPage = pageName;
+        indexController.ClickPage = pageName;
     }
 
     @FXML
     private void loadHomePage() throws IOException {
         System.out.println("Load Home Page");
-        handleSwitchPage("Trang chủ", "/fxml/admin/component/ingredient/goodsreceipt.fxml");
+        handleSwitchPage("Trang chủ", "/fxml/homepage.fxml");
     }
 
     @FXML
@@ -92,6 +92,15 @@ public class indexController extends SwitchPage {
         System.out.println("Load Customer Page");
         handleSwitchPage("Khách hàng", "/fxml/admin/component/product/addproduct.fxml");
     }
+
+
+    @FXML
+    private void loadBillPage() throws IOException {
+        System.out.println("Load Bill Page");
+        handleSwitchPage("Hóa đơn", "/fxml/admin/component/invoicepage.fxml");
+        System.out.println("Bill Page loaded successfully");
+    }
+
 
     @FXML
     private void loadEmployeePage() throws IOException {
