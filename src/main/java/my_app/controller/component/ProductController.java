@@ -533,6 +533,7 @@ public class ProductController {
         String quantityStr = ((TextField) vbAddProduct.lookup("#tfQuantityProduct")).getText();
 
         ProductCategory categoryTemp = cbbCategoryProduct.getSelectionModel().getSelectedItem();
+        String unit = cbbUnitProduct.getSelectionModel().getSelectedItem();
 
         if (name.isBlank() || priceStr.isBlank() || quantityStr.isBlank()) {
             AlertInformation.showWarningAlert("Chú Ý", "Thiếu Thông Tin", "Vui lòng điền đầy đủ thông tin sản phẩm.");
