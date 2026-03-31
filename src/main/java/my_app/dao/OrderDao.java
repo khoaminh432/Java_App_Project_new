@@ -8,8 +8,10 @@ import my_app.model.Order;
 import my_app.util.QueryExecutor;
 
 public class OrderDao implements GenericDao<Order, Integer> {
+
     private static final String BASE_QUERY = "SELECT * FROM `order`";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "order";
 
     @Override
     public Order findById(Integer id) {
@@ -21,8 +23,25 @@ public class OrderDao implements GenericDao<Order, Integer> {
     }
 
     @Override
-    public  ArrayList<Order> findAll() {
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
+    public ArrayList<Order> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<Order> orders = new ArrayList<>(records.size());
+        records.forEach(row -> orders.add(new Order(row)));
+        return orders;
+    }
+
+    @Override
+    public ArrayList<Order> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
         ArrayList<Order> orders = new ArrayList<>(records.size());
         records.forEach(row -> orders.add(new Order(row)));
         return orders;

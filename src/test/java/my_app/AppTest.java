@@ -5,6 +5,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import my_app.bus.CustomerBus;
 import my_app.util.DBConnection;
+import my_app.dao.IngredientProductDao;
+import my_app.dao.ProductDao;
+import my_app.util.QueryExecutor;
 
 /**
  * * Using JUnit 3 (TestCase, TestSuite).
@@ -59,13 +62,33 @@ public class AppTest extends TestCase {
     //     });
     //     DBConnection.close();
     // }
-    public void testMethodModel() {
-        CustomerBus customerBus = new CustomerBus();
-        assertNotNull(customerBus);
-        customerBus.findAll();
-        assertNotNull(customerBus.getCustomers());
-        System.out.println(customerBus.getCustomers());
-        DBConnection.close();
+    // public void testMethodModel() {
+    //     CustomerBus customerBus = new CustomerBus();
+    //     assertNotNull(customerBus);
+    //     customerBus.findAll();
+    //     assertNotNull(customerBus.getCustomers());
+    //     System.out.println(customerBus.getCustomers());
+    //     DBConnection.close();
+    // }
+    // public void testMethodvalue() {
+    //     IngredientBus ingredientBus = new IngredientBus();
+    //     assertNotNull(ingredientBus);
+    //     ingredientBus.findAll();
+    //     System.out.println(ingredientBus.getIngredientProductByThis(new Ingredient(ingredientBus.getIngredients().get(0))).getIngredient());
+    //     System.out.println();
+    //     DBConnection.close();
+    // }
+    
+    // Test database dependencies should be set up before running this test
+    // To run this test, ensure the database is initialized with the required tables
+    // You can run: mysql -u [user] -p < src/main/resources/database/mytable.sql
+    public void testDaoMethod() {
+        ProductDao productDao = new ProductDao();
+        assertNotNull(productDao);
+        IngredientProductDao productIngredientDao = new IngredientProductDao();
+        assertNotNull(productIngredientDao);
+        // Commented out - requires database setup
+        // System.out.println(productDao.getMaxQuantity(productIngredientDao.findByProductId(4)));
     }
 
     /**

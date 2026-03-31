@@ -1,0 +1,129 @@
+.header {
+    -fx-background-color: linear-gradient(to right, #3b82f6, #60a5fa);
+    -fx-padding: 14;
+    -fx-background-radius: 0 0 12 12;
+}
+
+.title {
+    -fx-text-fill: white;
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+}
+
+/* CARD */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 12, 0, 0, 4);
+}
+
+/* LABEL */
+.label-title {
+    -fx-text-fill: #374151;
+    -fx-font-size: 13px;
+}
+
+/* INPUT */
+.text-field, .combo-box, .date-picker {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 7 10;
+}
+
+/* INPUT FOCUS */
+.text-field:focused,
+.combo-box:focused,
+.date-picker:focused {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(59,130,246,0.2), 8, 0, 0, 0);
+}
+
+/* BUTTON */
+.button {
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-padding: 7 16;
+    -fx-cursor: hand;
+    -fx-font-weight: 500;
+}
+
+/* BUTTON COLORS */
+.btn-add {
+    -fx-background-color: #22c55e;
+    -fx-text-fill: white;
+}
+.btn-add:hover {
+    -fx-background-color: #16a34a;
+}
+
+.btn-delete {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+}
+.btn-delete:hover {
+    -fx-background-color: #dc2626;
+}
+
+.btn-update {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+}
+.btn-update:hover {
+    -fx-background-color: #2563eb;
+}
+
+/* CLICK EFFECT */
+.button:pressed {
+    -fx-scale-x: 0.96;
+    -fx-scale-y: 0.96;
+    -fx-opacity: 0.85;
+}
+
+/* TABLE */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 10;
+}
+
+/* HEADER TABLE */
+.table-view .column-header {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 10 10 0 0;
+}
+.table-view .column-header .label-header{
+    -fx-text-fill: #334155;
+    -fx-font-weight: bold;
+}
+
+
+/* ROW */
+.table-row-cell {
+    -fx-background-color: white;
+}
+
+/* HOVER ROW */
+.table-row-cell:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+/* SELECT ROW */
+.table-row-cell:selected {
+    -fx-background-color: #dbeafe;
+}
+
+/* FOOTER */
+.footer {
+    -fx-padding: 10 0 0 0;
+}
+
+/* TOTAL LABEL */
+.total-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}

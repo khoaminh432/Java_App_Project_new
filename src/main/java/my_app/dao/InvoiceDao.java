@@ -14,6 +14,7 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM invoice";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "invoice";
 
     // ========================
     // CRUD CƠ BẢN (GenericDao)
@@ -54,7 +55,20 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
     }
 
     @Override
-    public int create(Invoice entity) {
+    public ArrayList<Invoice> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<Invoice> invoices = new ArrayList<>(records.size());
+        records.forEach(row -> invoices.add(new Invoice(row)));
+        return invoices;
+    }
+
+    @Override
+    public int create(Invoice entity
+    ) {
         if (entity == null) {
             throw new IllegalArgumentException("Invoice entity must not be null");
         }
@@ -88,7 +102,8 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
     }
 
     @Override
-    public int update(Invoice entity) {
+    public int update(Invoice entity
+    ) {
         if (entity == null || entity.getId() == null) {
             throw new IllegalArgumentException("Invoice entity and id must not be null");
         }
@@ -121,7 +136,8 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
     }
 
     @Override
-    public int delete(Integer id) {
+    public int delete(Integer id
+    ) {
         if (id == null) {
             throw new IllegalArgumentException("Invoice id must not be null");
         }
