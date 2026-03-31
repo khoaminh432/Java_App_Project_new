@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import my_app.bus.EmployeeBus;
@@ -20,14 +21,17 @@ import my_app.model.Role;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class EmployeeController implements Initializable {
@@ -41,6 +45,8 @@ public class EmployeeController implements Initializable {
     private Button btnSearch;
     @FXML
     private Button btnRefresh;
+    @FXML
+    private Button btnStatistics;
     @FXML
     private ComboBox<String> cbFilterRole;
     @FXML
@@ -57,6 +63,40 @@ public class EmployeeController implements Initializable {
     private Label lblInactiveEmployees;
     @FXML
     private Label lblTotalSalary;
+
+    // -- Statistics Dashboard --
+    @FXML
+    private VBox tableViewContainer;
+    @FXML
+    private ScrollPane statisticsViewContainer;
+    @FXML
+    private Label lblStatisticsUpdatedDate;
+    @FXML
+    private Label lblAverageSalary;
+    @FXML
+    private Label lblRetentionRate;
+    @FXML
+    private Label lblRetentionDescription;
+    @FXML
+    private Label lblLargestDepartment;
+    @FXML
+    private Label lblLargestDepartmentCount;
+    @FXML
+    private TableView<RankingRow> tblSalaryRanking;
+    @FXML
+    private TableColumn<RankingRow, Integer> colSalaryRank;
+    @FXML
+    private TableColumn<RankingRow, String> colSalaryDepartment;
+    @FXML
+    private TableColumn<RankingRow, String> colSalaryValue;
+    @FXML
+    private TableView<RankingRow> tblAgeRanking;
+    @FXML
+    private TableColumn<RankingRow, Integer> colAgeRank;
+    @FXML
+    private TableColumn<RankingRow, String> colAgeGroup;
+    @FXML
+    private TableColumn<RankingRow, String> colAgeCount;
 
     // -- Center: Table --
     @FXML
@@ -144,9 +184,11 @@ public class EmployeeController implements Initializable {
     private int currentPage = 1;
     private int pageSize = 20;
     private int totalPages = 1;
+    private boolean statisticsMode = false;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final DecimalFormat currencyFormat = new DecimalFormat("#,###");
+    private final DecimalFormat millionFormat = new DecimalFormat("#,##0.0");
 
     // ==================== INITIALIZATION ====================
 
@@ -162,6 +204,8 @@ public class EmployeeController implements Initializable {
         setupDatePickers();
         setupRoleComboBox();
         setupFilters();
+        setupRankingTables();
+        switchToTableMode();
         loadEmployeeData();
     }
 
@@ -198,6 +242,123 @@ public class EmployeeController implements Initializable {
      */
     private boolean isActive(Employee emp) {
         return emp.getStatus() != null && emp.getStatus().equalsIgnoreCase("active");
+    }
+
+    private String resolveRoleName(Integer roleId) {
+        String roleName = getRoleNameById(roleId);
+        if (roleName == null || roleName.isBlank()) {
+            return "Chưa phân loại";
+        }
+        return roleName;
+    }
+
+    private String toAsciiLower(String value) {
+        if (value == null) {
+            return "";
+        }
+        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return normalized.toLowerCase(Locale.ROOT).trim();
+    }
+
+    private String normalizeDepartmentName(String roleName) {
+        String key = toAsciiLower(roleName);
+        if (key.isEmpty()) {
+            return "Chưa phân loại";
+        }
+        if (key.contains("quan ly") || key.contains("truong ca") || key.contains("manager")) {
+            return "Quản lý";
+        }
+        if (key.contains("pha che")) {
+            return "Pha chế";
+        }
+        if (key.contains("thu ngan")) {
+            return "Thu ngân";
+        }
+        if (key.contains("giao hang") || key.contains("shipper")) {
+            return "Giao hàng";
+        }
+        if (key.contains("kho")) {
+            return "Kho";
+        }
+        if (key.contains("ve sinh")) {
+            return "Vệ sinh";
+        }
+        if (key.contains("phuc vu") || key.contains("ban hang") || key.contains("online")) {
+            return "Phục vụ";
+        }
+        return roleName;
+    }
+
+    private int getAge(Employee employee) {
+        if (employee == null || employee.getDob() == null) {
+            return -1;
+        }
+        return LocalDate.now().getYear() - employee.getDob().getYear();
+    }
+
+    private String getAgeGroup(Employee employee) {
+        int age = getAge(employee);
+        if (age >= 20 && age <= 25)
+            return "20-25";
+        if (age >= 26 && age <= 30)
+            return "26-30";
+        if (age >= 31 && age <= 35)
+            return "31-35";
+        if (age >= 36 && age <= 40)
+            return "36-40";
+        return "Khác";
+    }
+
+    private void setupRankingTables() {
+        colSalaryRank.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRank()).asObject());
+        colSalaryDepartment.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        colSalaryValue.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValue()));
+
+        colAgeRank.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRank()).asObject());
+        colAgeGroup.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        colAgeCount.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValue()));
+
+        configureRankingTable(tblSalaryRanking);
+        configureRankingTable(tblAgeRanking);
+        tblSalaryRanking.setItems(FXCollections.observableArrayList());
+        tblAgeRanking.setItems(FXCollections.observableArrayList());
+        adjustRankingTableHeight(tblSalaryRanking);
+        adjustRankingTableHeight(tblAgeRanking);
+    }
+
+    private void configureRankingTable(TableView<RankingRow> table) {
+        table.setFixedCellSize(36);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        table.setPlaceholder(new Label("Không có dữ liệu thống kê"));
+    }
+
+    private void adjustRankingTableHeight(TableView<RankingRow> table) {
+        int rows = table.getItems() != null ? table.getItems().size() : 0;
+        int visibleRows = Math.max(1, rows);
+        double headerHeight = 34;
+        double tableHeight = headerHeight + (visibleRows * table.getFixedCellSize()) + 2;
+        table.setPrefHeight(tableHeight);
+        table.setMinHeight(Region.USE_PREF_SIZE);
+        table.setMaxHeight(Region.USE_PREF_SIZE);
+    }
+
+    private void switchToStatisticsMode() {
+        statisticsMode = true;
+        tableViewContainer.setVisible(false);
+        tableViewContainer.setManaged(false);
+        statisticsViewContainer.setVisible(true);
+        statisticsViewContainer.setManaged(true);
+        btnStatistics.setText("📋 Danh sách");
+    }
+
+    private void switchToTableMode() {
+        statisticsMode = false;
+        tableViewContainer.setVisible(true);
+        tableViewContainer.setManaged(true);
+        statisticsViewContainer.setVisible(false);
+        statisticsViewContainer.setManaged(false);
+        btnStatistics.setText("📊 Thống kê");
     }
 
     // ==================== TABLE SETUP ====================
@@ -405,6 +566,7 @@ public class EmployeeController implements Initializable {
             currentPage = 1;
             updateTable();
             updateStatistics();
+            updateStatisticsDashboard();
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể tải dữ liệu nhân viên: " + e.getMessage());
             e.printStackTrace();
@@ -468,6 +630,121 @@ public class EmployeeController implements Initializable {
         lblTotalSalary.setText(currencyFormat.format(totalSalary) + " VNĐ");
     }
 
+    private void updateStatisticsDashboard() {
+        if (lblStatisticsUpdatedDate == null) {
+            return;
+        }
+
+        int total = allEmployees.size();
+        long active = allEmployees.stream().filter(this::isActive).count();
+
+        BigDecimal totalSalary = allEmployees.stream()
+                .filter(this::isActive)
+                .map(Employee::getBasicSalary)
+                .filter(salary -> salary != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal averageSalary = active > 0
+                ? totalSalary.divide(BigDecimal.valueOf(active), 1, java.math.RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        double retentionRate = total > 0 ? (active * 100.0 / total) : 0;
+
+        Map<String, Long> roleCounts = allEmployees.stream()
+            .collect(Collectors.groupingBy(emp -> normalizeDepartmentName(resolveRoleName(emp.getRoleId())), Collectors.counting()));
+
+        Map.Entry<String, Long> largestDepartment = roleCounts.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .orElse(Map.entry("N/A", 0L));
+
+        lblAverageSalary.setText(millionFormat.format(averageSalary.doubleValue() / 1_000_000d) + " triệu");
+        lblRetentionRate.setText(millionFormat.format(retentionRate) + "%");
+        lblRetentionDescription.setText(active + " nhân viên đang làm việc");
+        lblLargestDepartment.setText(largestDepartment.getKey());
+        lblLargestDepartmentCount.setText(largestDepartment.getValue() + " nhân viên");
+        lblStatisticsUpdatedDate.setText(LocalDate.now().format(dateFormatter));
+
+        updateSalaryRankingTable();
+        updateAgeDistributionRankingTable();
+    }
+
+    private void updateSalaryRankingTable() {
+        Map<String, BigDecimal> salaryByRole = new HashMap<>();
+
+        for (Employee employee : allEmployees) {
+            if (!isActive(employee) || employee.getBasicSalary() == null) {
+                continue;
+            }
+            String roleName = normalizeDepartmentName(resolveRoleName(employee.getRoleId()));
+            salaryByRole.merge(roleName, employee.getBasicSalary(), BigDecimal::add);
+        }
+
+        List<Map.Entry<String, BigDecimal>> sortedEntries = salaryByRole.entrySet().stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .collect(Collectors.toList());
+
+        ObservableList<RankingRow> rows = FXCollections.observableArrayList();
+        int rank = 1;
+        for (Map.Entry<String, BigDecimal> entry : sortedEntries) {
+            double salaryMillions = entry.getValue().doubleValue() / 1_000_000d;
+            rows.add(new RankingRow(rank++, entry.getKey(), millionFormat.format(salaryMillions)));
+        }
+
+        tblSalaryRanking.setItems(rows);
+        adjustRankingTableHeight(tblSalaryRanking);
+    }
+
+    private void updateAgeDistributionRankingTable() {
+        Map<String, Integer> ageDistribution = new LinkedHashMap<>();
+        ageDistribution.put("20-25", 0);
+        ageDistribution.put("26-30", 0);
+        ageDistribution.put("31-35", 0);
+        ageDistribution.put("36-40", 0);
+
+        for (Employee employee : allEmployees) {
+            String ageGroup = getAgeGroup(employee);
+            if (ageDistribution.containsKey(ageGroup)) {
+                ageDistribution.put(ageGroup, ageDistribution.get(ageGroup) + 1);
+            }
+        }
+
+        List<Map.Entry<String, Integer>> sortedAgeGroups = ageDistribution.entrySet().stream()
+                .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
+                .collect(Collectors.toList());
+
+        ObservableList<RankingRow> rows = FXCollections.observableArrayList();
+        int rank = 1;
+        for (Map.Entry<String, Integer> entry : sortedAgeGroups) {
+            rows.add(new RankingRow(rank++, entry.getKey(), String.valueOf(entry.getValue())));
+        }
+        tblAgeRanking.setItems(rows);
+        adjustRankingTableHeight(tblAgeRanking);
+    }
+
+    private static class RankingRow {
+        private final int rank;
+        private final String name;
+        private final String value;
+
+        public RankingRow(int rank, String name, String value) {
+            this.rank = rank;
+            this.name = name;
+            this.value = value;
+        }
+
+        public int getRank() {
+            return rank;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
     // ==================== FILTER / SEARCH ====================
 
     /**
@@ -526,6 +803,16 @@ public class EmployeeController implements Initializable {
     @FXML
     private void handleSearch() {
         applyFilters();
+    }
+
+    @FXML
+    private void handleToggleStatistics() {
+        if (statisticsMode) {
+            switchToTableMode();
+        } else {
+            updateStatisticsDashboard();
+            switchToStatisticsMode();
+        }
     }
 
     @FXML

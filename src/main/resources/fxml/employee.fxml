@@ -24,6 +24,8 @@
                 <Label text="☕ Quản Lý Nhân Viên"
                     style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
                 <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnStatistics" text="📊 Thống kê" onAction="#handleToggleStatistics"
+                    style="-fx-background-color: #6c5ce7; -fx-text-fill: white; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-radius: 5;" />
                 <Button fx:id="btnRefresh" text="⟳ Làm mới" onAction="#handleRefresh"
                     style="-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-radius: 5;" />
             </HBox>
@@ -120,50 +122,132 @@
                 </HBox>
             </HBox>
 
-            <!-- Bảng nhân viên -->
-            <TableView fx:id="employeeTable" VBox.vgrow="ALWAYS"
-                style="-fx-background-color: #ffffff; -fx-background-radius: 8;">
-                <columns>
-                    <TableColumn fx:id="colSTT" text="STT" prefWidth="50" sortable="false"
-                        style="-fx-alignment: CENTER;" />
-                    <TableColumn fx:id="colId" text="Mã NV" prefWidth="80"
-                        style="-fx-alignment: CENTER;" />
-                    <TableColumn fx:id="colFullName" text="Họ và Tên" prefWidth="200" />
-                    <TableColumn fx:id="colPhone" text="SĐT" prefWidth="130"
-                        style="-fx-alignment: CENTER;" />
-                    <TableColumn fx:id="colDateOfBirth" text="Ngày sinh" prefWidth="110"
-                        style="-fx-alignment: CENTER;" />
-                    <TableColumn fx:id="colAddress" text="Địa chỉ" prefWidth="180" />
-                    <TableColumn fx:id="colRole" text="Chức vụ" prefWidth="120"
-                        style="-fx-alignment: CENTER;" />
-                    <TableColumn fx:id="colSalary" text="Lương (VNĐ)" prefWidth="130"
-                        style="-fx-alignment: CENTER_RIGHT;" />
-                    <TableColumn fx:id="colStatus" text="Trạng thái" prefWidth="120"
-                        style="-fx-alignment: CENTER;" />
-                    <TableColumn fx:id="colActions" text="Thao tác" prefWidth="140" sortable="false"
-                        style="-fx-alignment: CENTER;" />
-                </columns>
-                <placeholder>
-                    <VBox alignment="CENTER" spacing="10">
-                        <Label text="📋" style="-fx-font-size: 40px;" />
-                        <Label text="Không có dữ liệu nhân viên"
-                            style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;" />
-                    </VBox>
-                </placeholder>
-            </TableView>
+            <StackPane VBox.vgrow="ALWAYS">
+                <children>
+                    <VBox fx:id="tableViewContainer" spacing="8" visible="true" managed="true">
+                        <!-- Bảng nhân viên -->
+                        <TableView fx:id="employeeTable" VBox.vgrow="ALWAYS"
+                            style="-fx-background-color: #ffffff; -fx-background-radius: 8;">
+                            <columns>
+                                <TableColumn fx:id="colSTT" text="STT" prefWidth="50" sortable="false"
+                                    style="-fx-alignment: CENTER;" />
+                                <TableColumn fx:id="colId" text="Mã NV" prefWidth="80"
+                                    style="-fx-alignment: CENTER;" />
+                                <TableColumn fx:id="colFullName" text="Họ và Tên" prefWidth="200" />
+                                <TableColumn fx:id="colPhone" text="SĐT" prefWidth="130"
+                                    style="-fx-alignment: CENTER;" />
+                                <TableColumn fx:id="colDateOfBirth" text="Ngày sinh" prefWidth="110"
+                                    style="-fx-alignment: CENTER;" />
+                                <TableColumn fx:id="colAddress" text="Địa chỉ" prefWidth="180" />
+                                <TableColumn fx:id="colRole" text="Chức vụ" prefWidth="120"
+                                    style="-fx-alignment: CENTER;" />
+                                <TableColumn fx:id="colSalary" text="Lương (VNĐ)" prefWidth="130"
+                                    style="-fx-alignment: CENTER_RIGHT;" />
+                                <TableColumn fx:id="colStatus" text="Trạng thái" prefWidth="120"
+                                    style="-fx-alignment: CENTER;" />
+                                <TableColumn fx:id="colActions" text="Thao tác" prefWidth="140" sortable="false"
+                                    style="-fx-alignment: CENTER;" />
+                            </columns>
+                            <placeholder>
+                                <VBox alignment="CENTER" spacing="10">
+                                    <Label text="📋" style="-fx-font-size: 40px;" />
+                                    <Label text="Không có dữ liệu nhân viên"
+                                        style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;" />
+                                </VBox>
+                            </placeholder>
+                        </TableView>
 
-            <!-- Phân trang -->
-            <HBox spacing="10" alignment="CENTER" style="-fx-padding: 5 0 5 0;">
-                <Label fx:id="lblShowingRecords" text="Hiển thị 0 - 0 trên tổng 0 nhân viên"
-                    style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;" />
-                <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnPrevPage" text="◀ Trước" onAction="#handlePrevPage"
-                    style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-cursor: hand;" />
-                <Label fx:id="lblPageInfo" text="Trang 1 / 1"
-                    style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
-                <Button fx:id="btnNextPage" text="Sau ▶" onAction="#handleNextPage"
-                    style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-cursor: hand;" />
-            </HBox>
+                        <!-- Phân trang -->
+                        <HBox spacing="10" alignment="CENTER" style="-fx-padding: 5 0 5 0;">
+                            <Label fx:id="lblShowingRecords" text="Hiển thị 0 - 0 trên tổng 0 nhân viên"
+                                style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button fx:id="btnPrevPage" text="◀ Trước" onAction="#handlePrevPage"
+                                style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-cursor: hand;" />
+                            <Label fx:id="lblPageInfo" text="Trang 1 / 1"
+                                style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                            <Button fx:id="btnNextPage" text="Sau ▶" onAction="#handleNextPage"
+                                style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-cursor: hand;" />
+                        </HBox>
+                    </VBox>
+
+                    <ScrollPane fx:id="statisticsViewContainer" fitToWidth="true" visible="false" managed="false"
+                        style="-fx-background-color: transparent; -fx-background: transparent;">
+                        <content>
+                            <VBox spacing="16" style="-fx-padding: 4 2 12 2;">
+                                <HBox alignment="CENTER_LEFT" spacing="10"
+                                    style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-padding: 12 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 1);">
+                                    <Label text="📈 Thống Kê Nhân Viên"
+                                        style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1f3a5f;" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label text="📅 Cập nhật:"
+                                        style="-fx-font-size: 14px; -fx-text-fill: #636e72;" />
+                                    <Label fx:id="lblStatisticsUpdatedDate" text="--/--/----"
+                                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #34495e;" />
+                                </HBox>
+
+                                <VBox spacing="14">
+                                    <VBox spacing="6"
+                                        style="-fx-background-color: linear-gradient(to right, #3b82f6, #2563eb); -fx-background-radius: 14; -fx-padding: 16 18; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 1);">
+                                        <Label text="Lương trung bình"
+                                            style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ffffff;" />
+                                        <Label fx:id="lblAverageSalary" text="0 triệu"
+                                            style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #ffffff;" />
+                                        <Label text="VNĐ/người/tháng"
+                                            style="-fx-font-size: 15px; -fx-text-fill: #dbeafe;" />
+                                    </VBox>
+                                    <VBox spacing="6"
+                                        style="-fx-background-color: #00c853; -fx-background-radius: 14; -fx-padding: 16 18; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 1);">
+                                        <Label text="Tỷ lệ giữ chân"
+                                            style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ffffff;" />
+                                        <Label fx:id="lblRetentionRate" text="0%"
+                                            style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #ffffff;" />
+                                        <Label fx:id="lblRetentionDescription" text="Nhân viên đang làm việc"
+                                            style="-fx-font-size: 15px; -fx-text-fill: #ddffeb;" />
+                                    </VBox>
+                                    <VBox spacing="6"
+                                        style="-fx-background-color: linear-gradient(to right, #8b5cf6, #a21caf); -fx-background-radius: 14; -fx-padding: 16 18; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 1);">
+                                        <Label text="Phòng ban lớn nhất"
+                                            style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ffffff;" />
+                                        <Label fx:id="lblLargestDepartment" text="N/A"
+                                            style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #ffffff;" wrapText="true" />
+                                        <Label fx:id="lblLargestDepartmentCount" text="0 nhân viên"
+                                            style="-fx-font-size: 15px; -fx-text-fill: #f2e7fe;" />
+                                    </VBox>
+                                </VBox>
+
+                                <VBox spacing="8"
+                                    style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-padding: 14 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 1);">
+                                    <Label text="🏆 Bảng xếp hạng tổng lương theo phòng ban"
+                                        style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0f3057;" />
+                                    <TableView fx:id="tblSalaryRanking" prefHeight="320"
+                                        style="-fx-background-color: #ffffff; -fx-background-radius: 8;">
+                                        <columns>
+                                            <TableColumn fx:id="colSalaryRank" text="Hạng" prefWidth="90" style="-fx-alignment: CENTER;" />
+                                            <TableColumn fx:id="colSalaryDepartment" text="Phòng ban" prefWidth="300" />
+                                            <TableColumn fx:id="colSalaryValue" text="Tổng lương (triệu VNĐ)" prefWidth="280" style="-fx-alignment: CENTER_RIGHT;" />
+                                        </columns>
+                                    </TableView>
+                                </VBox>
+
+                                <VBox spacing="8"
+                                    style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-padding: 14 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 1);">
+                                    <Label text="🏆 Bảng xếp hạng phân bổ nhân viên theo độ tuổi"
+                                            style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0f3057;" />
+                                    <TableView fx:id="tblAgeRanking" prefHeight="280"
+                                        style="-fx-background-color: #ffffff; -fx-background-radius: 8;">
+                                        <columns>
+                                            <TableColumn fx:id="colAgeRank" text="Hạng" prefWidth="90" style="-fx-alignment: CENTER;" />
+                                            <TableColumn fx:id="colAgeGroup" text="Nhóm tuổi" prefWidth="260" style="-fx-alignment: CENTER;" />
+                                            <TableColumn fx:id="colAgeCount" text="Số lượng nhân viên" prefWidth="320" style="-fx-alignment: CENTER_RIGHT;" />
+                                        </columns>
+                                    </TableView>
+                                </VBox>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </children>
+            </StackPane>
         </VBox>
     </center>
 
