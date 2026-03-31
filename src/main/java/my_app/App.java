@@ -9,12 +9,14 @@ import my_app.service.LoadFileGUI;
 import my_app.util.DBConnection;
 
 public class App extends Application {
+
     private static final String APP_NAME = "JavaFX Console Application";
     private static final String APP_PATH = "/fxml/admin/index.fxml";
     private LoadFileGUI loader;
     private void DesktopRoot(){
         loader = new LoadFileGUI(APP_PATH);
     }
+
     @Override
     public void start(Stage stage) {
         DesktopRoot();
@@ -34,10 +36,9 @@ public class App extends Application {
         }
         );
     }
-    
 
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }

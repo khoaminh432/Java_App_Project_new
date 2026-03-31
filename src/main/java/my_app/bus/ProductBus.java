@@ -1,43 +1,67 @@
 package my_app.bus;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import my_app.dao.ProductDao;
+import my_app.model.Ingredient;
+import my_app.model.IngredientProduct;
 import my_app.model.Product;
 
 public class ProductBus implements GeneralConfig<Product> {
 
-    private ProductDao productDao = new ProductDao();
+    private static final ProductDao productDao = new ProductDao();
     public static ArrayList<Product> listProducts = new ArrayList<>();
     private final ObservableList<Product> products;
+    private final FilteredList<Product> filteredProducts;
 
     public ObservableList<Product> getProducts() {
         return products;
     }
 
+    public FilteredList<Product> getFilteredProducts() {
+        return filteredProducts;
+    }
+
+    private void ShowFilterAll() {
+        filteredProducts.setPredicate(p -> {
+            return true;
+        });
+    }
+
+    private void ShowFilteredFromName(String name) {
+        filteredProducts.setPredicate(p -> {
+            if (name == null || name.isBlank()) {
+                return true;
+            }
+            if (p.getProductName() != null && p.getProductName().toLowerCase().contains(name.toLowerCase())) {
+                return true;
+            }
+            return false;
+        });
+        System.out.println("Filtered products count: " + filteredProducts);
+    }
+
+    public int getMaxQuantity(ArrayList<IngredientProduct> ingredientProducts) {
+        return productDao.getMaxQuantity(ingredientProducts);
+    }
+
     public ProductBus() {
         this.products = FXCollections.observableArrayList();
-
+        this.filteredProducts = new FilteredList<>(products, p -> true);
     }
 
-    public List<Product> fetchAllFromDb() {
-        return productDao.findAll();
+    public void replaceAll(ArrayList<Product> newProducts) {
+        setobser(newProducts);
+        ShowFilterAll();
     }
 
-    public void replaceAll(List<Product> newProducts) {
-        listProducts.clear();
-        if (newProducts != null) {
-            listProducts.addAll(newProducts);
-        }
-        setobser();
-    }
-
-    private void setobser() {
-        products.setAll(listProducts);
+    private void setobser(ArrayList<Product> newProducts) {
+        products.setAll(newProducts);
     }
 
     @Override
@@ -50,42 +74,56 @@ public class ProductBus implements GeneralConfig<Product> {
         // TODO Auto-generated method stub
 
         Product product = productDao.findById(id);
-        listProducts.clear();
         if (product != null) {
-            listProducts.add(product);
+            setobser(new ArrayList<Product>() {
+                {
+                    add(product);
+                }
+            });
+        } else {
+            ShowFilterAll();
         }
-        setobser();
     }
 
     @Override
     public void searchNameByArray(String name) {
         // TODO Auto-generated method stub
-        ArrayList<Product> filteredList = (ArrayList<Product>) listProducts.stream()
-                .filter(p -> p.getProductName().toLowerCase().contains(name.toLowerCase()))
-                .collect(Collectors.toList());
-        products.setAll(filteredList);
+        ShowFilteredFromName(name);
     }
 
     @Override
     public void searchNameByDB(String name) {
         // TODO Auto-generated method stub
-        listProducts = productDao.findByName(name);
-        setobser();
+        ArrayList<Product> listProducts = productDao.findByName(name);
+        setobser(listProducts);
+    }
+
+    private void ValidateObject(Product obj) throws Exception {
+        if (obj.getProductName() == null || obj.getProductName().isBlank()) {
+            throw new Exception("Product name cannot be empty");
+        }
+
     }
 
     @Override
     public int create(Product obj) {
         // TODO Auto-generated method stub
-        int index = productDao.create(obj);
-        findAll();
-        return index;
+        try {
+            ValidateObject(obj);
+            int index = productDao.create(obj);
+            getProducts().add(obj);
+            return index;
+        } catch (Exception e) {
+
+        }
+        return -1;
     }
 
     @Override
     public int update(Product obj) {
         // TODO Auto-generated method stub
         int index = productDao.update(obj);
-        findAll();
+        products.set(index, obj);
         return index;
     }
 
@@ -93,7 +131,7 @@ public class ProductBus implements GeneralConfig<Product> {
     public int delete(int id) {
         // TODO Auto-generated method stub
         int index = productDao.delete(id);
-        findAll();
+        products.removeIf(filter -> filter.getId() == id);
         return index;
     }
 

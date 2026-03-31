@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import my_app.service.LoadFileGUI;
 import my_app.service.SwitchPage;
@@ -26,22 +27,25 @@ public class indexController extends SwitchPage {
     private AnchorPane apLoadPane;
 
     @FXML
-    private Button btnBillPage;
+    private HBox btnBillPage;
 
     @FXML
-    private Button btnCustomerPage;
+    private HBox btnCustomerPage;
 
     @FXML
-    private Button btnEmployeePage;
+    private HBox btnEmployeePage;
 
     @FXML
-    private Button btnHomePage;
+    private HBox btnHomePage;
 
     @FXML
-    private Button btnProductPage;
+    private HBox btnProductPage;
 
     @FXML
-    private Button btnSupplierPage;
+    private Button btnSignOut;
+
+    @FXML
+    private HBox btnSupplierPage;
 
     private LoadFileGUI createPage(String location) {
         return new LoadFileGUI(location);
@@ -72,7 +76,7 @@ public class indexController extends SwitchPage {
     @FXML
     private void loadHomePage() throws IOException {
         System.out.println("Load Home Page");
-        handleSwitchPage("Trang chủ", "/fxml/admin/component/homepage.fxml");
+        handleSwitchPage("Trang chủ", "/fxml/admin/component/ingredient/goodsreceipt.fxml");
     }
 
     @FXML
@@ -90,6 +94,7 @@ public class indexController extends SwitchPage {
     }
 
     @FXML
+<<<<<<< HEAD
     private void loadBillPage() throws IOException {
         try {
             System.out.println("Load Bill Page");
@@ -99,6 +104,17 @@ public class indexController extends SwitchPage {
             System.err.println("Error loading Bill Page: " + e.getMessage());
             e.printStackTrace();
         }
+=======
+    private void loadEmployeePage() throws IOException {
+        System.out.println("Load Employee Page");
+        handleSwitchPage("Nhân viên", "/fxml/employee.fxml");
+    }
+
+    @FXML
+    private void loadSupplierPage() throws IOException {
+        System.out.println("Load Supplier Page");
+        handleSwitchPage("Nha cung cap", "/fxml/admin/supplier/supplier.fxml");
+>>>>>>> b70f6cc1042cc07ccd2dbe975b69c12dd65cd970
     }
 
     private void loadLabel() {
