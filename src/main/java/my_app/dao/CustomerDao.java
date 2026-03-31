@@ -33,7 +33,7 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         }
         int offset = limit * page;
         ArrayList<Customer> list = new ArrayList<Customer>();
-        qe.ExecuteQuery(QUERYALL + " WHERE id > ? LIMIT ?", offset, limit).forEach(action -> {
+        qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit).forEach(action -> {
             Customer cus = new Customer(action);
             list.add(cus);
         });
