@@ -28,10 +28,17 @@ import my_app.service.LoadFileGUI;
 
 public class GoodsReceiptController extends BaseController {
 
-    private final static SupplierBus supplierBus = new SupplierBus();
-    private final static IngredientBus ingredientBus = new IngredientBus();
-    private final static GoodsReceiptBus goodsReceiptBus = new GoodsReceiptBus();
-    private final static GoodsReceiptDetailBus goodsReceiptDetailBus = new GoodsReceiptDetailBus();
+    private SupplierBus supplierBus;
+    private IngredientBus ingredientBus;
+    private GoodsReceiptBus goodsReceiptBus;
+    private GoodsReceiptDetailBus goodsReceiptDetailBus;
+    
+    private void initBusClasses() {
+        if (supplierBus == null) supplierBus = new SupplierBus();
+        if (ingredientBus == null) ingredientBus = new IngredientBus();
+        if (goodsReceiptBus == null) goodsReceiptBus = new GoodsReceiptBus();
+        if (goodsReceiptDetailBus == null) goodsReceiptDetailBus = new GoodsReceiptDetailBus();
+    }
     @FXML
     private ComboBox<Supplier> cbSupplier;
 
@@ -102,11 +109,16 @@ public class GoodsReceiptController extends BaseController {
 
     @Override
     protected void initData() {
-        RenderData();
-        setTable();
-        setComboBoxData();
-        setInputData();
-
+        initBusClasses();
+        try {
+            RenderData();
+            setTable();
+            setComboBoxData();
+            setInputData();
+        } catch (Exception e) {
+            System.err.println("Warning: Database not available during initialization. Error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void setDataIngredient() {

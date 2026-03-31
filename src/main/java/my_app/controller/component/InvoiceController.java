@@ -5,17 +5,21 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Map;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -29,13 +33,22 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import my_app.bus.InvoiceBus;
+import my_app.bus.InvoiceDetailBus;
+import my_app.dao.InvoiceDetailDao;
+import my_app.dao.ProductDao;
 import my_app.model.Customer;
 import my_app.model.Employee;
 import my_app.model.Invoice;
+import my_app.model.InvoiceDetail;
+import my_app.model.Product;
 
 public class InvoiceController implements Initializable {
 
@@ -76,7 +89,14 @@ public class InvoiceController implements Initializable {
         setupStatusFilter();
         setupTableColumns();
         setupSearch();
-        loadData();
+        try {
+            loadData();
+        } catch (Exception e) {
+            System.err.println("Warning: Database not available during initialization. Error: " + e.getMessage());
+            e.printStackTrace();
+            // Hiển thị bảng trống thay vì crash
+            invoiceTable.setItems(FXCollections.observableArrayList());
+        }
     }
 
     // ── Setup ─────────────────────────────────────────────────────────────────
@@ -281,19 +301,40 @@ public class InvoiceController implements Initializable {
     // 👁 XEM CHI TIẾT
     private void handleView(Invoice inv) {
         try {
-            // Lấy thông tin khách hàng
+            // Mở UI chi tiết hóa đơn bằng FXML riêng
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fxml/admin/component/invoicedetail.fxml")
+                );
+                Parent root = loader.load();
+                InvoiceDetailController controller = loader.getController();
+                controller.setInvoice(inv);
+
+                Stage stage = new Stage();
+                stage.setTitle("Chi tiết hóa đơn #" + inv.getId());
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setScene(new Scene(root));
+                stage.showAndWait();
+
+                // Refresh bảng hóa đơn sau khi đóng window
+                loadData();
+                return;
+            } catch (Exception fxmlEx) {
+                // Nếu FXML bị lỗi (ví dụ thiếu bảng invoice_detail), fallback sang dialog cũ.
+                System.err.println("Cannot open invoicedetail.fxml: " + fxmlEx.getMessage());
+            }
+
+            // ========= Thông tin hóa đơn =========
             my_app.dao.CustomerDao custDao = new my_app.dao.CustomerDao();
             Customer customer = custDao.findById(inv.getCustomerId());
             String custName = (customer != null) ? customer.getFullName() : "N/A";
 
-            // Lấy thông tin nhân viên
             my_app.dao.EmployeeDao empDao = new my_app.dao.EmployeeDao();
             Employee employee = (inv.getEmployeeId() != null) ? empDao.findById(inv.getEmployeeId()) : null;
             String empName = (employee != null)
                     ? (employee.getFirstName() + " " + employee.getLastName()).trim()
                     : "N/A";
 
-            // Lấy chi tiết đơn hàng
             String orderDetails = "—";
             if (inv.getOrderId() != null) {
                 my_app.dao.OrderDao orderDao = new my_app.dao.OrderDao();
@@ -310,40 +351,291 @@ public class InvoiceController implements Initializable {
                 default -> "◯ Mới";
             };
 
-            String contentText = String.format(
-                    "━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "Hóa Đơn #%d\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "👤 Khách Hàng: %s\n" +
-                    "👨‍💼 Nhân Viên: %s\n" +
-                    "📦 Đơn Hàng: %s\n" +
-                    "💰 Tổng Tiền: %s\n" +
-                    "📅 Ngày Xuất: %s\n" +
-                    "🕐 Giờ Xuất: %s\n" +
-                    "📊 Trạng Thái: %s\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━━━━",
-                    inv.getId(),
-                    custName,
-                    empName,
-                    orderDetails,
-                    formatMoney(inv.getTotalAmount()),
-                    (inv.getIssuedDate() != null
-                            ? String.format("%02d/%02d/%d", inv.getIssuedDate().getDayOfMonth(),
-                            inv.getIssuedDate().getMonthValue(), inv.getIssuedDate().getYear())
-                            : "—"),
-                    (inv.getIssuedDate() != null
-                            ? String.format("%02d:%02d:%02d", inv.getIssuedDate().getHour(),
-                            inv.getIssuedDate().getMinute(), inv.getIssuedDate().getSecond())
-                            : "—"),
-                    statusLabel
+            Label header = new Label(
+                    String.format("Hóa Đơn #%d | %s | Tổng: %s", inv.getId(), statusLabel, formatMoney(inv.getTotalAmount()))
+            );
+            header.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 6 0 6 0;");
+
+            // ========= Load invoice_detail + product map =========
+            InvoiceDetailDao detailDao = new InvoiceDetailDao();
+            ProductDao productDao = new ProductDao();
+
+            Map<Integer, String> productNameMap = new HashMap<>();
+            try {
+                for (Product p : productDao.findAll()) {
+                    productNameMap.put(p.getId(), p.getProductName());
+                }
+            } catch (Exception ignore) {
+                // Nếu không load được product thì vẫn hiển thị productId
+            }
+
+            final ObservableList<InvoiceDetail> detailItems = FXCollections.observableArrayList();
+            try {
+                detailItems.setAll(detailDao.findByInvoiceId(inv.getId()));
+            } catch (Exception ex) {
+                // Nếu DB chưa có bảng invoice_detail thì vẫn mở dialog, nhưng không có dòng chi tiết
+                System.err.println("Cannot load invoice_detail: " + ex.getMessage());
+                showWarning("Thiếu dữ liệu", "Không thể tải chi tiết hóa đơn (invoice_detail). Vui lòng kiểm tra DB.");
+            }
+
+            TableView<InvoiceDetail> tv = new TableView<>();
+            tv.setItems(detailItems);
+            tv.setPrefHeight(260);
+
+            TableColumn<InvoiceDetail, Integer> colProductId = new TableColumn<>("Mã SP");
+            colProductId.setCellValueFactory(new PropertyValueFactory<>("productId"));
+
+            TableColumn<InvoiceDetail, String> colProductName = new TableColumn<>("Sản phẩm");
+            colProductName.setCellValueFactory(cd ->
+                    new javafx.beans.property.SimpleStringProperty(
+                            productNameMap.getOrDefault(cd.getValue().getProductId(), "")
+                    )
             );
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Chi Tiết Hóa Đơn");
-            alert.setHeaderText(null);
-            alert.setContentText(contentText);
-            alert.getDialogPane().setPrefWidth(400);
-            alert.showAndWait();
+            TableColumn<InvoiceDetail, Integer> colQty = new TableColumn<>("SL");
+            colQty.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+
+            TableColumn<InvoiceDetail, String> colUnitPrice = new TableColumn<>("Đơn giá");
+            colUnitPrice.setCellValueFactory(cd ->
+                    new javafx.beans.property.SimpleStringProperty(
+                            formatMoney(cd.getValue().getUnitPrice())
+                    )
+            );
+
+            TableColumn<InvoiceDetail, String> colLineTotal = new TableColumn<>("Thành tiền");
+            colLineTotal.setCellValueFactory(cd ->
+                    new javafx.beans.property.SimpleStringProperty(
+                            formatMoney(cd.getValue().getLineTotal())
+                    )
+            );
+
+            tv.getColumns().addAll(colProductId, colProductName, colQty, colUnitPrice, colLineTotal);
+
+            // ========= Helpers: reload + recalc invoice total =========
+            Runnable reloadAndRecalc = () -> {
+                try {
+                    detailItems.setAll(detailDao.findByInvoiceId(inv.getId()));
+                    BigDecimal total = detailItems.stream()
+                            .map(InvoiceDetail::getLineTotal)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    inv.setTotalAmount(total);
+                    invoiceBus.updateInvoice(inv);
+                    loadData(); // cập nhật lại bảng hóa đơn
+                } catch (Exception ex) {
+                    showError("Lỗi", "Không thể cập nhật tổng tiền/chi tiết: " + ex.getMessage());
+                }
+            };
+
+            // ========= Dialog chính =========
+            Dialog<Void> dialog = new Dialog<>();
+            dialog.setTitle("Chi Tiết Hóa Đơn & InvoiceDetail");
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            dialog.getDialogPane().setPrefSize(820, 520);
+
+            Button btnAdd = new Button("➕ Thêm sản phẩm");
+            Button btnEdit = new Button("✏ Sửa dòng");
+            Button btnRemove = new Button("🗑 Xóa dòng");
+            Button btnDeleteInvoice = new Button("🗑 Xóa hóa đơn");
+
+            HBox actionBar = new HBox(10, btnAdd, btnEdit, btnRemove, btnDeleteInvoice);
+            actionBar.setStyle("-fx-padding: 8 0 0 0;");
+
+            btnAdd.setOnAction(e -> {
+                try {
+                    // Dữ liệu chọn sản phẩm
+                    List<Product> products = productDao.findAll();
+                    if (products.isEmpty()) {
+                        showWarning("Thiếu dữ liệu", "Không có sản phẩm trong DB để thêm.");
+                        return;
+                    }
+
+                    Map<String, Integer> displayToProductId = new HashMap<>();
+                    Map<Integer, BigDecimal> idToPrice = new HashMap<>();
+                    ComboBox<String> cbProduct = new ComboBox<>();
+                    for (Product p : products) {
+                        if (p.getId() == null) continue;
+                        String display = p.getId() + " - " + p.getProductName();
+                        displayToProductId.put(display, p.getId());
+                        idToPrice.put(p.getId(), p.getUnitPrice());
+                        cbProduct.getItems().add(display);
+                    }
+
+                    TextField tfQty = new TextField("1");
+                    TextField tfUnitPrice = new TextField();
+
+                    cbProduct.setOnAction(ev -> {
+                        Integer pid = displayToProductId.get(cbProduct.getValue());
+                        if (pid != null && idToPrice.containsKey(pid)) {
+                            BigDecimal up = idToPrice.get(pid);
+                            if (up != null) tfUnitPrice.setText(up.toPlainString());
+                        }
+                    });
+
+                    if (!cbProduct.getItems().isEmpty()) {
+                        cbProduct.getSelectionModel().selectFirst();
+                        Integer pid = displayToProductId.get(cbProduct.getValue());
+                        BigDecimal up = idToPrice.get(pid);
+                        if (up != null) tfUnitPrice.setText(up.toPlainString());
+                    }
+
+                    Dialog<InvoiceDetail> addDialog = new Dialog<>();
+                    addDialog.setTitle("Thêm sản phẩm vào hóa đơn #" + inv.getId());
+                    ButtonType btnSave = new ButtonType("Thêm", ButtonType.OK.getButtonData());
+                    addDialog.getDialogPane().getButtonTypes().addAll(btnSave, ButtonType.CANCEL);
+
+                    GridPane grid = new GridPane();
+                    grid.setHgap(12);
+                    grid.setVgap(10);
+                    grid.setPadding(new Insets(16));
+
+                    grid.add(new Label("Chọn sản phẩm:"), 0, 0);
+                    grid.add(cbProduct, 1, 0);
+                    grid.add(new Label("Số lượng:"), 0, 1);
+                    grid.add(tfQty, 1, 1);
+                    grid.add(new Label("Đơn giá:"), 0, 2);
+                    grid.add(tfUnitPrice, 1, 2);
+
+                    addDialog.getDialogPane().setContent(grid);
+
+                    addDialog.setResultConverter(btn -> {
+                        if (btn != btnSave) return null;
+                        try {
+                            String display = cbProduct.getValue();
+                            Integer productId = displayToProductId.get(display);
+                            if (productId == null) throw new RuntimeException("Chưa chọn sản phẩm.");
+
+                            int qty = Integer.parseInt(tfQty.getText().trim());
+                            if (qty <= 0) throw new RuntimeException("Số lượng phải > 0.");
+
+                            BigDecimal unitPrice = new BigDecimal(tfUnitPrice.getText().trim());
+
+                            return new InvoiceDetail(inv.getId(), productId, qty, unitPrice);
+                        } catch (Exception ex) {
+                            showError("Dữ liệu không hợp lệ", ex.getMessage());
+                            return null;
+                        }
+                    });
+
+                    Optional<InvoiceDetail> result = addDialog.showAndWait();
+                    result.ifPresent(newDetail -> {
+                        try {
+                            detailDao.create(newDetail);
+                            reloadAndRecalc.run();
+                        } catch (Exception ex) {
+                            showError("Lỗi", "Không thể thêm sản phẩm: " + ex.getMessage());
+                        }
+                    });
+                } catch (Exception ex) {
+                    showError("Lỗi", "Không thể mở dialog thêm: " + ex.getMessage());
+                }
+            });
+
+            btnEdit.setOnAction(e -> {
+                InvoiceDetail selected = tv.getSelectionModel().getSelectedItem();
+                if (selected == null) {
+                    showWarning("Chưa chọn", "Vui lòng chọn một dòng để sửa.");
+                    return;
+                }
+
+                try {
+                    Dialog<InvoiceDetail> editDialog = new Dialog<>();
+                    editDialog.setTitle("Sửa dòng sản phẩm (InvoiceDetail) #" + selected.getId());
+                    ButtonType btnSave = new ButtonType("Cập nhật", ButtonType.OK.getButtonData());
+                    editDialog.getDialogPane().getButtonTypes().addAll(btnSave, ButtonType.CANCEL);
+
+                    TextField tfQty = new TextField(String.valueOf(selected.getQuantity()));
+                    TextField tfUnitPrice = new TextField(
+                            selected.getUnitPrice() == null ? "" : selected.getUnitPrice().toPlainString()
+                    );
+
+                    GridPane grid = new GridPane();
+                    grid.setHgap(12);
+                    grid.setVgap(10);
+                    grid.setPadding(new Insets(16));
+
+                    grid.add(new Label("Số lượng:"), 0, 0);
+                    grid.add(tfQty, 1, 0);
+                    grid.add(new Label("Đơn giá:"), 0, 1);
+                    grid.add(tfUnitPrice, 1, 1);
+
+                    editDialog.getDialogPane().setContent(grid);
+
+                    editDialog.setResultConverter(btn -> {
+                        if (btn != btnSave) return null;
+                        try {
+                            int qty = Integer.parseInt(tfQty.getText().trim());
+                            if (qty <= 0) throw new RuntimeException("Số lượng phải > 0.");
+                            BigDecimal unitPrice = new BigDecimal(tfUnitPrice.getText().trim());
+
+                            selected.setQuantity(qty);
+                            selected.setUnitPrice(unitPrice);
+                            return selected;
+                        } catch (Exception ex) {
+                            showError("Dữ liệu không hợp lệ", ex.getMessage());
+                            return null;
+                        }
+                    });
+
+                    Optional<InvoiceDetail> result = editDialog.showAndWait();
+                    result.ifPresent(updated -> {
+                        try {
+                            detailDao.update(updated);
+                            reloadAndRecalc.run();
+                        } catch (Exception ex) {
+                            showError("Lỗi", "Không thể cập nhật dòng: " + ex.getMessage());
+                        }
+                    });
+                } catch (Exception ex) {
+                    showError("Lỗi", "Không thể mở dialog sửa: " + ex.getMessage());
+                }
+            });
+
+            btnRemove.setOnAction(e -> {
+                InvoiceDetail selected = tv.getSelectionModel().getSelectedItem();
+                if (selected == null) {
+                    showWarning("Chưa chọn", "Vui lòng chọn một dòng để xóa.");
+                    return;
+                }
+                Alert confirm = new Alert(AlertType.CONFIRMATION);
+                confirm.setTitle("Xác nhận xóa dòng");
+                confirm.setHeaderText(null);
+                confirm.setContentText("Xóa dòng sản phẩm #" + selected.getId() + " khỏi hóa đơn?");
+                confirm.showAndWait().ifPresent(btnType -> {
+                    if (btnType == ButtonType.OK) {
+                        try {
+                            detailDao.delete(selected.getId());
+                            reloadAndRecalc.run();
+                        } catch (Exception ex) {
+                            showError("Lỗi", "Không thể xóa dòng: " + ex.getMessage());
+                        }
+                    }
+                });
+            });
+
+            btnDeleteInvoice.setOnAction(e -> {
+                Alert confirm = new Alert(AlertType.CONFIRMATION);
+                confirm.setTitle("Xác nhận xóa hóa đơn");
+                confirm.setHeaderText(null);
+                confirm.setContentText("Xóa hóa đơn #" + inv.getId() + " và tất cả invoice_detail?");
+                confirm.showAndWait().ifPresent(btnType -> {
+                    if (btnType == ButtonType.OK) {
+                        try {
+                            detailDao.deleteByInvoiceId(inv.getId());
+                            invoiceBus.deleteInvoice(inv.getId());
+                            loadData();
+                            dialog.close();
+                        } catch (Exception ex) {
+                            showError("Lỗi", "Không thể xóa hóa đơn: " + ex.getMessage());
+                        }
+                    }
+                });
+            });
+
+            VBox content = new VBox(10, header, new Label("Khách: " + custName + " | Nhân viên: " + empName + " | " + orderDetails), tv, actionBar);
+            content.setStyle("-fx-padding: 12;");
+            dialog.getDialogPane().setContent(content);
+
+            dialog.showAndWait();
         } catch (Exception e) {
             showError("Lỗi", "Không thể lấy chi tiết hóa đơn: " + e.getMessage());
         }
@@ -383,6 +675,8 @@ public class InvoiceController implements Initializable {
             confirm.showAndWait().ifPresent(btn -> {
                 if (btn == ButtonType.OK) {
                     try {
+                        // Xóa invoice_detail trước để tránh lỗi khóa ngoại
+                        new InvoiceDetailDao().deleteByInvoiceId(inv.getId());
                         boolean ok = invoiceBus.deleteInvoice(inv.getId());
                         if (ok) {
                             showInfo("Thành công", "Đã xóa hóa đơn #" + inv.getId());
@@ -512,9 +806,17 @@ public class InvoiceController implements Initializable {
                 }
 
                 int custId = invoiceBus.getOrCreateCustomerId(custName);
-                BigDecimal amt = new BigDecimal(tfAmount.getText().trim());
-                Integer empId = tfEmpId.getText().trim().isEmpty()
-                    ? null : Integer.parseInt(tfEmpId.getText().trim());
+
+                String amountText = tfAmount.getText().trim();
+                if (amountText.isEmpty()) {
+                    showError("Du lieu khong hop le", "Tong tien khong duoc rong!");
+                    return null;
+                }
+                BigDecimal amt = new BigDecimal(amountText);
+
+                String employeeText = tfEmpId.getText().trim();
+                Integer empId = employeeText.isEmpty()
+                    ? null : Integer.parseInt(employeeText);
 
                 Invoice inv = new Invoice();
                 inv.setCustomerId(custId);
@@ -526,7 +828,7 @@ public class InvoiceController implements Initializable {
                 return inv;
 
             } catch (NumberFormatException ex) {
-                showError("Dữ liệu không hợp lệ", "Tổng tiền phải là số!");
+                showError("Du lieu khong hop le", "ID nhan vien va tong tien phai la so!");
                 return null;
             } catch (Exception ex) {
                 showError("Lỗi", ex.getMessage());

@@ -80,4 +80,23 @@ public class InvoiceDetailDao implements GenericDao<InvoiceDetail, Integer> {
         }
         return qe.ExecuteUpdate("DELETE FROM invoice_detail WHERE id=?", id);
     }
+
+    public ArrayList<InvoiceDetail> findByInvoiceId(Integer invoiceId) {
+        if (invoiceId == null) {
+            throw new IllegalArgumentException("Invoice id must not be null");
+        }
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(
+                BASE_QUERY + " WHERE invoice_id=? ORDER BY id ASC",
+                invoiceId);
+        ArrayList<InvoiceDetail> details = new ArrayList<>(records.size());
+        records.forEach(row -> details.add(new InvoiceDetail(row)));
+        return details;
+    }
+
+    public int deleteByInvoiceId(Integer invoiceId) {
+        if (invoiceId == null) {
+            throw new IllegalArgumentException("Invoice id must not be null");
+        }
+        return qe.ExecuteUpdate("DELETE FROM invoice_detail WHERE invoice_id=?", invoiceId);
+    }
 }

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.Scene?>
+<?import javafx.stage.Stage?>
+<?import javafx.scene.text.Text?>
+<BorderPane xmlns="http://javafx.com/javafx/21.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="my_app.controller.component.InvoiceDetailController"
+            prefWidth="900.0" prefHeight="520.0"
+            style="-fx-background-color: #f5f7f5;">
+
+    <top>
+        <VBox spacing="8.0" BorderPane.alignment="CENTER" style="-fx-padding: 12 12 10 12;">
+            <Label fx:id="lblInvoiceHeader" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2d2d2d;" />
+            <HBox spacing="14.0">
+                <Label fx:id="lblInvoiceStatus" style="-fx-text-fill:#2e7d32; -fx-font-weight: bold;" />
+                <Label fx:id="lblInvoiceTotal" style="-fx-text-fill:#2d2d2d; -fx-font-weight: bold;" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="10.0" style="-fx-padding: 6 12 12 12;">
+            <TableView fx:id="detailTable" prefHeight="340.0">
+                <columns>
+                    <TableColumn fx:id="colProductId" prefWidth="70.0" text="Mã SP" />
+                    <TableColumn fx:id="colProductName" prefWidth="240.0" text="Sản phẩm" />
+                    <TableColumn fx:id="colQuantity" prefWidth="80.0" text="SL" />
+                    <TableColumn fx:id="colUnitPrice" prefWidth="130.0" text="Đơn giá" />
+                    <TableColumn fx:id="colLineTotal" prefWidth="140.0" text="Thành tiền" />
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10.0" BorderPane.alignment="CENTER" style="-fx-padding: 6 12 14 12;">
+            <Button fx:id="btnAddLine" mnemonicParsing="false" text="➕ Thêm dòng" onAction="#handleAddLine"
+                    style="-fx-background-color: #4a7c59; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" />
+            <Button fx:id="btnEditLine" mnemonicParsing="false" text="✏ Sửa dòng" onAction="#handleEditLine"
+                    style="-fx-background-color: #29b6f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" />
+            <Button fx:id="btnDeleteLine" mnemonicParsing="false" text="🗑 Xóa dòng" onAction="#handleDeleteLine"
+                    style="-fx-background-color: #e91e63; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" />
+            <Button fx:id="btnDeleteInvoice" mnemonicParsing="false" text="🗑 Xóa hóa đơn" onAction="#handleDeleteInvoice"
+                    style="-fx-background-color: #ef5350; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" />
+
+            <HBox HBox.hgrow="ALWAYS" />
+
+            <Button fx:id="btnClose" mnemonicParsing="false" text="Đóng" onAction="#handleClose"
+                    style="-fx-background-color: #777; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" />
+        </HBox>
+    </bottom>
+</BorderPane>
+

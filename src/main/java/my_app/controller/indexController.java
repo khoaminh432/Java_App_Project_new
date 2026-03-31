@@ -56,10 +56,10 @@ public class indexController extends SwitchPage {
     }
 
     // private void initpage() {
-    //     HomePage = createPage("/fxml/admin/component/homepage.fxml");
-    //     ProductPage = createPage("/fxml/admin/component/productpage.fxml");
+    //     HomePage = createPage("/fxml/admin/component/homepage.fxml");        
+    //     ProductPage = createPage("/fxml/admin/component/productpage.fxml");  
     //     CustomerPage = createPage("/fxml/admin/component/product/addproduct.fxml");
-    //     BillPage = createPage("/fxml/admin/component/invoicepage.fxml");
+    //     BillPage = createPage("/fxml/admin/component/invoicepage.fxml");     
     // }
     private void handleSwitchPage(String pageName, String url) throws IOException {
         if (!pageName.equals(ClickPage)) {
@@ -76,7 +76,7 @@ public class indexController extends SwitchPage {
     @FXML
     private void loadHomePage() throws IOException {
         System.out.println("Load Home Page");
-        handleSwitchPage("Trang chủ", "/fxml/admin/component/ingredient/goodsreceipt.fxml");
+        handleSwitchPage("Trang chủ", "/fxml/admin/component/homepage.fxml");
     }
 
     @FXML
@@ -94,7 +94,6 @@ public class indexController extends SwitchPage {
     }
 
     @FXML
-<<<<<<< HEAD
     private void loadBillPage() throws IOException {
         try {
             System.out.println("Load Bill Page");
@@ -104,7 +103,9 @@ public class indexController extends SwitchPage {
             System.err.println("Error loading Bill Page: " + e.getMessage());
             e.printStackTrace();
         }
-=======
+    }
+
+    @FXML
     private void loadEmployeePage() throws IOException {
         System.out.println("Load Employee Page");
         handleSwitchPage("Nhân viên", "/fxml/employee.fxml");
@@ -113,8 +114,13 @@ public class indexController extends SwitchPage {
     @FXML
     private void loadSupplierPage() throws IOException {
         System.out.println("Load Supplier Page");
-        handleSwitchPage("Nha cung cap", "/fxml/admin/supplier/supplier.fxml");
->>>>>>> b70f6cc1042cc07ccd2dbe975b69c12dd65cd970
+        handleSwitchPage("Nhà cung cấp", "/fxml/admin/supplier/supplier.fxml");
+    }
+
+    @FXML
+    private void loadOrderPage() throws IOException {
+        System.out.println("Load Order Page");
+        handleSwitchPage("Đặt Hàng", "/fxml/admin/component/orderpage.fxml");
     }
 
     private void loadLabel() {

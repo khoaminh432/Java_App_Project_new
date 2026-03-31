@@ -107,4 +107,14 @@ public class InvoiceDetailBus implements GeneralConfig<InvoiceDetail> {
         findAll();
         return index;
     }
+
+    public List<InvoiceDetail> findByInvoiceId(int invoiceId) {
+        return invoiceDetailDao.findByInvoiceId(invoiceId);
+    }
+
+    public int deleteByInvoiceId(int invoiceId) {
+        int index = invoiceDetailDao.deleteByInvoiceId(invoiceId);
+        findAll(); // cập nhật danh sách trong memory
+        return index;
+    }
 }

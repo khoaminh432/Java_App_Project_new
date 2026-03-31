@@ -18,7 +18,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="650" prefWidth="1000" spacing="12" styleClass="root" stylesheets="@../../../../css/goodsreceipt.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.component.goods.GoodsReceiptController">
+<VBox prefHeight="650" prefWidth="1000" spacing="12" styleClass="root" stylesheets="@../../../../css/goodsreceipt.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.component.goods.GoodsReceiptController">
 
     <!-- HEADER -->
     <HBox alignment="CENTER_LEFT" style="-fx-padding:10; -fx-background-color:#409eff;" styleClass="header">

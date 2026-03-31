@@ -123,8 +123,8 @@ public class SupplierController {
     private final  SupplierBus bus = new SupplierBus();
     private final  GoodsReceiptDetailBus RDBus= new GoodsReceiptDetailBus();
     private final  GoodsReceiptBus RBus= new GoodsReceiptBus();
-    private  List<GoodsReceiptDetail> List= RDBus.fetchAllFromDb();
-    private  List<GoodsReceipt> Parent= RBus.fetchAllFromDb();
+    private  List<GoodsReceiptDetail> List;
+    private  List<GoodsReceipt> Parent;
     private ObservableList<Supplier> obser;
     public LocalDate time; 
     private static HashMap<String, Integer> supplierStats = new HashMap<>();
@@ -137,8 +137,15 @@ public class SupplierController {
 
     @FXML
     private void initialize() {
-        loadData();
-        loadEvent();
+        try {
+            List = RDBus.fetchAllFromDb();
+            Parent = RBus.fetchAllFromDb();
+            loadData();
+            loadEvent();
+        } catch (Exception e) {
+            System.err.println("Error initializing SupplierController: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private List<Supplier> CacheDB() {

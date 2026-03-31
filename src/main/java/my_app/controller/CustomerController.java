@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.collections.FXCollections;
 import java.util.List;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TableCell;
@@ -117,11 +118,18 @@ public class CustomerController {
     
     @FXML
     public void initialize() {
-        setupTableColumns();
-        loadCustomerData();
-        setupFilters();
-        updateStatistics();
-        hideDetailPanel();
+        try {
+            setupTableColumns();
+            loadCustomerData();
+            setupFilters();
+            updateStatistics();
+            hideDetailPanel();
+        } catch (Exception e) {
+            System.err.println("Warning: Error during Customer Controller initialization: " + e.getMessage());
+            e.printStackTrace();
+            // Hiển thị bảng trống thay vì crash
+            customerTable.setItems(FXCollections.observableArrayList());
+        }
     }
     
     private void setupTableColumns() {

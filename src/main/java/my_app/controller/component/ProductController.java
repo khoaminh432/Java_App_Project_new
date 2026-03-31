@@ -45,10 +45,18 @@ import my_app.util.QueryExecutor;
 
     public class ProductController {
 
-    private final static IngredientProductBus ingredientProductBus = new IngredientProductBus();
-    private final static ProductCategoryBus productCategoryBus = new ProductCategoryBus();
-    private final static IngredientBus ingredientBus = new IngredientBus();
-    private final static ProductBus productBus = new ProductBus();
+    private IngredientProductBus ingredientProductBus;
+    private ProductCategoryBus productCategoryBus;
+    private IngredientBus ingredientBus;
+    private ProductBus productBus;
+    
+    private void initBusClasses() {
+        if (ingredientProductBus == null) ingredientProductBus = new IngredientProductBus();
+        if (productCategoryBus == null) productCategoryBus = new ProductCategoryBus();
+        if (ingredientBus == null) ingredientBus = new IngredientBus();
+        if (productBus == null) productBus = new ProductBus();
+    }
+    
     private static BigDecimal calTotalPriceAll = BigDecimal.ZERO;
     private static HashMap<String, Integer> statisticProduct = new HashMap<>();
 
@@ -182,11 +190,17 @@ import my_app.util.QueryExecutor;
 
     // tải dữ liệu
     private void LoadData() {
-        productBus.findAll();
-        ingredientBus.findAll();
-        setTableData();
-        LoadComboboxData();
-        setTextFieldNumeric();
+        initBusClasses();
+        try {
+            productBus.findAll();
+            ingredientBus.findAll();
+            setTableData();
+            LoadComboboxData();
+            setTextFieldNumeric();
+        } catch (Exception e) {
+            System.err.println("Warning: Database not available during initialization. Error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     // tải sự kiện
@@ -533,6 +547,7 @@ import my_app.util.QueryExecutor;
         String quantityStr = ((TextField) vbAddProduct.lookup("#tfQuantityProduct")).getText();
 
         ProductCategory categoryTemp = cbbCategoryProduct.getSelectionModel().getSelectedItem();
+        String unit = cbbUnitProduct.getSelectionModel().getSelectedItem();
 
         if (name.isBlank() || priceStr.isBlank() || quantityStr.isBlank()) {
             AlertInformation.showWarningAlert("Chú Ý", "Thiếu Thông Tin", "Vui lòng điền đầy đủ thông tin sản phẩm.");

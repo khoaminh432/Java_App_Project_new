@@ -1,11 +1,11 @@
 package my_app.dao;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.math.BigDecimal;
 
 import my_app.model.Invoice;
 import my_app.util.QueryExecutor;
@@ -13,12 +13,9 @@ import my_app.util.QueryExecutor;
 public class InvoiceDao implements GenericDao<Invoice, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM invoice";
-    private final QueryExecutor qe = new QueryExecutor();
-    private final static String TABLE_NAME = "invoice";
+    private static final String TABLE_NAME = "invoice";
 
-    // ========================
-    // CRUD CƠ BẢN (GenericDao)
-    // ========================
+    private final QueryExecutor qe = new QueryExecutor();
 
     @Override
     public Invoice findById(Integer id) {
@@ -27,44 +24,26 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
         }
 
         try {
-            ArrayList<HashMap<String, Object>> results =
-                    qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
-
+            ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
             return results.isEmpty() ? null : new Invoice(results.get(0));
         } catch (Exception e) {
-            System.err.println("⚠️ Lỗi khi truy vấn Invoice theo ID: " + e.getMessage());
+            System.err.println("Invoice lookup failed: " + e.getMessage());
             return null;
         }
     }
 
     @Override
-<<<<<<< HEAD
     public ArrayList<Invoice> findAll() {
         try {
-            ArrayList<HashMap<String, Object>> records =
-                    qe.ExecuteQuery(BASE_QUERY);
-
+            ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " ORDER BY issued_date DESC, id DESC");
             ArrayList<Invoice> invoices = new ArrayList<>(records.size());
             records.forEach(row -> invoices.add(new Invoice(row)));
-
             return invoices;
         } catch (Exception e) {
-            System.err.println("⚠️ Chi tiết lỗi khi truy vấn Invoice: " + e.getMessage());
+            System.err.println("Invoice query failed: " + e.getMessage());
             e.printStackTrace();
             return new ArrayList<>();
         }
-=======
-    public int getNextID() {
-        return qe.NextID(TABLE_NAME);
-    }
-
-    @Override
-    public ArrayList<Invoice> findAll() {
-        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        ArrayList<Invoice> invoices = new ArrayList<>(records.size());
-        records.forEach(row -> invoices.add(new Invoice(row)));
-        return invoices;
->>>>>>> b70f6cc1042cc07ccd2dbe975b69c12dd65cd970
     }
 
     @Override
@@ -72,27 +51,31 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
         if (limit <= 0 || page < 0) {
             throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
         }
+
         int offset = limit * page;
-        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<HashMap<String, Object>> records =
+                qe.ExecuteQuery(BASE_QUERY + " ORDER BY issued_date DESC, id DESC LIMIT ? OFFSET ?", limit, offset);
+
         ArrayList<Invoice> invoices = new ArrayList<>(records.size());
         records.forEach(row -> invoices.add(new Invoice(row)));
         return invoices;
     }
 
     @Override
-    public int create(Invoice entity
-    ) {
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
+    public int create(Invoice entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Invoice entity must not be null");
         }
 
-        String sql = "INSERT INTO invoice (customer_id, employee_id, order_id, payment_method_id, " +
-                "issued_date, total_amount, status) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO invoice (customer_id, employee_id, order_id, payment_method_id, issued_date, total_amount, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        Timestamp issuedDate = entity.getIssuedDate() != null
-                ? Timestamp.valueOf(entity.getIssuedDate())
-                : null;
+        Timestamp issuedDate = entity.getIssuedDate() != null ? Timestamp.valueOf(entity.getIssuedDate()) : null;
 
         try {
             return qe.ExecuteUpdate(
@@ -103,37 +86,67 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
                     entity.getPaymentMethodId(),
                     issuedDate,
                     entity.getTotalAmount(),
-                    "NEW"
-            );
+                    normalizeStatus(entity.getStatus()));
         } catch (RuntimeException e) {
-            if (e.getMessage() != null && e.getMessage().contains("foreign key constraint")) {
-                System.err.println("⚠️ Lỗi ràng buộc khóa ngoài: " + e.getMessage());
-                throw new RuntimeException("Dữ liệu tham chiếu không hợp lệ (Khách hàng/Nhân viên/Đơn hàng/Phương thức thanh toán không tồn tại)", e);
+            String message = e.getMessage() == null ? "" : e.getMessage().toLowerCase();
+            if (message.contains("foreign key")) {
+                throw new RuntimeException("Du lieu tham chieu khong hop le", e);
             }
             throw e;
         }
     }
 
+    /**
+     * Tạo hóa đơn mới và trả về id vừa được insert (dùng để ghi invoice_detail).
+     */
+    public Integer createAndReturnId(Invoice entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Invoice entity must not be null");
+        }
+
+        String sql = "INSERT INTO invoice (customer_id, employee_id, order_id, payment_method_id, issued_date, total_amount, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        Timestamp issuedDate = entity.getIssuedDate() != null ? Timestamp.valueOf(entity.getIssuedDate()) : null;
+
+        int affected = qe.ExecuteUpdate(
+                sql,
+                entity.getCustomerId(),
+                entity.getEmployeeId(),
+                entity.getOrderId(),
+                entity.getPaymentMethodId(),
+                issuedDate,
+                entity.getTotalAmount(),
+                normalizeStatus(entity.getStatus()));
+
+        if (affected <= 0) {
+            return null;
+        }
+
+        // Lấy id vừa insert trong MySQL
+        ArrayList<HashMap<String, Object>> rows = qe.ExecuteQuery("SELECT LAST_INSERT_ID() AS id");
+        if (rows.isEmpty()) {
+            return null;
+        }
+
+        Object val = rows.get(0).get("id");
+        if (val instanceof Number n) {
+            return n.intValue();
+        }
+        return null;
+    }
+
     @Override
-    public int update(Invoice entity
-    ) {
+    public int update(Invoice entity) {
         if (entity == null || entity.getId() == null) {
             throw new IllegalArgumentException("Invoice entity and id must not be null");
         }
 
-        String sql = "UPDATE invoice " +
-                "SET customer_id=?, " +
-                "    employee_id=?, " +
-                "    order_id=?, " +
-                "    payment_method_id=?, " +
-                "    issued_date=?, " +
-                "    total_amount=?, " +
-                "    status=? " +
-                "WHERE id=?";
+        String sql = "UPDATE invoice "
+                + "SET customer_id=?, employee_id=?, order_id=?, payment_method_id=?, issued_date=?, total_amount=?, status=? "
+                + "WHERE id=?";
 
-        Timestamp issuedDate = entity.getIssuedDate() != null
-                ? Timestamp.valueOf(entity.getIssuedDate())
-                : null;
+        Timestamp issuedDate = entity.getIssuedDate() != null ? Timestamp.valueOf(entity.getIssuedDate()) : null;
 
         return qe.ExecuteUpdate(
                 sql,
@@ -143,87 +156,58 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
                 entity.getPaymentMethodId(),
                 issuedDate,
                 entity.getTotalAmount(),
-                entity.getStatus(),
-                entity.getId()
-        );
+                normalizeStatus(entity.getStatus()),
+                entity.getId());
     }
 
     @Override
-    public int delete(Integer id
-    ) {
+    public int delete(Integer id) {
         if (id == null) {
             throw new IllegalArgumentException("Invoice id must not be null");
         }
-
-        return qe.ExecuteUpdate(
-                "DELETE FROM invoice WHERE id=?",
-                id
-        );
+        return qe.ExecuteUpdate("DELETE FROM invoice WHERE id=?", id);
     }
 
-    // ========================
-    // TRUY VẤN THEO NGHIỆP VỤ
-    // ========================
-
-    // 1. Lấy danh sách hóa đơn theo khách hàng
     public List<Invoice> findByCustomerId(Integer customerId) {
         if (customerId == null) {
             throw new IllegalArgumentException("Customer id must not be null");
         }
 
-        ArrayList<HashMap<String, Object>> records =
-                qe.ExecuteQuery(
-                        BASE_QUERY + " WHERE customer_id=?",
-                        customerId
-                );
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(
+                BASE_QUERY + " WHERE customer_id=? ORDER BY issued_date DESC, id DESC",
+                customerId);
 
-        List<Invoice> invoices = new ArrayList<>();
+        List<Invoice> invoices = new ArrayList<>(records.size());
         records.forEach(row -> invoices.add(new Invoice(row)));
-
         return invoices;
     }
 
-    // 2. Lấy danh sách hóa đơn theo khoảng ngày
     public List<Invoice> findByDateRange(LocalDateTime from, LocalDateTime to) {
         if (from == null || to == null) {
             throw new IllegalArgumentException("Date range must not be null");
         }
 
         try {
-            // Convert LocalDateTime to Date for reliable date comparison
-            java.sql.Date startDate = java.sql.Date.valueOf(from.toLocalDate());
-            java.sql.Date endDate = java.sql.Date.valueOf(to.toLocalDate());
-            
-            // Use DATE() function in SQL for timezone-safe date comparison
-            ArrayList<HashMap<String, Object>> records =
-                    qe.ExecuteQuery(
-                            BASE_QUERY + " WHERE DATE(issued_date) BETWEEN ? AND ?",
-                            startDate,
-                            endDate
-                    );
+            ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(
+                    BASE_QUERY + " WHERE issued_date BETWEEN ? AND ? ORDER BY issued_date DESC, id DESC",
+                    Timestamp.valueOf(from),
+                    Timestamp.valueOf(to));
 
-            List<Invoice> invoices = new ArrayList<>();
+            List<Invoice> invoices = new ArrayList<>(records.size());
             records.forEach(row -> invoices.add(new Invoice(row)));
-
             return invoices;
         } catch (Exception e) {
-            System.err.println("⚠️ Lỗi khi truy vấn Invoice theo ngày: " + e.getMessage());
+            System.err.println("Invoice date-range query failed: " + e.getMessage());
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
 
-    // ========================
-    // TRẠNG THÁI HÓA ĐƠN
-    // ========================
-
     public int updateStatus(Integer invoiceId, String status) {
         if (invoiceId == null || status == null) {
             throw new IllegalArgumentException("Invoice id and status must not be null");
         }
-
-        String sql = "UPDATE invoice SET status=? WHERE id=?";
-        return qe.ExecuteUpdate(sql, status, invoiceId);
+        return qe.ExecuteUpdate("UPDATE invoice SET status=? WHERE id=?", normalizeStatus(status), invoiceId);
     }
 
     public int markAsPaid(Integer invoiceId) {
@@ -234,53 +218,45 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
         return updateStatus(invoiceId, "CANCELED");
     }
 
-    // ========================
-    // THỐNG KÊ – DOANH THU
-    // ========================
-
     public BigDecimal getTotalRevenue(LocalDateTime from, LocalDateTime to) {
         if (from == null || to == null) {
             throw new IllegalArgumentException("Date range must not be null");
         }
 
         try {
-            // Convert LocalDateTime to Date for reliable date comparison
-            java.sql.Date startDate = java.sql.Date.valueOf(from.toLocalDate());
-            java.sql.Date endDate = java.sql.Date.valueOf(to.toLocalDate());
-            
-            // Use DATE() function in SQL for timezone-safe date comparison
-            String sql = "SELECT COALESCE(SUM(total_amount), 0) as revenue " +
-                    "FROM invoice " +
-                    "WHERE DATE(issued_date) BETWEEN ? AND ? " +
-                    "AND status = 'PAID'";
-
-            ArrayList<HashMap<String, Object>> results =
-                    qe.ExecuteQuery(
-                            sql,
-                            startDate,
-                            endDate
-                    );
+            ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(
+                    "SELECT COALESCE(SUM(total_amount), 0) AS revenue "
+                            + "FROM invoice WHERE issued_date BETWEEN ? AND ? AND status = 'PAID'",
+                    Timestamp.valueOf(from),
+                    Timestamp.valueOf(to));
 
             if (results.isEmpty()) {
                 return BigDecimal.ZERO;
             }
 
             Object revenue = results.get(0).get("revenue");
-            if (revenue == null) {
-                return BigDecimal.ZERO;
+            if (revenue instanceof BigDecimal bigDecimal) {
+                return bigDecimal;
             }
-
-            if (revenue instanceof BigDecimal) {
-                return (BigDecimal) revenue;
-            } else if (revenue instanceof Number) {
-                return BigDecimal.valueOf(((Number) revenue).doubleValue());
+            if (revenue instanceof Number number) {
+                return BigDecimal.valueOf(number.doubleValue());
             }
-
             return BigDecimal.ZERO;
         } catch (Exception e) {
-            System.err.println("⚠️ Lỗi khi tính doanh thu: " + e.getMessage());
+            System.err.println("Revenue query failed: " + e.getMessage());
             e.printStackTrace();
             return BigDecimal.ZERO;
         }
+    }
+
+    public ArrayList<Invoice> findAll1(int limit, int page) {
+        return findAll(limit, page);
+    }
+
+    private String normalizeStatus(String status) {
+        if (status == null || status.isBlank()) {
+            return "NEW";
+        }
+        return status.trim().toUpperCase();
     }
 }

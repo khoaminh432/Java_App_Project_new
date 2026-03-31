@@ -33,7 +33,7 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         }
         int offset = limit * page;
         ArrayList<Customer> list = new ArrayList<Customer>();
-        qe.ExecuteQuery(QUERYALL + " WHERE id > ? LIMIT ?", offset, limit).forEach(action -> {
+        qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit).forEach(action -> {
             Customer cus = new Customer(action);
             list.add(cus);
         });
@@ -48,7 +48,7 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         return customers;
     }
 
-    public ArrayList<Customer> findByName(String name) {
+    public ArrayList<Customer> findByName1(String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Customer name must not be null or empty");
         }
@@ -66,7 +66,7 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         }
         try {
             ArrayList<Customer> results = new ArrayList<>();
-            qe.ExecuteQuery(QUERYALL + " WHERE full_name = ?", fullName.trim())
+            qe.ExecuteQuery(BASE_QUERY + " WHERE full_name = ?", fullName.trim())
                     .forEach(row -> results.add(new Customer(row)));
             return results.isEmpty() ? null : results.get(0);
         } catch (Exception e) {
@@ -112,3 +112,6 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         return qe.ExecuteUpdate("DELETE FROM customer WHERE id=?", id);
     }
 }
+
+
+

@@ -5,121 +5,118 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import my_app.dao.CustomerDao;
+import my_app.dao.EmployeeDao;
 import my_app.dao.InvoiceDao;
 import my_app.model.Customer;
 import my_app.model.Invoice;
 
 public class InvoiceBus {
-    private InvoiceDao invoiceDao;
+    private final InvoiceDao invoiceDao;
 
     public InvoiceBus() {
-        this.invoiceDao = new InvoiceDao();
+        this(new InvoiceDao());
     }
 
-    // Constructor cho unit testing (dependency injection)
+    // Constructor for testing / dependency injection.
     public InvoiceBus(InvoiceDao invoiceDao) {
         this.invoiceDao = invoiceDao;
     }
 
-    // Lấy hóa đơn theo ID
     public Invoice getInvoiceById(Integer id) {
         if (id == null || id <= 0) {
-            throw new IllegalArgumentException("ID hóa đơn không hợp lệ");
+            throw new IllegalArgumentException("ID hoa don khong hop le");
         }
         return invoiceDao.findById(id);
     }
 
-    // Lấy tất cả hóa đơn
     public List<Invoice> getAllInvoices() {
         return invoiceDao.findAll();
     }
 
-    // Tạo mới hóa đơn
     public boolean createInvoice(Invoice invoice) {
         if (invoice == null) {
-            throw new IllegalArgumentException("Thông tin hóa đơn không được null");
+            throw new IllegalArgumentException("Thong tin hoa don khong duoc null");
         }
 
-        // Validate dữ liệu
         validateInvoice(invoice);
 
-        // Tự động set issued_date nếu chưa có
         if (invoice.getIssuedDate() == null) {
             invoice.setIssuedDate(LocalDateTime.now());
         }
 
-        int result = invoiceDao.create(invoice);
-        return result > 0;
+        return invoiceDao.create(invoice) > 0;
     }
 
-    // Cập nhật hóa đơn
-    public boolean updateInvoice(Invoice invoice) {
-        if (invoice == null || invoice.getId() == null) {
-            throw new IllegalArgumentException("Thông tin hóa đơn không hợp lệ");
+    /**
+     * Tạo hóa đơn mới và trả về id vừa được insert.
+     * Dùng khi cần ghi thêm invoice_detail ngay sau khi tạo invoice.
+     */
+    public Integer createInvoiceAndReturnId(Invoice invoice) {
+        if (invoice == null) {
+            throw new IllegalArgumentException("Thong tin hoa don khong duoc null");
         }
 
-        // Kiểm tra hóa đơn có tồn tại không
-        Invoice existingInvoice = invoiceDao.findById(invoice.getId());
-        if (existingInvoice == null) {
-            throw new IllegalArgumentException("Hóa đơn không tồn tại");
-        }
-
-        // Validate dữ liệu
         validateInvoice(invoice);
 
-        int result = invoiceDao.update(invoice);
-        return result > 0;
+        if (invoice.getIssuedDate() == null) {
+            invoice.setIssuedDate(LocalDateTime.now());
+        }
+
+        return invoiceDao.createAndReturnId(invoice);
     }
 
-    // Xóa hóa đơn
+    public boolean updateInvoice(Invoice invoice) {
+        if (invoice == null || invoice.getId() == null) {
+            throw new IllegalArgumentException("Thong tin hoa don khong hop le");
+        }
+
+        Invoice existingInvoice = invoiceDao.findById(invoice.getId());
+        if (existingInvoice == null) {
+            throw new IllegalArgumentException("Hoa don khong ton tai");
+        }
+
+        validateInvoice(invoice);
+        return invoiceDao.update(invoice) > 0;
+    }
+
     public boolean deleteInvoice(Integer id) {
         if (id == null || id <= 0) {
-            throw new IllegalArgumentException("ID hóa đơn không hợp lệ");
+            throw new IllegalArgumentException("ID hoa don khong hop le");
         }
 
-        // Kiểm tra hóa đơn có tồn tại không
         Invoice invoice = invoiceDao.findById(id);
         if (invoice == null) {
-            throw new IllegalArgumentException("Hóa đơn không tồn tại");
+            throw new IllegalArgumentException("Hoa don khong ton tai");
         }
 
-        int result = invoiceDao.delete(id);
-        return result > 0;
+        return invoiceDao.delete(id) > 0;
     }
 
-    // ========================
-    // TRUY VẤN THEO NGHIỆP VỤ
-    // ========================
-
-    // Lấy danh sách hóa đơn theo khách hàng
     public List<Invoice> getInvoicesByCustomer(Integer customerId) {
         if (customerId == null || customerId <= 0) {
-            throw new IllegalArgumentException("ID khách hàng không hợp lệ");
+            throw new IllegalArgumentException("ID khach hang khong hop le");
         }
         return invoiceDao.findByCustomerId(customerId);
     }
 
-    // Lấy danh sách hóa đơn theo khoảng ngày
     public List<Invoice> getInvoicesByDateRange(LocalDateTime from, LocalDateTime to) {
         if (from == null || to == null) {
-            throw new IllegalArgumentException("Khoảng thời gian không hợp lệ");
+            throw new IllegalArgumentException("Khoang thoi gian khong hop le");
         }
         if (from.isAfter(to)) {
-            throw new IllegalArgumentException("Ngày bắt đầu phải trước ngày kết thúc");
+            throw new IllegalArgumentException("Ngay bat dau phai truoc ngay ket thuc");
         }
         return invoiceDao.findByDateRange(from, to);
     }
 
-    // Lấy hóa đơn trong tháng hiện tại
     public List<Invoice> getCurrentMonthInvoices() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startOfMonth = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endOfMonth = now.withDayOfMonth(now.toLocalDate().lengthOfMonth())
-                                      .withHour(23).withMinute(59).withSecond(59);
+                .withHour(23).withMinute(59).withSecond(59);
         return invoiceDao.findByDateRange(startOfMonth, endOfMonth);
     }
 
-    // Lấy hóa đơn trong ngày hôm nay
     public List<Invoice> getTodayInvoices() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startOfDay = now.withHour(0).withMinute(0).withSecond(0);
@@ -127,118 +124,108 @@ public class InvoiceBus {
         return invoiceDao.findByDateRange(startOfDay, endOfDay);
     }
 
-    // Đánh dấu hóa đơn đã thanh toán
     public boolean markInvoiceAsPaid(Integer invoiceId) {
         if (invoiceId == null || invoiceId <= 0) {
-            throw new IllegalArgumentException("ID hóa đơn không hợp lệ");
+            throw new IllegalArgumentException("ID hoa don khong hop le");
         }
 
         Invoice invoice = invoiceDao.findById(invoiceId);
         if (invoice == null) {
-            throw new IllegalArgumentException("Hóa đơn không tồn tại");
+            throw new IllegalArgumentException("Hoa don khong ton tai");
         }
 
-        int result = invoiceDao.markAsPaid(invoiceId);
-        return result > 0;
+        return invoiceDao.markAsPaid(invoiceId) > 0;
     }
 
-    // Hủy hóa đơn
     public boolean cancelInvoice(Integer invoiceId) {
         if (invoiceId == null || invoiceId <= 0) {
-            throw new IllegalArgumentException("ID hóa đơn không hợp lệ");
+            throw new IllegalArgumentException("ID hoa don khong hop le");
         }
 
         Invoice invoice = invoiceDao.findById(invoiceId);
         if (invoice == null) {
-            throw new IllegalArgumentException("Hóa đơn không tồn tại");
+            throw new IllegalArgumentException("Hoa don khong ton tai");
         }
 
-        // Không cho phép hủy hóa đơn đã thanh toán
         if ("PAID".equals(invoice.getStatus())) {
-            throw new IllegalStateException("Không thể hủy hóa đơn đã thanh toán");
+            throw new IllegalStateException("Khong the huy hoa don da thanh toan");
         }
 
-        int result = invoiceDao.cancel(invoiceId);
-        return result > 0;
+        return invoiceDao.cancel(invoiceId) > 0;
     }
 
-    // Cập nhật trạng thái hóa đơn
     public boolean updateInvoiceStatus(Integer invoiceId, String status) {
         if (invoiceId == null || invoiceId <= 0) {
-            throw new IllegalArgumentException("ID hóa đơn không hợp lệ");
+            throw new IllegalArgumentException("ID hoa don khong hop le");
         }
         if (status == null || status.trim().isEmpty()) {
-            throw new IllegalArgumentException("Trạng thái không được rỗng");
+            throw new IllegalArgumentException("Trang thai khong duoc rong");
         }
-
         if (!isValidStatus(status)) {
-            throw new IllegalArgumentException("Trạng thái không hợp lệ: " + status);
+            throw new IllegalArgumentException("Trang thai khong hop le: " + status);
         }
 
-        int result = invoiceDao.updateStatus(invoiceId, status);
-        return result > 0;
+        return invoiceDao.updateStatus(invoiceId, status) > 0;
     }
 
-    // Tính tổng doanh thu trong khoảng thời gian
     public BigDecimal getTotalRevenue(LocalDateTime from, LocalDateTime to) {
         if (from == null || to == null) {
-            throw new IllegalArgumentException("Khoảng thời gian không hợp lệ");
+            throw new IllegalArgumentException("Khoang thoi gian khong hop le");
         }
         if (from.isAfter(to)) {
-            throw new IllegalArgumentException("Ngày bắt đầu phải trước ngày kết thúc");
+            throw new IllegalArgumentException("Ngay bat dau phai truoc ngay ket thuc");
         }
         return invoiceDao.getTotalRevenue(from, to);
     }
 
-    // Tính doanh thu tháng hiện tại
     public BigDecimal getCurrentMonthRevenue() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startOfMonth = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endOfMonth = now.withDayOfMonth(now.toLocalDate().lengthOfMonth())
-                                      .withHour(23).withMinute(59).withSecond(59);
+                .withHour(23).withMinute(59).withSecond(59);
         return invoiceDao.getTotalRevenue(startOfMonth, endOfMonth);
     }
 
-    // Tính doanh thu ngày hôm nay
     public BigDecimal getTodayRevenue() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startOfDay = now.withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endOfDay = now.withHour(23).withMinute(59).withSecond(59);
-       return invoiceDao.getTotalRevenue(startOfDay, endOfDay);
+        return invoiceDao.getTotalRevenue(startOfDay, endOfDay);
     }
 
-    // Tính doanh thu năm hiện tại
     public BigDecimal getCurrentYearRevenue() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startOfYear = now.withDayOfYear(1).withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endOfYear = now.withDayOfYear(now.toLocalDate().lengthOfYear())
-                                     .withHour(23).withMinute(59).withSecond(59);
+                .withHour(23).withMinute(59).withSecond(59);
         return invoiceDao.getTotalRevenue(startOfYear, endOfYear);
     }
 
-    // ========================
-    // PRIVATE HELPERS
-    // ========================
-
-    // Validate thông tin hóa đơn
     private void validateInvoice(Invoice invoice) {
         if (invoice.getCustomerId() == null || invoice.getCustomerId() <= 0) {
-            throw new IllegalArgumentException("ID khách hàng không hợp lệ");
+            throw new IllegalArgumentException("ID khach hang khong hop le");
         }
+        ensureCustomerExists(invoice.getCustomerId());
+        ensureEmployeeExists(invoice.getEmployeeId());
+
         if (invoice.getTotalAmount() == null || invoice.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Tổng tiền phải lớn hơn 0");
+            throw new IllegalArgumentException("Tong tien phai lon hon 0");
+        }
+
+        if (invoice.getStatus() == null || invoice.getStatus().isBlank()) {
+            invoice.setStatus("NEW");
+        } else if (!isValidStatus(invoice.getStatus())) {
+            throw new IllegalArgumentException("Trang thai khong hop le: " + invoice.getStatus());
         }
     }
 
-    // Kiểm tra trạng thái hợp lệ
     private boolean isValidStatus(String status) {
-        return "NEW".equals(status) ||
-               "PENDING".equals(status) ||
-               "PAID".equals(status) ||
-               "CANCELED".equals(status);
+        return "NEW".equals(status)
+                || "PENDING".equals(status)
+                || "PAID".equals(status)
+                || "CANCELED".equals(status);
     }
 
-    // Kiểm tra sự tồn tại của hóa đơn
     public boolean invoiceExists(Integer id) {
         if (id == null || id <= 0) {
             return false;
@@ -246,29 +233,59 @@ public class InvoiceBus {
         return invoiceDao.findById(id) != null;
     }
 
-    // Lấy hoặc tạo mới khách hàng theo tên
     public Integer getOrCreateCustomerId(String customerName) {
         if (customerName == null || customerName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Tên khách hàng không được rỗng");
+            throw new IllegalArgumentException("Ten khach hang khong duoc rong");
         }
 
-        CustomerBus customerBus = new CustomerBus();
-        Customer existing = new CustomerDao().findByName(customerName.trim());
-
+        String normalizedName = customerName.trim();
+        CustomerDao customerDao = new CustomerDao();
+        Customer existing = customerDao.findByName(normalizedName);
         if (existing != null) {
             return existing.getId();
         }
 
-        // Tạo khách hàng mới
         Customer newCustomer = new Customer();
-        newCustomer.setFullName(customerName.trim());
+        newCustomer.setFullName(normalizedName);
         newCustomer.setStatus("ACTIVE");
-        int customerId = customerBus.create(newCustomer);
 
-        if (customerId <= 0) {
-            throw new RuntimeException("Không thể tạo khách hàng mới");
+        int createResult = new CustomerBus().create(newCustomer);
+        if (createResult <= 0) {
+            throw new RuntimeException("Khong the tao khach hang moi");
         }
 
-        return customerId;
+        Customer created = customerDao.findByName(normalizedName);
+        if (created == null || created.getId() == null || created.getId() <= 0) {
+            throw new RuntimeException("Da tao khach hang nhung khong lay duoc ID");
+        }
+
+        return created.getId();
+    }
+
+    private void ensureCustomerExists(Integer customerId) {
+        try {
+            Customer customer = new CustomerDao().findById(customerId);
+            if (customer == null) {
+                throw new IllegalArgumentException("Khach hang khong ton tai");
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Khach hang khong ton tai: " + customerId, e);
+        }
+    }
+
+    private void ensureEmployeeExists(Integer employeeId) {
+        if (employeeId == null) {
+            return;
+        }
+        if (employeeId <= 0) {
+            throw new IllegalArgumentException("ID nhan vien khong hop le");
+        }
+        try {
+            if (new EmployeeDao().findById(employeeId) == null) {
+                throw new IllegalArgumentException("Nhan vien khong ton tai");
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Nhan vien khong ton tai: " + employeeId, e);
+        }
     }
 }

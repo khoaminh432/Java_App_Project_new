@@ -24,7 +24,7 @@
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<BorderPane fx:id="rootPane" styleClass="root-pane" stylesheets="@../../../css/Supplier.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.component.supplier.SupplierController">
+<BorderPane fx:id="rootPane" styleClass="root-pane" stylesheets="@../../../css/Supplier.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.component.supplier.SupplierController">
 
     <!-- Top Navigation Bar -->
     <top>

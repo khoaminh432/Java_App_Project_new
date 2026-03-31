@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.component.product.AddProductController">
+<VBox xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="my_app.controller.component.product.AddProductController">
    <children>
       <AnchorPane prefHeight="425.0" prefWidth="535.0" styleClass="form-card" stylesheets="@../../../../css/product.css" VBox.vgrow="ALWAYS">
       

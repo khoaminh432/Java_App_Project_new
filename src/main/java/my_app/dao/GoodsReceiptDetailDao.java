@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import my_app.model.GoodsReceiptDetail;
+import my_app.model.Invoice;
 import my_app.util.QueryExecutor;
 
 public class GoodsReceiptDetailDao implements GenericDao<GoodsReceiptDetail, Integer> {

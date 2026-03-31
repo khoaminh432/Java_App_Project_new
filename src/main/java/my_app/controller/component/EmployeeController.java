@@ -152,17 +152,24 @@ public class EmployeeController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        employeeBus = new EmployeeBus();
-        employeeList = FXCollections.observableArrayList();
-        allEmployees = new ArrayList<>();
-        filteredEmployees = new ArrayList<>();
+        try {
+            employeeBus = new EmployeeBus();
+            employeeList = FXCollections.observableArrayList();
+            allEmployees = new ArrayList<>();
+            filteredEmployees = new ArrayList<>();
 
-        loadRoles();
-        setupTable();
-        setupDatePickers();
-        setupRoleComboBox();
-        setupFilters();
-        loadEmployeeData();
+            loadRoles();
+            setupTable();
+            setupDatePickers();
+            setupRoleComboBox();
+            setupFilters();
+            loadEmployeeData();
+        } catch (Exception e) {
+            System.err.println("Warning: Error during Employee Controller initialization: " + e.getMessage());
+            e.printStackTrace();
+            // Hiển thị bảng trống thay vì crash
+            employeeList = FXCollections.observableArrayList();
+        }
     }
 
     /**
