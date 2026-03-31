@@ -48,17 +48,6 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         return customers;
     }
 
-    public ArrayList<Customer> findByName(String name) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Customer name must not be null or empty");
-        }
-        String searchQuery = BASE_QUERY + " WHERE full_name LIKE ?";
-        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(searchQuery, "%" + name + "%");
-        ArrayList<Customer> customers = new ArrayList<>(records.size());
-        records.forEach(row -> customers.add(new Customer(row)));
-        return customers;
-    }
-
     // Tìm khách hàng theo tên
     public Customer findByName(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
@@ -66,7 +55,7 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         }
         try {
             ArrayList<Customer> results = new ArrayList<>();
-            qe.ExecuteQuery(QUERYALL + " WHERE full_name = ?", fullName.trim())
+            qe.ExecuteQuery(BASE_QUERY + " WHERE full_name = ?", fullName.trim())
                     .forEach(row -> results.add(new Customer(row)));
             return results.isEmpty() ? null : results.get(0);
         } catch (Exception e) {

@@ -148,6 +148,28 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
         );
     }
 
+    @Override
+    public int getNextID() {
+        try {
+            ArrayList<HashMap<String, Object>> results =
+                    qe.ExecuteQuery("SELECT MAX(id) as max_id FROM invoice");
+            
+            if (results.isEmpty()) {
+                return 1;
+            }
+            
+            Object maxId = results.get(0).get("max_id");
+            if (maxId == null) {
+                return 1;
+            }
+            
+            return ((Number) maxId).intValue() + 1;
+        } catch (Exception e) {
+            System.err.println("⚠️ Lỗi khi lấy next ID: " + e.getMessage());
+            return 1;
+        }
+    }
+
     // ========================
     // TRUY VẤN THEO NGHIỆP VỤ
     // ========================
