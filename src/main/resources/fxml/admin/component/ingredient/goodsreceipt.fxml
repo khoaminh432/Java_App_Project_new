@@ -49,8 +49,8 @@
                 <TextField fx:id="txtNote" promptText="Ghi chú" styleClass="text-field" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <Button onAction="#btnAddIngredient" text="+ Thêm " GridPane.columnIndex="5" GridPane.rowIndex="1">
                <styleClass>
-                  <String fx:value="button" />
                   <String fx:value="btn-add" />
+                  <String fx:value="button-base" />
                </styleClass>
             </Button>
             <Label styleClass="label-title" text="Nguyên Liệu:" GridPane.columnIndex="4" />
@@ -79,14 +79,14 @@
                <children>
                       <Button onAction="#btnUpdateIngredient" text="+ Cập nhật nguyên liệu">
                      <styleClass>
-                        <String fx:value="button" />
                         <String fx:value="btn-add" />
+                        <String fx:value="button-base" />
                      </styleClass>
                   </Button>
                       <Button onAction="#handleCanceIngredient" text="Xóa dòng">
                      <styleClass>
-                        <String fx:value="button" />
                         <String fx:value="btn-delete" />
+                        <String fx:value="button-base" />
                      </styleClass>
                   </Button>
                </children>
@@ -111,16 +111,27 @@
                         </columnResizePolicy>
             
                         </TableView>
-                     <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="718.0" spacing="20.0">
+                     <HBox alignment="CENTER_LEFT" prefHeight="2.0" prefWidth="718.0" spacing="20.0">
                         <children>
                            <Label styleClass="label-title" text="Tổng Số: " />
-                           <Label styleClass="label-title" text="100" />
-                           <Separator opacity="0.0" prefHeight="0.0" prefWidth="436.0" />
-                           <HBox alignment="CENTER" prefHeight="20.0" prefWidth="125.0" spacing="20.0" HBox.hgrow="ALWAYS">
+                           <Label fx:id="lbTotalIngredient" styleClass="label-title" text="100" />
+                           <Separator opacity="0.0" prefHeight="0.0" prefWidth="363.0" HBox.hgrow="ALWAYS" />
+                           <HBox alignment="CENTER" prefHeight="34.0">
                               <children>
-                                 <Label styleClass="label-title" text="&lt;" />
+                                 <Label styleClass="label-title" text="1" />
+                                 <Label styleClass="label-title" text="/" />
+                                 <Label styleClass="label-title" text="2" />
+                                 <Label onMouseClicked="#lbHandleBeforePage" text=" &lt;Trước">
+                                    <styleClass>
+                                       <String fx:value="label-title" />
+                                       <String fx:value="button-base" />
+                                    </styleClass></Label>
                                  <Label styleClass="label-title" text="10" />
-                                 <Label styleClass="label-title" text="&gt;" />
+                                 <Label onMouseClicked="#lbHandleAfterPage" text="Sau&gt;">
+                                    <styleClass>
+                                       <String fx:value="label-title" />
+                                       <String fx:value="button-base" />
+                                    </styleClass></Label>
                               </children>
                            </HBox>
                         </children>
@@ -152,8 +163,8 @@
             <Label fx:id="lbTotal" style="-fx-font-weight:bold;" styleClass="total-label" text="0 VND" />
             <Button onAction="#btnHandleSave" text="Lưu phiếu">
             <styleClass>
-               <String fx:value="button" />
                <String fx:value="btn-update" />
+               <String fx:value="button-base" />
             </styleClass></Button>
         </HBox>
 
