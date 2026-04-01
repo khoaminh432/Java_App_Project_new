@@ -1,6 +1,7 @@
 package my_app.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import my_app.model.Customer;
 import my_app.util.QueryExecutor;
@@ -75,7 +76,6 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         if (id == null) {
             throw new IllegalArgumentException("Customer id must not be null");
         }
-        final String deleteSql = "DELETE FROM customer WHERE id=?";
-        return qe.ExecuteUpdate(deleteSql, id);
+        return qe.ExecuteUpdate("DELETE FROM customer WHERE id=?", id);
     }
 }
