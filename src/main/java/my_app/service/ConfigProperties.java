@@ -22,16 +22,8 @@ public class ConfigProperties {
         return props.getProperty(key);
     }
     public static String getDbUrl() {
-        String host = props.getProperty("db.host");
-        String port = props.getProperty("db.port");
-        String name = props.getProperty("db.name");
-        String params = props.getProperty("db.params");
-
-        return String.format(
-            "jdbc:mysql://%s:%s/%s?%s",
-            host, port, name, params
-        );
-    }
+    return props.getProperty("db.url");
+}
 
     public static String getDbUser() {
         return props.getProperty("db.user");

@@ -1,11 +1,14 @@
 package my_app.dao;
 
-import java.sql.Timestamp;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
-import my_app.model.Order;
-import my_app.util.QueryExecutor;
+import my_app.dto.OrderDTO;
+import my_app.util.DBConnection;
 
 public class OrderDao implements GenericDao<Order, Integer> {
 
@@ -13,19 +16,13 @@ public class OrderDao implements GenericDao<Order, Integer> {
     private final QueryExecutor qe = new QueryExecutor();
     private final static String TABLE_NAME = "order";
 
-    @Override
-    public Order findById(Integer id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Order id must not be null");
-        }
-        ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
-        return results.isEmpty() ? null : new Order(results.get(0));
-    }
-
-    @Override
-    public int getNextID() {
-        return qe.NextID(TABLE_NAME);
-    }
+    public List<OrderDTO> getAll() {
+        List<OrderDTO> list = new ArrayList<>();
+        try {
+            Connection conn = DBConnection.getInstance().connect();
+            String sql = "SELECT * FROM orders";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
 
     @Override
     public ArrayList<Order> findAll() {
@@ -52,37 +49,48 @@ public class OrderDao implements GenericDao<Order, Integer> {
         if (entity == null) {
             throw new IllegalArgumentException("Order entity must not be null");
         }
-        final String insertSql = "INSERT INTO `order` (customer_id, order_date, sub_total, total_amount, status) VALUES (?,?,?,?,?)";
-        Timestamp orderDate = entity.getOrderDate() != null ? Timestamp.valueOf(entity.getOrderDate()) : null;
-        return qe.ExecuteUpdate(insertSql,
-                entity.getCustomerId(),
-                orderDate,
-                entity.getSubTotal(),
-                entity.getTotalAmount(),
-                entity.getStatus());
+        return list;
     }
 
-    @Override
-    public int update(Order entity) {
-        if (entity == null || entity.getId() == null) {
-            throw new IllegalArgumentException("Order entity and id must not be null");
+    public void insert(OrderDTO o) {
+        try {
+            Connection conn = DBConnection.getInstance().connect();
+            String sql = "INSERT INTO orders(customer, order_date, status, total) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, o.getCustomer());
+            ps.setString(2, o.getDate());
+            ps.setString(3, o.getStatus());
+            ps.setString(4, o.getTotal());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        final String updateSql = "UPDATE `order` SET customer_id=?, order_date=?, sub_total=?, total_amount=?, status=? WHERE id=?";
-        Timestamp orderDate = entity.getOrderDate() != null ? Timestamp.valueOf(entity.getOrderDate()) : null;
-        return qe.ExecuteUpdate(updateSql,
-                entity.getCustomerId(),
-                orderDate,
-                entity.getSubTotal(),
-                entity.getTotalAmount(),
-                entity.getStatus(),
-                entity.getId());
     }
 
-    @Override
-    public int delete(Integer id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Order id must not be null");
+    public void delete(int id) {
+        try {
+            Connection conn = DBConnection.getInstance().connect();
+            String sql = "DELETE FROM orders WHERE id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return qe.ExecuteUpdate("DELETE FROM `order` WHERE id=?", id);
     }
+    public void update(OrderDTO o) {
+    try {
+        Connection conn = DBConnection.getInstance().connect();
+        String sql = "UPDATE orders SET customer=?, order_date=?, status=?, total=? WHERE id=?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, o.getCustomer());
+        ps.setString(2, o.getDate());
+        ps.setString(3, o.getStatus());
+        ps.setString(4, o.getTotal());
+        ps.setInt(5, o.getId());
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 }

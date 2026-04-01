@@ -8,7 +8,8 @@
   <name>JavaApp</name>
   <url>http://maven.apache.org</url>
   <properties>
-    <javafx.version>23.0.1</javafx.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javafx.version>21</javafx.version>
     <mysql.version>8.3.0</mysql.version>
     <java.version>19</java.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>

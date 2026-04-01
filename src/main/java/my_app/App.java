@@ -1,7 +1,5 @@
 package my_app;
 
-import java.io.IOException;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -28,8 +26,14 @@ public class App extends Application {
         DesktopRoot();
         Scene scene;
         try {
-            scene = new Scene(loader.load());
-        } catch (IOException e) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/order.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            stage.setTitle("JavaFX App");
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
@@ -40,11 +44,16 @@ public class App extends Application {
         {
             DBConnection.close();
         }
-        );
+
+        stage.setOnCloseRequest(e -> {
+            try {
+                DBConnection.close();
+            } catch (Exception ex) {
+            }
+        });
     }
 
     public static void main(String[] args) {
         launch(args);
     }
-
 }

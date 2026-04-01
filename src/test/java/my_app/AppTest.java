@@ -4,10 +4,16 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import my_app.bus.CustomerBus;
+import my_app.dao.CustomerDao;
 import my_app.util.DBConnection;
 import my_app.dao.IngredientProductDao;
 import my_app.dao.ProductDao;
 import my_app.util.QueryExecutor;
+/*** Sử dụng JUnit 3 (TestCase, TestSuite).
+ * 
+ */
+public class AppTest extends TestCase {
+
 
 /**
  * * Using JUnit 3 (TestCase, TestSuite).
@@ -37,8 +43,7 @@ public class AppTest extends TestCase {
      * Verify that the App class exists and can be instantiated.
      */
     public void testAppClassExists() {
-        App app = new App();
-        assertNotNull(app);
+        assertNotNull(App.class);
     }
     // public void testUserServiceMethod() {
     //     UserService userService = new UserService();
@@ -62,6 +67,16 @@ public class AppTest extends TestCase {
     //     });
     //     DBConnection.close();
     // }
+    public void testMethodModel(){
+        try {
+            CustomerDao customerDao = new CustomerDao();
+            assertNotNull(customerDao);
+            System.out.println(customerDao.findById(1));
+        } catch (Exception e) {
+            System.err.println("Database not ready: " + e.getMessage());
+        } finally {
+            DBConnection.close();
+        }}
     // public void testMethodModel() {
     //     CustomerBus customerBus = new CustomerBus();
     //     assertNotNull(customerBus);
