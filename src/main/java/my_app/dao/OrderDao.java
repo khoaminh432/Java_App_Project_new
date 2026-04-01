@@ -1,69 +1,83 @@
 package my_app.dao;
 
-import java.sql.Timestamp;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
-import my_app.model.Order;
-import my_app.util.QueryExecutor;
+import my_app.dto.OrderDTO;
+import my_app.util.DBConnection;
 
 public class OrderDao implements GenericDao<Order, Integer> {
+
     private static final String BASE_QUERY = "SELECT * FROM `order`";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "order";
 
-    @Override
-    public Order findById(Integer id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Order id must not be null");
+    public List<OrderDTO> getAll() {
+        List<OrderDTO> list = new ArrayList<>();
+        try {
+            Connection conn = DBConnection.getInstance().connect();
+            String sql = "SELECT * FROM orders";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                OrderDTO o = new OrderDTO();
+                o.setId(rs.getInt("id"));
+                o.setCustomer(rs.getString("customer"));
+                o.setDate(rs.getString("order_date"));
+                o.setStatus(rs.getString("status"));
+                o.setTotal(rs.getString("total"));
+                list.add(o);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id);
-        return results.isEmpty() ? null : new Order(results.get(0));
+        return list;
     }
 
-    @Override
-    public  ArrayList<Order> findAll() {
-        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
-        ArrayList<Order> orders = new ArrayList<>(records.size());
-        records.forEach(row -> orders.add(new Order(row)));
-        return orders;
-    }
-
-    @Override
-    public int create(Order entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Order entity must not be null");
+    public void insert(OrderDTO o) {
+        try {
+            Connection conn = DBConnection.getInstance().connect();
+            String sql = "INSERT INTO orders(customer, order_date, status, total) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, o.getCustomer());
+            ps.setString(2, o.getDate());
+            ps.setString(3, o.getStatus());
+            ps.setString(4, o.getTotal());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        final String insertSql = "INSERT INTO `order` (customer_id, order_date, sub_total, total_amount, status) VALUES (?,?,?,?,?)";
-        Timestamp orderDate = entity.getOrderDate() != null ? Timestamp.valueOf(entity.getOrderDate()) : null;
-        return qe.ExecuteUpdate(insertSql,
-                entity.getCustomerId(),
-                orderDate,
-                entity.getSubTotal(),
-                entity.getTotalAmount(),
-                entity.getStatus());
     }
 
-    @Override
-    public int update(Order entity) {
-        if (entity == null || entity.getId() == null) {
-            throw new IllegalArgumentException("Order entity and id must not be null");
+    public void delete(int id) {
+        try {
+            Connection conn = DBConnection.getInstance().connect();
+            String sql = "DELETE FROM orders WHERE id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        final String updateSql = "UPDATE `order` SET customer_id=?, order_date=?, sub_total=?, total_amount=?, status=? WHERE id=?";
-        Timestamp orderDate = entity.getOrderDate() != null ? Timestamp.valueOf(entity.getOrderDate()) : null;
-        return qe.ExecuteUpdate(updateSql,
-                entity.getCustomerId(),
-                orderDate,
-                entity.getSubTotal(),
-                entity.getTotalAmount(),
-                entity.getStatus(),
-                entity.getId());
     }
-
-    @Override
-    public int delete(Integer id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Order id must not be null");
-        }
-        return qe.ExecuteUpdate("DELETE FROM `order` WHERE id=?", id);
+    public void update(OrderDTO o) {
+    try {
+        Connection conn = DBConnection.getInstance().connect();
+        String sql = "UPDATE orders SET customer=?, order_date=?, status=?, total=? WHERE id=?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, o.getCustomer());
+        ps.setString(2, o.getDate());
+        ps.setString(3, o.getStatus());
+        ps.setString(4, o.getTotal());
+        ps.setInt(5, o.getId());
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
 }

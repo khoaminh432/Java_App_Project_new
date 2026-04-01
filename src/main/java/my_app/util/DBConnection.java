@@ -45,8 +45,8 @@ public class DBConnection  {
     public static void main(String[] args) {
         DBConnection dbConn = DBConnection.getInstance();
         // Sử dụng kết nối
-        Connection conn = dbConn.connect();
+        dbConn.connect();
         // Đóng kết nối khi không còn sử dụng
-        dbConn.close();
+        DBConnection.close();
     }
 }

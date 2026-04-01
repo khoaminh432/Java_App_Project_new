@@ -2,18 +2,42 @@ SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 use jdbc_demo;
 
+-- Ensure ingredient.total_weight exists before seeding (works on MySQL < 8.0)
+SET @ingredient_total_weight_exists := (
+	SELECT COUNT(*)
+	FROM information_schema.columns
+	WHERE table_schema = DATABASE()
+		AND table_name = 'ingredient'
+		AND column_name = 'total_weight'
+);
+
+SET @ingredient_alter_sql := IF(
+	@ingredient_total_weight_exists = 0,
+	'ALTER TABLE ingredient ADD COLUMN total_weight INT DEFAULT 0 AFTER quantity',
+	'SELECT 1'
+);
+
+PREPARE ingredient_stmt FROM @ingredient_alter_sql;
+EXECUTE ingredient_stmt;
+DEALLOCATE PREPARE ingredient_stmt;
+
+-- Backfill total_weight for any existing rows
+UPDATE ingredient
+SET total_weight = COALESCE(net_weight, 0) * COALESCE(quantity, 0)
+WHERE total_weight IS NULL;
+
 -- 1. product_category
 INSERT INTO product_category (category_name, description) VALUES
-('Cà phê', 'Các loại cà phê nguyên chất và pha chế'),
-('Trà', 'Trà các loại: trà sữa, trà trái cây, trà thảo mộc'),
-('Nước ép & Sinh tố', 'Nước ép trái cây tươi và sinh tố'),
-('Bánh ngọt', 'Các loại bánh ngọt, bánh mì, bánh kem'),
-('Đồ ăn nhẹ', 'Đồ ăn vặt, snack'),
-('Đồ uống đặc biệt', 'Các loại đồ uống đặc biệt của quán'),
-('Combo', 'Các gói combo tiết kiệm'),
-('Đồ uống lạnh', 'Các loại đồ uống lạnh'),
-('Đồ uống nóng', 'Các loại đồ uống nóng'),
-('Topping', 'Các loại topping thêm');
+('Ca phe', 'Cac loai ca phe nguyen chat va pha che'),
+('Tra', 'Tra cac loai: tra sua, tra trai cay, tra thao moc'),
+('Nuoc ep & Sinh to', 'Nuoc ep trai cay tuoi va sinh to'),
+('Banh ngot', 'Cac loai banh ngot, banh mi, banh kem'),
+('Do an nhe', 'Do an vat, snack'),
+('Do uong dac biet', 'Cac loai do uong dac biet cua quan'),
+('Combo', 'Cac goi combo tiet kiem'),
+('Do uong lanh', 'Cac loai do uong lanh'),
+('Do uong nong', 'Cac loai do uong nong'),
+('Topping', 'Cac loai topping them');
 
 -- 2. supplier
 INSERT INTO supplier (supplier_name, address, phone_number, status) VALUES
@@ -30,81 +54,81 @@ INSERT INTO supplier (supplier_name, address, phone_number, status) VALUES
 
 -- 3. role
 INSERT INTO role (role_name, hourly_rate) VALUES
-('Quản lý', 50000.00),
-('Nhân viên pha chế', 35000.00),
-('Nhân viên thu ngân', 30000.00),
-('Nhân viên phục vụ', 25000.00),
+('Quan ly', 50000.00),
+('Nhan vien pha che', 35000.00),
+('Nhan vien thu ngan', 30000.00),
+('Nhan vien phuc vu', 25000.00),
 ('Shipper', 20000.00),
-('Quản lý kho', 40000.00),
-('Trưởng ca', 45000.00),
-('Nhân viên vệ sinh', 20000.00),
-('Pha chế chính', 40000.00),
-('Nhân viên bán hàng online', 30000.00);
+('Quan ly kho', 40000.00),
+('Truong ca', 45000.00),
+('Nhan vien ve sinh', 20000.00),
+('Pha che chinh', 40000.00),
+('Nhan vien ban hang online', 30000.00);
 
 -- 4. customer
 INSERT INTO customer (full_name, phone_number, email, password, status) VALUES
-('Nguyễn Văn An', '0901111111', 'nguyenvanan@gmail.com', 'password123', 'active'),
-('Trần Thị Bình', '0902222222', 'tranthibinh@gmail.com', 'password123', 'active'),
-('Lê Minh Châu', '0903333333', 'leminhchau@gmail.com', 'password123', 'active'),
-('Phạm Văn Đức', '0904444444', 'phamvanduc@gmail.com', 'password123', 'active'),
-('Hoàng Thị Em', '0905555555', 'hoangthiem@gmail.com', 'password123', 'inactive'),
-('Vũ Văn Phong', '0906666666', 'vuvanphong@gmail.com', 'password123', 'active'),
-('Đặng Thị Quỳnh', '0907777777', 'dangthiquynh@gmail.com', 'password123', 'active'),
-('Bùi Văn Hải', '0908888888', 'buivanhai@gmail.com', 'password123', 'active'),
-('Đỗ Thị Lan', '0909999999', 'dothilan@gmail.com', 'password123', 'active'),
-('Ngô Văn Minh', '0900000000', 'ngovanminh@gmail.com', 'password123', 'inactive');
+('Nguyen Van An', '0901111111', 'nguyenvanan@gmail.com', 'password123', 'active'),
+('Tran Thi Binh', '0902222222', 'tranthibinh@gmail.com', 'password123', 'active'),
+('Le Minh Chau', '0903333333', 'leminhchau@gmail.com', 'password123', 'active'),
+('Pham Van Duc', '0904444444', 'phamvanduc@gmail.com', 'password123', 'active'),
+('Hoang Thi Em', '0905555555', 'hoangthiem@gmail.com', 'password123', 'inactive'),
+('Vu Van Phong', '0906666666', 'vuvanphong@gmail.com', 'password123', 'active'),
+('Dang Thi Quynh', '0907777777', 'dangthiquynh@gmail.com', 'password123', 'active'),
+('Bui Van Hai', '0908888888', 'buivanhai@gmail.com', 'password123', 'active'),
+('Do Thi Lan', '0909999999', 'dothilan@gmail.com', 'password123', 'active'),
+('Ngo Van Minh', '0900000000', 'ngovanminh@gmail.com', 'password123', 'inactive');
 
 -- 5. payment_method
 INSERT INTO payment_method (method_name) VALUES
-('Tiền mặt'),
-('Chuyển khoản ngân hàng'),
+('Tien mat'),
+('Chuyen khoan ngan hang'),
 ('Visa/Mastercard'),
 ('MoMo'),
 ('ZaloPay'),
 ('VNPay'),
 ('ShopeePay'),
-('Thẻ thành viên'),
-('Ví điện tử'),
+('The thanh vien'),
+('Vi dien tu'),
 ('QR Code');
 
 -- 6. voucher
 INSERT INTO voucher (promotion_name, start_date, end_date) VALUES
-('Giảm 20% cho đơn đầu tiên', '2024-01-01 00:00:00', '2024-12-31 23:59:59'),
-('Giảm 30K cho đơn từ 150K', '2024-02-01 00:00:00', '2024-06-30 23:59:59'),
-('Mua 1 tặng 1', '2024-03-01 00:00:00', '2024-03-31 23:59:59'),
-('Giảm 15% tất cả đồ uống', '2024-04-01 00:00:00', '2024-04-30 23:59:59'),
+('Giam 20% cho don dau tien', '2024-01-01 00:00:00', '2024-12-31 23:59:59'),
+('Giam 30K cho don tu 150K', '2024-02-01 00:00:00', '2024-06-30 23:59:59'),
+('Mua 1 tang 1', '2024-03-01 00:00:00', '2024-03-31 23:59:59'),
+('Giam 15% tat ca do uong', '2024-04-01 00:00:00', '2024-04-30 23:59:59'),
 ('Freeship 5KM', '2024-05-01 00:00:00', '2024-05-31 23:59:59'),
-('Giảm 50% sinh tố', '2024-06-01 00:00:00', '2024-06-15 23:59:59'),
-('Combo gia đình 199K', '2024-07-01 00:00:00', '2024-07-31 23:59:59'),
-('Tích điểm 2x', '2024-08-01 00:00:00', '2024-08-31 23:59:59'),
-('Giảm 25K bánh ngọt', '2024-09-01 00:00:00', '2024-09-30 23:59:59'),
-('Đồ uống thứ 2 chỉ 50K', '2024-10-01 00:00:00', '2024-10-31 23:59:59');
+('Giam 50% sinh to', '2024-06-01 00:00:00', '2024-06-15 23:59:59'),
+('Combo gia dinh 199K', '2024-07-01 00:00:00', '2024-07-31 23:59:59'),
+('Tich diem 2x', '2024-08-01 00:00:00', '2024-08-31 23:59:59'),
+('Giam 25K banh ngot', '2024-09-01 00:00:00', '2024-09-30 23:59:59'),
+('Do uong thu 2 chi 50K', '2024-10-01 00:00:00', '2024-10-31 23:59:59');
 
 -- 7. employee
 INSERT INTO employee (first_name, last_name, phone_number, dob, address, basic_salary, status, role_id) VALUES
-('Mai', 'Văn Hùng', '0911111111', '1990-05-15', '12 Lê Lợi, Q.1, TP.HCM', 15000000.00, 'active', 1),
-('Lê', 'Thị Mai', '0912222222', '1995-08-20', '34 Nguyễn Huệ, Q.1, TP.HCM', 12000000.00, 'active', 2),
-('Trần', 'Văn Nam', '0913333333', '1998-03-10', '56 Pasteur, Q.3, TP.HCM', 10000000.00, 'active', 3),
-('Nguyễn', 'Thị Hương', '0914444444', '1997-11-25', '78 CMT8, Q.10, TP.HCM', 9000000.00, 'active', 4),
-('Phạm', 'Văn Tài', '0915555555', '1996-07-30', '90 Lý Tự Trọng, Q.1, TP.HCM', 8000000.00, 'active', 5),
-('Hoàng', 'Thị Thu', '0916666666', '1994-02-14', '112 Nguyễn Thị Minh Khai, Q.3, TP.HCM', 11000000.00, 'active', 6),
-('Vũ', 'Văn Sơn', '0917777777', '1993-09-05', '134 Hai Bà Trưng, Q.1, TP.HCM', 13000000.00, 'active', 7),
-('Đặng', 'Thị Nga', '0918888888', '1999-12-12', '156 Điện Biên Phủ, Q.3, TP.HCM', 7000000.00, 'active', 8),
-('Bùi', 'Văn Đạt', '0919999999', '1992-06-18', '178 Trần Hưng Đạo, Q.5, TP.HCM', 11500000.00, 'active', 9),
-('Đỗ', 'Thị Hoa', '0910000000', '2000-04-22', '190 Nguyễn Văn Cừ, Q.5, TP.HCM', 9500000.00, 'active', 10);
+('Mai', 'Van Hung', '0911111111', '1990-05-15', '12 Le Loi, Q.1, TP.HCM', 15000000.00, 'active', 1),
+('Le', 'Thi Mai', '0912222222', '1995-08-20', '34 Nguyen Hue, Q.1, TP.HCM', 12000000.00, 'active', 2),
+('Tran', 'Van Nam', '0913333333', '1998-03-10', '56 Pasteur, Q.3, TP.HCM', 10000000.00, 'active', 3),
+('Nguyen', 'Thi Huong', '0914444444', '1997-11-25', '78 CMT8, Q.10, TP.HCM', 9000000.00, 'active', 4),
+('Pham', 'Van Tai', '0915555555', '1996-07-30', '90 Ly Tu Trong, Q.1, TP.HCM', 8000000.00, 'active', 5),
+('Hoang', 'Thi Thu', '0916666666', '1994-02-14', '112 Nguyen Thi Minh Khai, Q.3, TP.HCM', 11000000.00, 'active', 6),
+('Vu', 'Van Son', '0917777777', '1993-09-05', '134 Hai Ba Trung, Q.1, TP.HCM', 13000000.00, 'active', 7),
+('Dang', 'Thi Nga', '0918888888', '1999-12-12', '156 Dien Bien Phu, Q.3, TP.HCM', 7000000.00, 'active', 8),
+('Bui', 'Van Dat', '0919999999', '1992-06-18', '178 Tran Hung Dao, Q.5, TP.HCM', 11500000.00, 'active', 9),
+('Do', 'Thi Hoa', '0910000000', '2000-04-22', '190 Nguyen Van Cu, Q.5, TP.HCM', 9500000.00, 'active', 10);
 
 -- 8. product
 INSERT INTO product (product_name, unit_price, unit, quantity, status, category_id) VALUES
-('Cà phê đen đá', 25000.00, 'ly', 100, 'available', 1),
-('Cà phê sữa đá', 30000.00, 'ly', 150, 'available', 1),
-('Trà sữa trân châu', 45000.00, 'ly', 200, 'available', 2),
-('Trà đào cam sả', 40000.00, 'ly', 180, 'available', 2),
-('Sinh tố bơ', 50000.00, 'ly', 120, 'available', 3),
-('Nước ép cam', 35000.00, 'ly', 90, 'available', 3),
-('Bánh su kem', 20000.00, 'cái', 50, 'available', 4),
-('Bánh mì sandwich', 15000.00, 'cái', 80, 'available', 4),
-('Khoai tây chiên', 30000.00, 'phần', 60, 'available', 5),
-('Cà phê caramel macchiato', 55000.00, 'ly', 130, 'available', 6);
+('Ca phe den da', 25000.00, 'ly', 100, 'available', 1),
+('Ca phe sua da', 30000.00, 'ly', 150, 'available', 1),
+('Tra sua tran chau', 45000.00, 'ly', 200, 'available', 2),
+('Tra dao cam sa', 40000.00, 'ly', 180, 'available', 2),
+('Sinh to bo', 50000.00, 'ly', 120, 'available', 3),
+('Nuoc ep cam', 35000.00, 'ly', 90, 'available', 3),
+('Banh su kem', 20000.00, 'cai', 50, 'available', 4),
+('Banh mi sandwich', 15000.00, 'cai', 80, 'available', 4),
+('Khoai tay chien', 30000.00, 'phan', 60, 'available', 5),
+('Ca phe caramel macchiato', 55000.00, 'ly', 130, 'available', 6);
 
 -- 9. shipper
 INSERT INTO shipper (id, vehicle_plate_number, current_status) VALUES
@@ -147,42 +171,55 @@ INSERT INTO goods_receipt (received_date, supplier_id, total_quantity, total_pri
 
 -- 12. ingredient
 INSERT INTO ingredient (ingredient_name, net_weight, quantity) VALUES
-('Cà phê Arabica', 1000, 50),
-('Sữa đặc có đường', 380, 100),
-('Trà đen', 500, 80),
-('Đào tươi', 1000, 30),
-('Bơ', 500, 20),
-('Cam tươi', 1000, 40),
-('Bột mì', 1000, 25),
-('Khoai tây', 1000, 15),
-('Đường trắng', 1000, 200),
-('Caramel syrup', 1000, 50);
+('Ca phe Arabica', 1000, 5),
+('Sua dac co duong', 380, 10),
+('Tra den', 500, 8),
+('Dao tuoi', 1000, 3),
+('Bo', 500, 20),
+('Cam tuoi', 1000, 4),
+('Bot mi', 1000, 2),
+('Khoai tay', 1000, 1),
+('Duong trang', 1000, 20),
+('Caramel syrup', 1000, 5);
+
 
 -- 13. goods_receipt_detail
-INSERT INTO goods_receipt_detail (receipt_id, ingredient_id, quantity, unit_price) VALUES
-(1, 1, 50, 100000.00),
-(1, 9, 50, 50000.00),
-(2, 2, 100, 25000.00),
-(3, 3, 200, 30000.00),
-(4, 4, 150, 30000.00),
-(5, 7, 80, 40000.00),
-(6, 9, 300, 30000.00),
-(7, 10, 1000, 2000.00),
-(8, 8, 500, 10000.00),
-(9, 5, 200, 20000.00);
+INSERT INTO goods_receipt_detail (receipt_id, ingredient_id, quantity, unit_price,net_weight) VALUES
+(1, 1, 5, 100000.00, 1000),
+(1, 9, 5, 50000.00, 1000),
+(2, 2, 10, 25000.00, 380),
+(3, 3, 2, 30000.00, 500),
+(4, 4, 15, 30000.00, 1000),
+(5, 7, 8, 40000.00, 1000),
+(6, 9, 30, 30000.00, 1000),
+(7, 10, 10, 2000.00, 1000),
+(8, 8, 50, 10000.00, 1000),
+(9, 5, 20, 20000.00, 500);
 
 -- 14. ingredient_product
-INSERT INTO ingredient_product (product_id, ingredient_id, estimate) VALUES
-(1, 1, 20),
-(1, 9, 10),
-(2, 1, 20),
-(2, 2, 15),
-(2, 9, 10),
-(3, 3, 30),
-(3, 2, 20),
-(3, 9, 15),
-(4, 3, 25),
-(4, 4, 20);
+INSERT INTO ingredient_product (product_id, ingredient_id, estimate, total_price) VALUES
+(1, 1, 20,  100000.00),
+(1, 2, 10,  25000.00),
+(1, 9, 10,  50000.00),
+(2, 1, 20, 100000.00),
+(2, 2, 15, 25000.00),
+(2, 9, 10, 50000.00),
+(3, 3, 30, 30000.00),
+(3, 2, 20, 25000.00),
+(3, 9, 15, 20000.00),
+(4, 3, 25, 30000.00),
+(4, 4, 20, 30000.00),
+(1, 1, 20,  100000.00),
+(1, 2, 10,  25000.00),
+(1, 9, 10,  50000.00),
+(2, 1, 20, 100000.00),
+(2, 2, 15, 25000.00),
+(2, 9, 10, 50000.00),
+(3, 3, 30, 30000.00),
+(3, 2, 20, 25000.00),
+(3, 9, 15, 20000.00),
+(4, 3, 25, 30000.00),
+(4, 4, 20, 30000.00);
 
 -- 15. order
 INSERT INTO `order` (customer_id, order_date, sub_total, total_amount, status) VALUES
@@ -199,9 +236,9 @@ INSERT INTO `order` (customer_id, order_date, sub_total, total_amount, status) V
 
 -- 16. online_order
 INSERT INTO online_order (id, customer_id, shipper_id, receiver_name, phone_number, address, shipping_fee, estimated_delivery_time, completed_time, status, total_amount) VALUES
-(4, 4, 5, 'Phạm Văn Đức', '0904444444', '123 Nguyễn Văn Linh, Q.7, TP.HCM', 15000.00, '2024-03-01 12:30:00', NULL, 'delivering', 165000.00),
-(7, 7, 6, 'Đặng Thị Quỳnh', '0907777777', '456 Lê Văn Sỹ, Q.3, TP.HCM', 10000.00, '2024-03-01 16:00:00', NULL, 'preparing', 75000.00),
-(10, 10, 7, 'Ngô Văn Minh', '0900000000', '789 Lý Thường Kiệt, Q.10, TP.HCM', 20000.00, '2024-03-01 19:00:00', NULL, 'cancelled', 100000.00);
+(4, 4, 5, 'Pham Van Duc', '0904444444', '123 Nguyen Van Linh, Q.7, TP.HCM', 15000.00, '2024-03-01 12:30:00', NULL, 'delivering', 165000.00),
+(7, 7, 6, 'Dang Thi Quynh', '0907777777', '456 Le Van Sy, Q.3, TP.HCM', 10000.00, '2024-03-01 16:00:00', NULL, 'preparing', 75000.00),
+(10, 10, 7, 'Ngo Van Minh', '0900000000', '789 Ly Thuong Kiet, Q.10, TP.HCM', 20000.00, '2024-03-01 19:00:00', NULL, 'cancelled', 100000.00);
 
 -- 17. order_detail
 INSERT INTO order_detail (order_id, product_id, quantity, unit_price) VALUES
@@ -246,3 +283,19 @@ INSERT INTO invoice_voucher_detail (invoice_id, voucher_id, discount_value) VALU
 (5, 3, 90000.00),
 (6, 4, 21000.00),
 (7, 5, 15000.00);
+
+
+
+DELIMITER $$
+-- 
+CREATE TRIGGER IF NOT EXISTS trg_ingredient_product_after_insert
+AFTER INSERT ON ingredient_product
+FOR EACH ROW
+BEGIN
+    UPDATE ingredient ing
+    SET ing.total_weight = COALESCE(ing.total_weight,0) - (COALESCE(NEW.estimate,0))
+    WHERE ing.id = NEW.ingredient_id;
+END$$
+
+DELIMITER ;
+

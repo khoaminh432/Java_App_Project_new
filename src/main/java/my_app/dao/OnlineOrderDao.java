@@ -16,6 +16,7 @@ public class OnlineOrderDao implements GenericDao<OnlineOrder, Integer> {
             + "oo.estimated_delivery_time, oo.completed_time "
             + "FROM online_order oo INNER JOIN `order` o ON oo.id = o.id";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "online_order";
 
     @Override
     public OnlineOrder findById(Integer id) {
@@ -24,6 +25,11 @@ public class OnlineOrderDao implements GenericDao<OnlineOrder, Integer> {
         }
         ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(BASE_QUERY + " WHERE o.id=?", id);
         return results.isEmpty() ? null : new OnlineOrder(results.get(0));
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
     }
 
     @Override
