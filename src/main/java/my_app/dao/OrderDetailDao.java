@@ -35,6 +35,18 @@ public class OrderDetailDao implements GenericDao<OrderDetail, Integer> {
     }
 
     @Override
+    public ArrayList<OrderDetail> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<OrderDetail> details = new ArrayList<>(records.size());
+        records.forEach(row -> details.add(new OrderDetail(row)));
+        return details;
+    }
+
+    @Override
     public int create(OrderDetail entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Order detail entity must not be null");

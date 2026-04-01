@@ -36,13 +36,26 @@ public class GoodsReceiptDao implements GenericDao<GoodsReceipt, Integer> {
     }
 
     @Override
+    public ArrayList<GoodsReceipt> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<GoodsReceipt> receipts = new ArrayList<>(records.size());
+        records.forEach(row -> receipts.add(new GoodsReceipt(row)));
+        return receipts;
+    }
+
+    @Override
     public int create(GoodsReceipt entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Goods receipt entity must not be null");
         }
-        final String insertSql = "INSERT INTO goods_receipt (received_date, supplier_id, total_quantity, total_price) VALUES (?,?,?,?)";
+        final String insertSql = "INSERT INTO goods_receipt (id, received_date, supplier_id, total_quantity, total_price) VALUES (?,?,?,?,?)";
         Timestamp receivedDate = entity.getReceivedDate() != null ? Timestamp.valueOf(entity.getReceivedDate()) : null;
         return qe.ExecuteUpdate(insertSql,
+                entity.getId(),
                 receivedDate,
                 entity.getSupplierId(),
                 entity.getTotalQuantity(),

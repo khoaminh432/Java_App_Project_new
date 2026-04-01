@@ -33,11 +33,28 @@ public class LoadFileGUI extends FXMLLoader {
     }
 
     public Parent load() throws IOException {
-        Parent parent = fxmlLoader.load();
-
-        setAnchor(parent);
-
-        return parent;
+        try {
+            Parent parent = fxmlLoader.load();
+            setAnchor(parent);
+            return parent;
+        } catch (Exception e) {
+            System.err.println("=== FXML Loading Error ===");
+            System.err.println("Resource: " + fxmlLoader.getLocation());
+            System.err.println("Error Type: " + e.getClass().getName());
+            System.err.println("Error Message: " + e.getMessage());
+            
+            // Print all causes in the exception chain
+            Throwable cause = e;
+            int level = 0;
+            while (cause != null) {
+                System.err.println("Cause #" + level + ": " + cause.getClass().getName() + " - " + cause.getMessage());
+                cause = cause.getCause();
+                level++;
+            }
+            
+            e.printStackTrace();
+            throw new IOException("Failed to load FXML: " + e.getMessage(), e);
+        }
     }
 
     public Parent load(Boolean setAnchor) throws IOException {

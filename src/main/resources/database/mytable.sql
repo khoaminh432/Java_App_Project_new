@@ -226,7 +226,12 @@ CREATE TABLE IF NOT EXISTS invoice (
     order_id INT,
     payment_method_id INT,
     issued_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+<<<<<<< HEAD
+    total_amount DECIMAL(15, 2),
+    status VARCHAR(50) DEFAULT 'NEW',
+=======
     total_amount DECIMAL(15, 2) DEFAULT 0,
+>>>>>>> master
     FOREIGN KEY (customer_id) REFERENCES customer(id),
     FOREIGN KEY (employee_id) REFERENCES employee(id),
     FOREIGN KEY (order_id) REFERENCES `order`(id),
@@ -300,7 +305,7 @@ FOR EACH ROW
 BEGIN
     UPDATE ingredient ing
     SET ing.net_weight = COALESCE(new.net_weight,0),
-        ing.quantity = COALESCE(NEW.quantity,0),
+        ing.quantity = COALESCE(ing.quantity, 0) + COALESCE(NEW.quantity, 0),
         ing.unit_price = COALESCE(NEW.unit_price, ing.unit_price),
         ing.total_weight = COALESCE(ing.total_weight,0)+(COALESCE(NEW.net_weight,0) * COALESCE(NEW.quantity,0))
     WHERE ing.id = NEW.ingredient_id;

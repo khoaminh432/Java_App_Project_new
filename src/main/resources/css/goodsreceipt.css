@@ -19,7 +19,7 @@
 }
 
 /* LABEL */
-.label {
+.label-title {
     -fx-text-fill: #374151;
     -fx-font-size: 13px;
 }
@@ -95,10 +95,11 @@
     -fx-background-color: #f1f5f9;
     -fx-background-radius: 10 10 0 0;
 }
-.table-view .column-header .label {
+.table-view .column-header .label-header{
     -fx-text-fill: #334155;
     -fx-font-weight: bold;
 }
+
 
 /* ROW */
 .table-row-cell {

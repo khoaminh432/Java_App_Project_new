@@ -46,6 +46,18 @@ public class ProductDao implements GenericDao<Product, Integer> {
         return products;
     }
 
+    @Override
+    public ArrayList<Product> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<Product> products = new ArrayList<>(records.size());
+        records.forEach(row -> products.add(new Product(row)));
+        return products;
+    }
+
     private ArrayList<Integer> ParseListInt(ArrayList<IngredientProduct> ingredientProducts) {
         ArrayList<Integer> list = new ArrayList<>();
         ingredientProducts.forEach(ip -> {

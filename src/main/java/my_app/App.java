@@ -9,7 +9,7 @@ import my_app.util.DBConnection;
 public class App extends Application {
 
     private static final String APP_NAME = "JavaFX Console Application";
-    private static final String APP_PATH = "/fxml/employee.fxml";
+    private static final String APP_PATH = "/fxml/admin/index.fxml";
     private LoadFileGUI loader;
     private DBConnection dbConn;
 
@@ -23,7 +23,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        initDB();
         DesktopRoot();
         Scene scene;
         try {
@@ -41,9 +40,9 @@ public class App extends Application {
         stage.setTitle(APP_NAME);
         stage.setScene(scene);
         stage.show();
-        stage.setOnCloseRequest(e
-                -> {
-            dbConn.close();
+        stage.setOnCloseRequest(e ->
+        {
+            DBConnection.close();
         }
 
         stage.setOnCloseRequest(e -> {

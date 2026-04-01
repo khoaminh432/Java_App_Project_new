@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 import my_app.model.Employee;
 import my_app.util.QueryExecutor;
 
@@ -36,6 +37,24 @@ public class EmployeeDao implements GenericDao<Employee, Integer> {
     }
 
     @Override
+    public ArrayList<Employee> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<Employee> employees = new ArrayList<>(records.size());
+        records.forEach(row -> employees.add(new Employee(row)));
+        return employees;
+        // return qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit).stream().map(Employee::new)
+        //         .collect(Collectors.toList());
+        // Alternative using streams
+        // return qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit).stream()
+        //         .map(Employee::new)
+        //
+    }
+
+    @Override
     public int create(Employee entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Employee entity must not be null");
@@ -54,7 +73,8 @@ public class EmployeeDao implements GenericDao<Employee, Integer> {
     }
 
     @Override
-    public int update(Employee entity) {
+    public int update(Employee entity
+    ) {
         if (entity == null || entity.getId() == null) {
             throw new IllegalArgumentException("Employee entity and id must not be null");
         }
@@ -73,7 +93,8 @@ public class EmployeeDao implements GenericDao<Employee, Integer> {
     }
 
     @Override
-    public int delete(Integer id) {
+    public int delete(Integer id
+    ) {
         if (id == null) {
             throw new IllegalArgumentException("Employee id must not be null");
         }

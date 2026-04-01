@@ -2,6 +2,7 @@ package my_app.controller.component.product;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.function.Function;
 
 import javafx.fxml.FXML;
@@ -21,6 +22,8 @@ public class handleIngredientController {
     @FXML
     private TextField tfEstimate;
 
+    private static final ArrayList<IngredientProduct> ingredientProducts = new ArrayList<>();
+
     private IngredientProduct ingredient;
     private Function removeFunction;
     private Function changeFunction;
@@ -32,6 +35,7 @@ public class handleIngredientController {
 
     public void setData(IngredientProduct ingredient) {
         this.ingredient = ingredient;
+        ingredientProducts.add(ingredient);
         setlbText();
     }
 
@@ -45,7 +49,6 @@ public class handleIngredientController {
 
     @FXML
     private void initialize() {
-
         setupEvent();
     }
 
@@ -69,6 +72,7 @@ public class handleIngredientController {
     private void handleDeleteIngredient() {
         // Implement the logic to delete the ingredient
         System.out.println("Deleting ingredient: " + ingredient.getIngredient().getIngredientName());
+        ingredientProducts.remove(ingredient);
         removeFunction.apply(null);
 
     }

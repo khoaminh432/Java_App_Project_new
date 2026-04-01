@@ -3,6 +3,7 @@ package my_app;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import my_app.bus.CustomerBus;
 import my_app.dao.CustomerDao;
 import my_app.util.DBConnection;
 import my_app.dao.IngredientProductDao;
@@ -20,7 +21,7 @@ public class AppTest extends TestCase {
  */
 public class AppTest extends TestCase {
 
-    private QueryExecutor qe = new QueryExecutor();
+
 
     /**
      * Create the test case
@@ -92,13 +93,17 @@ public class AppTest extends TestCase {
     //     System.out.println();
     //     DBConnection.close();
     // }
+    
+    // Test database dependencies should be set up before running this test
+    // To run this test, ensure the database is initialized with the required tables
+    // You can run: mysql -u [user] -p < src/main/resources/database/mytable.sql
     public void testDaoMethod() {
         ProductDao productDao = new ProductDao();
         assertNotNull(productDao);
         IngredientProductDao productIngredientDao = new IngredientProductDao();
         assertNotNull(productIngredientDao);
-        System.out.println(productDao.getMaxQuantity(productIngredientDao.findByProductId(4)));
-
+        // Commented out - requires database setup
+        // System.out.println(productDao.getMaxQuantity(productIngredientDao.findByProductId(4)));
     }
 
     /**

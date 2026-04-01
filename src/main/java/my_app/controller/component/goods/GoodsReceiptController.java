@@ -1,5 +1,8 @@
 package my_app.controller.component.goods;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -11,9 +14,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import my_app.bus.GoodsReceiptBus;
+import my_app.bus.GoodsReceiptDetailBus;
 import my_app.bus.IngredientBus;
 import my_app.bus.SupplierBus;
 import my_app.controller.BaseController;
+import my_app.model.GoodsReceipt;
 import my_app.model.Ingredient;
 import my_app.model.Supplier;
 import my_app.service.AlertInformation;
@@ -24,7 +30,8 @@ public class GoodsReceiptController extends BaseController {
 
     private final static SupplierBus supplierBus = new SupplierBus();
     private final static IngredientBus ingredientBus = new IngredientBus();
-
+    private final static GoodsReceiptBus goodsReceiptBus = new GoodsReceiptBus();
+    private final static GoodsReceiptDetailBus goodsReceiptDetailBus = new GoodsReceiptDetailBus();
     @FXML
     private ComboBox<Supplier> cbSupplier;
 
@@ -61,9 +68,21 @@ public class GoodsReceiptController extends BaseController {
     @FXML
     private VBox vbIngredientItems;
 
+    @FXML
+    private TextField tfIngredientName;
+
+    private GoodsReceipt getGoodsReceiptbyForm() {
+        GoodsReceipt receipt = new GoodsReceipt();
+        receipt.setReceivedDate(LocalDateTime.of(dpDate.getValue(), java.time.LocalTime.now()));
+        receipt.setSupplierId(cbSupplier.getSelectionModel().getSelectedItem().getId());
+        receipt.setId(Integer.valueOf(goodsReceiptBus.getNextId()));
+        return receipt;
+    }
+
     private void setComboBoxData() {
         ComboBoxService<Supplier> comboBoxService = new ComboBoxService<>(cbSupplier);
         comboBoxService.setData(supplierBus.getSuppliers());
+        cbSupplier.getSelectionModel().select(0);
     }
 
     private void RenderData() {
@@ -71,11 +90,22 @@ public class GoodsReceiptController extends BaseController {
         supplierBus.findAll();
     }
 
+    @FXML
+    private void EmptyForm() {
+
+    }
+
+    private void setInputData() {
+        txtEmployee.setText("Nhân viên 1");
+        dpDate.setValue(java.time.LocalDate.now());
+    }
+
     @Override
     protected void initData() {
         RenderData();
         setTable();
         setComboBoxData();
+        setInputData();
 
     }
 
@@ -102,7 +132,6 @@ public class GoodsReceiptController extends BaseController {
     }
 
     private void handleDeleteIngredient(Ingredient ing, Node node) {
-
         vbIngredientItems.getChildren().remove(node);
         tbReceipt.getSelectionModel().clearSelection();
     }
@@ -111,7 +140,7 @@ public class GoodsReceiptController extends BaseController {
 
         Ingredient ing = tbReceipt.getSelectionModel().getSelectedItem();
         if (ing != null) {
-            if (!controller.getIngredients().contains(ing)) {
+            if (!controller.getArrayIngredients().contains(ing)) {
                 vbIngredientItems.getChildren().add(node);
                 controller.setData(ing);
                 controller.setDeleteEvent((e) -> {
@@ -129,7 +158,7 @@ public class GoodsReceiptController extends BaseController {
     }
 
     @FXML
-    private void handleIngredientAdd(ActionEvent event) {
+    private void btnUpdateIngredient(ActionEvent event) {
         try {
             LoadFileGUI loadingitem = new LoadFileGUI("/fxml/admin/component/ingredient/goodsreceiptdetails.fxml");
             Node node = loadingitem.getNode();
@@ -140,9 +169,66 @@ public class GoodsReceiptController extends BaseController {
         }
     }
 
-    @FXML
-    private void handleCanceIngredient(ActionEvent event) {
-
+    private void handleAddIngredient() {
+        Ingredient ing = new Ingredient();
+        ing.setIngredientName(tfIngredientName.getText());
+        ing.setUnitPrice(BigDecimal.ZERO);
+        ing.setQuantity(0);
+        ing.setNetWeight(0);
+        ingredientBus.create(ing);
+        tfIngredientName.clear();
     }
 
+    @FXML
+    private void btnAddIngredient(ActionEvent event) {
+        if (tfIngredientName.getText().isEmpty()) {
+            AlertInformation.showErrorAlert("Lỗi", "Vui lòng nhập tên nguyên liệu", "Bạn cần nhập tên nguyên liệu để thêm vào phiếu nhập.");
+            return;
+        }
+        Boolean isConfirmed = AlertInformation.showConfirmationAlert("Xác nhận", "Thêm nguyên liệu", "Bạn có chắc muốn thêm nguyên liệu này vào phiếu nhập không?");
+        if (isConfirmed) {
+            handleAddIngredient();
+        } else {
+            AlertInformation.showInfoAlert("Hủy bỏ", "Thêm nguyên liệu đã bị hủy", "Nguyên liệu không được thêm vào phiếu nhập.");
+        }
+    }
+
+    private void EmptyIngredient() {
+        vbIngredientItems.getChildren().clear();
+        GoodsReceiveItems.getArrayIngredients().clear();
+    }
+
+    @FXML
+    private void handleCanceIngredient(ActionEvent event) {
+        RenderData();
+        setComboBoxData();
+        dpDate.setValue(java.time.LocalDate.now());
+        txtNote.clear();
+        txtEmployee.setText("Nhân viên 1");
+        tfIngredientName.clear();
+        EmptyIngredient();
+        System.out.println(GoodsReceiveItems.getArrayIngredients().size());
+    }
+
+    @FXML
+    private void btnHandleSave(ActionEvent event) {
+
+        if (GoodsReceiveItems.getArrayIngredients().isEmpty()) {
+            AlertInformation.showErrorAlert("Lỗi", "Vui lòng thêm nguyên liệu", "Bạn cần thêm ít nhất một nguyên liệu vào phiếu nhập.");
+            return;
+        }
+        GoodsReceipt receipt = getGoodsReceiptbyForm();
+        goodsReceiptBus.create(receipt);
+        GoodsReceiveItems.getArrayIngredients().forEach(ing -> {
+            try {
+                ing.validateData();
+                goodsReceiptDetailBus.create(ing.getGoodsReceiptDetail(receipt.getId()));
+                System.out.println("Đã lưu nguyên liệu: " + ing.getIngredient().getIngredientName() + ing.getIngredient().getUnitPrice() + ing.getIngredient().getQuantity() + ing.getIngredient().getNetWeight());
+            } catch (IllegalArgumentException e) {
+                AlertInformation.showErrorAlert("Lỗi", "Dữ liệu không hợp lệ", e.getMessage());
+            }
+        });
+        handleCanceIngredient(null);
+        AlertInformation.showInfoAlert("Thành công", "Lưu phiếu nhập thành công", "Phiếu nhập đã được lưu vào hệ thống.");
+    }
 }

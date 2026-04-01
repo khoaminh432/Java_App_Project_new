@@ -22,16 +22,31 @@ public class SupplierDao implements GenericDao<Supplier, Integer> {
     }
 
     @Override
-    public      ArrayList<Supplier> findAll() {
+    public ArrayList<Supplier> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE status = 1");
         ArrayList<Supplier> suppliers = new ArrayList<>(records.size());
         records.forEach(row -> suppliers.add(new Supplier(row)));
         return suppliers;
     }
 
-    public      ArrayList<Supplier> All() {
+    public ArrayList<Supplier> All() {
+        return findAll();
+    }
+
     public int getNextID() {
         return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
+    public ArrayList<Supplier> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<Supplier> suppliers = new ArrayList<>(records.size());
+        records.forEach(row -> suppliers.add(new Supplier(row)));
+        return suppliers;
     }
 
     @Override
@@ -65,7 +80,7 @@ public class SupplierDao implements GenericDao<Supplier, Integer> {
         }
         return qe.ExecuteUpdate("DELETE FROM supplier WHERE id=?", id);
     }
-    
+
     @Override
     public int delete(Integer id) {
         if (id == null) {

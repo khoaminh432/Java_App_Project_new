@@ -8,13 +8,16 @@ import my_app.util.QueryExecutor;
 
 public class CustomerDao implements GenericDao<Customer, Integer> {
 
+    private static final String BASE_QUERY = "SELECT * FROM customer";
     private final QueryExecutor qe = new QueryExecutor();
-    private final String QUERYALL = "SELECT * FROM customer "; // Example query
     private final static String TABLE_NAME = "customer";
 
     @Override
     public Customer findById(Integer id) {
-        Customer customer = new Customer(qe.ExecuteQuery(QUERYALL + " where id=?", id).get(0));
+        if (id == null) {
+            throw new IllegalArgumentException("Customer id must not be null");
+        }
+        Customer customer = new Customer(qe.ExecuteQuery(BASE_QUERY + " WHERE id=?", id).get(0));
         return customer;
     }
 
@@ -24,22 +27,41 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
     }
 
     @Override
-    public ArrayList<Customer> findAll() {
+    public ArrayList<Customer> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
         ArrayList<Customer> list = new ArrayList<Customer>();
-        qe.ExecuteQuery(QUERYALL).forEach(action -> {
+        qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit).forEach(action -> {
             Customer cus = new Customer(action);
             list.add(cus);
         });
         return list;
     }
 
-    public ArrayList<Customer> findAll(String status) {
-        ArrayList<Customer> list = new ArrayList<Customer>();
-        qe.ExecuteQuery(QUERYALL + " WHERE status = ?", status).forEach(action -> {
-            Customer cus = new Customer(action);
-            list.add(cus);
-        });
-        return list;
+    @Override
+    public ArrayList<Customer> findAll() {
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<Customer> customers = new ArrayList<>(records.size());
+        records.forEach(row -> customers.add(new Customer(row)));
+        return customers;
+    }
+
+    // Tìm khách hàng theo tên
+    public Customer findByName(String fullName) {
+        if (fullName == null || fullName.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            ArrayList<Customer> results = new ArrayList<>();
+            qe.ExecuteQuery(BASE_QUERY + " WHERE full_name = ?", fullName.trim())
+                    .forEach(row -> results.add(new Customer(row)));
+            return results.isEmpty() ? null : results.get(0);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tìm khách hàng theo tên: " + e.getMessage());
+            return null;
+        }
     }
 
     @Override
