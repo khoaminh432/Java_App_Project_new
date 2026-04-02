@@ -70,25 +70,22 @@ public class AppTest extends TestCase {
     //     System.out.println(customerBus.getCustomers());
     //     DBConnection.close();
     // }
-    // public void testMethodvalue() {
-    //     IngredientBus ingredientBus = new IngredientBus();
-    //     assertNotNull(ingredientBus);
-    //     ingredientBus.findAll();
-    //     System.out.println(ingredientBus.getIngredientProductByThis(new Ingredient(ingredientBus.getIngredients().get(0))).getIngredient());
-    //     System.out.println();
-    //     DBConnection.close();
-    // }
-    
-    // Test database dependencies should be set up before running this test
-    // To run this test, ensure the database is initialized with the required tables
-    // You can run: mysql -u [user] -p < src/main/resources/database/mytable.sql
-    public void testDaoMethod() {
-        ProductDao productDao = new ProductDao();
-        assertNotNull(productDao);
-        IngredientProductDao productIngredientDao = new IngredientProductDao();
-        assertNotNull(productIngredientDao);
-        // Commented out - requires database setup
-        // System.out.println(productDao.getMaxQuantity(productIngredientDao.findByProductId(4)));
+    public void testMethodvalue() {
+        IngredientBus ingredientBus = new IngredientBus();
+
+        assertNotNull(ingredientBus);
+        ingredientBus.findAll();
+        
+        // Check if ingredients list is not empty before accessing
+        if (ingredientBus.getIngredients() != null && !ingredientBus.getIngredients().isEmpty()) {
+            Ingredient firstIngredient = ingredientBus.getIngredients().get(0);
+            var ingredientProduct = ingredientBus.getIngredientProductByThis(new Ingredient(firstIngredient));
+            assertNotNull(ingredientProduct);
+            System.out.println(ingredientProduct.getIngredient());
+        } else {
+            System.out.println("No ingredients found in database");
+        }
+        DBConnection.close();
     }
 
     /**

@@ -20,6 +20,10 @@ public class InvoiceDao implements GenericDao<Invoice, Integer> {
     // CRUD CƠ BẢN (GenericDao)
     // ========================
 
+    // ========================
+    // CRUD CƠ BẢN (GenericDao)
+    // ========================
+
     @Override
     public Invoice findById(Integer id) {
         if (id == null) {

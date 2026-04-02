@@ -88,7 +88,6 @@ public class indexController extends SwitchPage {
 
     @FXML
     private void loadCustomerPage() throws IOException {
-
         System.out.println("Load Customer Page");
         handleSwitchPage("Khách hàng", "/fxml/addcustomer/customer.fxml");
     }
@@ -110,6 +109,18 @@ public class indexController extends SwitchPage {
     private void loadSupplierPage() throws IOException {
         System.out.println("Load Supplier Page");
         handleSwitchPage("Nha cung cap", "/fxml/admin/supplier/supplier.fxml");
+    }
+
+    @FXML
+    private void loadBillPage() throws IOException {
+        try {
+            System.out.println("Load Bill Page");
+            handleSwitchPage("Hóa đơn", "/fxml/admin/component/invoicepage.fxml");
+            System.out.println("Bill Page loaded successfully");
+        } catch (Exception e) {
+            System.err.println("Error loading Bill Page: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void loadLabel() {
