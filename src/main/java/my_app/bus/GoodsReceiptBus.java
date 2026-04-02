@@ -36,6 +36,10 @@ public class GoodsReceiptBus implements GeneralConfig<GoodsReceipt> {
         syncObservable();
     }
 
+    public int getNextId() {
+        return goodsReceiptDao.getNextID();
+    }
+
     private void syncObservable() {
         goodsReceipts.setAll(listGoodsReceipts);
     }
@@ -52,7 +56,7 @@ public class GoodsReceiptBus implements GeneralConfig<GoodsReceipt> {
         if (source == null || source.isEmpty()) {
             return Collections.emptyList();
         }
-        if (keyword == null || keyword.isBlank()) {
+        if (keyword == null || keyword.isEmpty()) {
             return new ArrayList<>(source);
         }
         String needle = keyword.toLowerCase();

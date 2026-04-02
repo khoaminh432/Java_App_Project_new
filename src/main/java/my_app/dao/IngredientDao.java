@@ -10,6 +10,8 @@ public class IngredientDao implements GenericDao<Ingredient, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM ingredient";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "ingredient";
+    private static final String countQuery = "SELECT COUNT(*) AS total FROM ingredient";
 
     @Override
     public Ingredient findById(Integer id) {
@@ -21,8 +23,38 @@ public class IngredientDao implements GenericDao<Ingredient, Integer> {
     }
 
     @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    public int count() {
+        ArrayList<HashMap<String, Object>> results = qe.ExecuteQuery(countQuery);
+        if (results.isEmpty() || !results.get(0).containsKey("total")) {
+            throw new IllegalStateException("Count query did not return a valid result");
+        }
+        Object totalObj = results.get(0).get("total");
+        if (totalObj instanceof Number) {
+            return ((Number) totalObj).intValue();
+        } else {
+            throw new IllegalStateException("Count query result is not a number");
+        }
+    }
+
+    @Override
     public ArrayList<Ingredient> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<Ingredient> ingredients = new ArrayList<>(records.size());
+        records.forEach(row -> ingredients.add(new Ingredient(row)));
+        return ingredients;
+    }
+
+    @Override
+    public ArrayList<Ingredient> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
         ArrayList<Ingredient> ingredients = new ArrayList<>(records.size());
         records.forEach(row -> ingredients.add(new Ingredient(row)));
         return ingredients;

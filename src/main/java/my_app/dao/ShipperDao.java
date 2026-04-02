@@ -7,12 +7,14 @@ import my_app.model.Shipper;
 import my_app.util.QueryExecutor;
 
 public class ShipperDao implements GenericDao<Shipper, Integer> {
-    private static final String BASE_QUERY =
-            "SELECT e.id, e.first_name AS first_name, e.last_name AS last_name, e.phone_number AS phone_number, " +
-            "e.dob, e.address, e.basic_salary AS basic_salary, e.status, e.role_id AS role_id, " +
-            "s.vehicle_plate_number AS vehicle_plate_number, s.current_status AS current_status " +
-            "FROM employee e INNER JOIN shipper s ON e.id = s.id";
+
+    private static final String BASE_QUERY
+            = "SELECT e.id, e.first_name AS first_name, e.last_name AS last_name, e.phone_number AS phone_number, "
+            + "e.dob, e.address, e.basic_salary AS basic_salary, e.status, e.role_id AS role_id, "
+            + "s.vehicle_plate_number AS vehicle_plate_number, s.current_status AS current_status "
+            + "FROM employee e INNER JOIN shipper s ON e.id = s.id";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "shipper";
 
     @Override
     public Shipper findById(Integer id) {
@@ -24,8 +26,25 @@ public class ShipperDao implements GenericDao<Shipper, Integer> {
     }
 
     @Override
-    public  ArrayList<Shipper> findAll() {
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
+    public ArrayList<Shipper> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<Shipper> shippers = new ArrayList<>(records.size());
+        records.forEach(row -> shippers.add(new Shipper(row)));
+        return shippers;
+    }
+
+    @Override
+    public ArrayList<Shipper> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE e.id > ? LIMIT ?", offset, limit);
         ArrayList<Shipper> shippers = new ArrayList<>(records.size());
         records.forEach(row -> shippers.add(new Shipper(row)));
         return shippers;

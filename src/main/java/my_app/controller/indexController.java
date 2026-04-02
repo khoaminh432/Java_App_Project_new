@@ -76,7 +76,7 @@ public class indexController extends SwitchPage {
     @FXML
     private void loadHomePage() throws IOException {
         System.out.println("Load Home Page");
-        handleSwitchPage("Trang chủ", "/fxml/admin/component/homepage.fxml");
+        handleSwitchPage("Trang chủ", "/fxml/homepage.fxml");
     }
 
     @FXML
@@ -89,7 +89,26 @@ public class indexController extends SwitchPage {
     @FXML
     private void loadCustomerPage() throws IOException {
         System.out.println("Load Customer Page");
-        handleSwitchPage("Khách hàng", "/fxml/admin/component/product/addproduct.fxml");
+        handleSwitchPage("Khách hàng", "/fxml/addcustomer/customer.fxml");
+    }
+
+    @FXML
+    private void loadBillPage() throws IOException {
+        System.out.println("Load Bill Page");
+        handleSwitchPage("Hóa đơn", "/fxml/admin/component/invoicepage.fxml");
+        System.out.println("Bill Page loaded successfully");
+    }
+
+    @FXML
+    private void loadEmployeePage() throws IOException {
+        System.out.println("Load Employee Page");
+        handleSwitchPage("Nhân viên", "/fxml/employee.fxml");
+    }
+
+    @FXML
+    private void loadSupplierPage() throws IOException {
+        System.out.println("Load Supplier Page");
+        handleSwitchPage("Nha cung cap", "/fxml/admin/supplier/supplier.fxml");
     }
 
     @FXML
@@ -106,6 +125,12 @@ public class indexController extends SwitchPage {
 
     private void loadLabel() {
         lbTimeNow.setText(dateNow.toString());
+    }
+
+    @FXML
+    private void HandleIngredientPage() throws IOException {
+        System.out.println("Load Ingredient Page");
+        handleSwitchPage("Nguyen lieu", "/fxml/admin/component/ingredient/goodsreceipt.fxml");
     }
 
     @FXML

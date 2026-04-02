@@ -3,16 +3,21 @@ package my_app.controller.component;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -31,10 +36,12 @@ import my_app.controller.component.product.handleListController;
 import my_app.model.Ingredient;
 import my_app.model.IngredientProduct;
 import my_app.model.Product;
+import my_app.model.ProductCategory;
 import my_app.service.AlertInformation;
 import my_app.service.ConfigTextField;
 import my_app.service.LoadFileGUI;
 import my_app.util.DefaultValueObject;
+import my_app.util.QueryExecutor;
 
     public class ProductController {
 
@@ -51,6 +58,12 @@ import my_app.util.DefaultValueObject;
         statisticProduct.put("sell", 0);
         statisticProduct.put("warning", 0);
     }
+
+    @FXML
+    private Button btnMaxQuantity;
+
+    @FXML
+    private ComboBox<String> cbbUnitProduct;
 
     // dữ liệu sản phẩm
     @FXML
@@ -138,10 +151,7 @@ import my_app.util.DefaultValueObject;
 
     // add product pane
     @FXML
-    private ComboBox<String> cbbUnitProduct;
-
-    @FXML
-    private ComboBox<String> cbbCategoryProduct;
+    private ComboBox<ProductCategory> cbbCategoryProduct;
 
     @FXML
     private ComboBox<String> cbbPriceProduct;
@@ -158,6 +168,9 @@ import my_app.util.DefaultValueObject;
 
     @FXML
     private VBox vbIngredientTemp;
+    private Label lbTotalPriceIngredient;
+
+    public static ArrayList<IngredientProduct> ingredientTemp = new ArrayList<>();
     // end add product pane
     private Task<List<Product>> loadProductsTask;
 
@@ -180,13 +193,12 @@ import my_app.util.DefaultValueObject;
     private void LoadEvent() {
         setMouseClickTableProductEvent();
         searchBarProducts();
-        loadProductsAsync();
         setMouseClickTableIngredientEvent();
     }
 
     private void setTableData() {
         configureColumnsProduct();
-        tableProduct.setItems(productBus.getProducts());
+        tableProduct.setItems(productBus.getFilteredProducts());
         configureColumnsIngredient();
         tbIngredient.setItems(ingredientBus.getIngredients());
     }
@@ -203,7 +215,6 @@ import my_app.util.DefaultValueObject;
         tfUnitProduct.clear();
         cbbCategoryProduct.getSelectionModel().select(0);
         cbbPriceProduct.getSelectionModel().select(0);
-        cbbUnitProduct.getSelectionModel().select(0);
         rdoActiveProduct.setSelected(true);
     }
 
@@ -239,36 +250,10 @@ import my_app.util.DefaultValueObject;
         lbTotalAllIngredientProruct.setText(calTotalPriceAll != null ? calTotalPriceAll.toString() : "0");
     }
 
-    private void loadProductsAsync() {
-        if (loadProductsTask != null && loadProductsTask.isRunning()) {
-            return;
-        }
-
-        loadProductsTask = new Task<>() {
-            @Override
-            protected List<Product> call() {
-                return productBus.fetchAllFromDb();
-            }
-        };
-
-        loadProductsTask.setOnSucceeded(event -> {
-            List<Product> data = loadProductsTask.getValue();
-            productBus.replaceAll(data);
-            updateStatisticProduct();
-            setLabelStatisticProduct();
-        });
-
-        loadProductsTask.setOnFailed(event -> loadProductsTask.getException().printStackTrace());
-
-        Thread worker = new Thread(loadProductsTask, "product-loader");
-        worker.setDaemon(true);
-        worker.start();
-    }
-
     private void searchBarProducts() {
         tfSearchProduct.textProperty().addListener((obs, oldval, newval) -> {
-            if (newval == null || newval.isBlank()) {
-                loadProductsAsync();
+            if (newval == null || newval.isEmpty()) {
+                productBus.findAll();
             } else
              try {
                 searchIDProducts(newval);
@@ -284,6 +269,7 @@ import my_app.util.DefaultValueObject;
     private void handleaddIngredient() {
         try {
             Ingredient ingredient = tbIngredient.getSelectionModel().getSelectedItem();
+
             if (ingredient == null) {
                 AlertInformation.showWarningAlert("Chú Ý", "Chưa Chọn Nguyên Liệu", "Vui lòng chọn nguyên liệu để thêm.");
                 return;
@@ -294,9 +280,12 @@ import my_app.util.DefaultValueObject;
             if (!ingredientProductBus.addtoList(ingprotemp)) {
                 return;
             }
-            LoadIngredientTemp(ingprotemp);
-
+            IngredientProduct ingredientProduct = ingredientBus.getIngredientProductByThis(ingredient);
+            System.out.println(ingredientProduct + " ingredient: " + ingredientProduct.getIngredient());
+            LoadIngredientTemp(ingredientProduct);
+            AlertInformation.showInfoAlert("Thành Công", "Đã Thêm Nguyên Liệu", "Nguyên liệu đã được thêm thành công.");
             tbIngredient.getSelectionModel().clearSelection();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -329,6 +318,7 @@ import my_app.util.DefaultValueObject;
         colTotalWeightIngredient.setCellValueFactory(new PropertyValueFactory<>("totalWeight"));
         colUnitPriceIngredient.setCellValueFactory(cell
                 -> new ReadOnlyObjectWrapper<>(toDouble(cell.getValue().getUnitPrice())));
+
     }
 
     // xử lí khi ấn vào table
@@ -349,15 +339,40 @@ import my_app.util.DefaultValueObject;
         });
     }
 
+    private void setShowNameCombobox() {
+        cbbCategoryProduct.setCellFactory(clbck -> new ListCell<ProductCategory>() {
+            @Override
+            protected void updateItem(ProductCategory item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getCategoryName());
+                }
+            }
+        });
+        cbbCategoryProduct.setButtonCell(new ListCell<ProductCategory>() {
+            @Override
+            protected void updateItem(ProductCategory item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getCategoryName());
+                }
+            }
+        });
+    }
+
     private void LoadComboboxData() {
         productCategoryBus.findAll();
 
-        cbbUnitProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getUnitProduct()));
-        cbbUnitProduct.getSelectionModel().select(0);
-        cbbCategoryProduct.getItems().addAll(productCategoryBus.getProductCategories().stream().map(s -> s.getCategoryName()).toList());
+        cbbCategoryProduct.getItems().addAll(productCategoryBus.getProductCategories());
         cbbCategoryProduct.getSelectionModel().select(0);
         cbbPriceProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getDefaultUnitPriceProduct()));
         cbbPriceProduct.getSelectionModel().select(0);
+        cbbUnitProduct.getItems().addAll(FXCollections.observableArrayList(DefaultValueObject.getUnitProduct()));
+        cbbUnitProduct.getSelectionModel().select(0);
     }
 
     private void LoadActionButtons() {
@@ -388,6 +403,11 @@ import my_app.util.DefaultValueObject;
                 }
             }
         });
+    }
+
+    private void setTotalPriceAllIngredientTemp() {
+        double totalPrice = (int) ingredientTemp.stream().mapToDouble(ip -> toDouble(ip.getTotalPrice())).sum();
+        lbTotalPriceIngredient.setText(String.valueOf(totalPrice));
     }
 
     private void LoadIngredientTemp(IngredientProduct ingredient) {
@@ -467,15 +487,20 @@ import my_app.util.DefaultValueObject;
     private Double toDouble(Integer weight) {
         return weight == null ? 0d : weight.doubleValue();
     }
+
+    private void updateMaxQuantityProduct() {
+
+        btnMaxQuantity.setText(productBus.getMaxQuantity(ingredientTemp) + "");
+    }
     // sự kiện lọc sản phẩm
 
     @FXML
-    private void filteredProducts() {
+    private void filteredProducts(ActionEvent event) {
         System.out.println("Filter Products");
     }
 
     @FXML
-    private void btnCancelAddProduct() {
+    private void btnCancelAddProduct(ActionEvent event) {
         System.out.println("Cancel Add Product");
         productBus.findAll();
         FadeTransition ft = new FadeTransition(Duration.millis(300), this.vbManagementProduct);
@@ -489,7 +514,7 @@ import my_app.util.DefaultValueObject;
     }
 
     @FXML
-    private void handleActionaddProduct() {
+    private void handleActionaddProduct(ActionEvent event) {
         System.out.println("Add Product");
         ingredientBus.findAll();
 
@@ -502,4 +527,55 @@ import my_app.util.DefaultValueObject;
         ft.play();
     }
 
+    private Product getProductFromInput() {
+        String name = ((TextField) vbAddProduct.lookup("#tfNameProduct")).getText();
+        String priceStr = ((TextField) vbAddProduct.lookup("#tfPriceProduct")).getText();
+        String quantityStr = ((TextField) vbAddProduct.lookup("#tfQuantityProduct")).getText();
+
+        ProductCategory categoryTemp = cbbCategoryProduct.getSelectionModel().getSelectedItem();
+        String unit = cbbUnitProduct.getSelectionModel().getSelectedItem();
+
+        if (name.isBlank() || priceStr.isBlank() || quantityStr.isBlank()) {
+            AlertInformation.showWarningAlert("Chú Ý", "Thiếu Thông Tin", "Vui lòng điền đầy đủ thông tin sản phẩm.");
+            return null;
+        }
+
+        double price;
+        int quantity;
+        try {
+            price = Double.parseDouble(priceStr);
+            quantity = Integer.parseInt(quantityStr);
+        } catch (NumberFormatException e) {
+            AlertInformation.showWarningAlert("Chú Ý", "Thông Tin Không Hợp Lệ", "Vui lòng nhập giá và số lượng hợp lệ.");
+            return null;
+        }
+
+        int categoryId = categoryTemp.getId();
+        if (categoryId == -1) {
+            AlertInformation.showWarningAlert("Chú Ý", "Danh Mục Không Hợp Lệ", "Vui lòng chọn danh mục hợp lệ.");
+            return null;
+        }
+
+        Product product = new Product();
+        product.setProductName(name);
+        product.setUnitPrice(BigDecimal.valueOf(price));
+        product.setQuantity(quantity);
+        product.setUnit(unit);
+
+        product.setCategoryId(categoryId);
+
+        return product;
+    }
+
+    @FXML
+    private void btnAddProduct(ActionEvent event) {
+        Product product = getProductFromInput();
+        System.out.println("Product to add: " + product);
+        try {
+            ingredientProductBus.addListIngredientProducts(ingredientTemp);
+            ingredientProductBus.Validate();
+        } catch (Exception e) {
+            AlertInformation.showErrorAlert("Lỗi", "Lỗi nguyên liệu", e.getMessage());
+        }
+    }
 }

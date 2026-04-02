@@ -1,6 +1,8 @@
 package my_app.service;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import java.util.Optional;
 import javafx.scene.control.Alert.AlertType;
 
 public class AlertInformation {
@@ -33,9 +35,12 @@ public class AlertInformation {
 
     }
 
-    public static void showConfirmationAlert(String title, String header, String content) {
+    public static boolean showConfirmationAlert(String title, String header, String content) {
         setupAlert(alertconfirmation, title, header, content);
-        alertconfirmation.show();
+
+        Optional<ButtonType> result = alertconfirmation.showAndWait();
+
+        return result.isPresent() && result.get() == ButtonType.OK;
     }
 
 }

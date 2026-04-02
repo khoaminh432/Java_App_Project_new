@@ -12,6 +12,7 @@ public class GoodsReceiptDetail {
     private Integer quantity;
     private BigDecimal unitPrice;
     private GoodsReceipt goodsReceipt; // Reference to GoodsReceipt object
+    private Ingredient ingredient; // Reference to Ingredient object
 
     // Constructors
     public GoodsReceiptDetail() {
@@ -30,6 +31,7 @@ public class GoodsReceiptDetail {
     public GoodsReceiptDetail(GoodsReceiptDetail other) {
         this(other.id, other.receiptId, other.ingredientId, other.netWeight, other.quantity, other.unitPrice);
         this.goodsReceipt = other.goodsReceipt;
+        this.ingredient = other.ingredient;
     }
 
     public GoodsReceiptDetail(Integer id, Integer receiptId, Integer ingredientId,
@@ -145,6 +147,14 @@ public class GoodsReceiptDetail {
             return BigDecimal.ZERO;
         }
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
+    }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
+
+    public void setIngredient(Ingredient ingredient) {
+        this.ingredient = ingredient;
     }
 
     @Override

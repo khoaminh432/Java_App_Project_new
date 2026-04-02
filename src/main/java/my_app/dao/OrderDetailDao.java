@@ -10,6 +10,12 @@ public class OrderDetailDao implements GenericDao<OrderDetail, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM order_detail";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "order_detail";
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
 
     @Override
     public OrderDetail findById(Integer id) {
@@ -23,6 +29,18 @@ public class OrderDetailDao implements GenericDao<OrderDetail, Integer> {
     @Override
     public ArrayList<OrderDetail> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<OrderDetail> details = new ArrayList<>(records.size());
+        records.forEach(row -> details.add(new OrderDetail(row)));
+        return details;
+    }
+
+    @Override
+    public ArrayList<OrderDetail> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
         ArrayList<OrderDetail> details = new ArrayList<>(records.size());
         records.forEach(row -> details.add(new OrderDetail(row)));
         return details;

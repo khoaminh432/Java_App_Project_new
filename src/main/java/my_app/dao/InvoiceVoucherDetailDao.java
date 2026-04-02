@@ -10,6 +10,7 @@ public class InvoiceVoucherDetailDao implements GenericDao<InvoiceVoucherDetail,
 
     private static final String BASE_QUERY = "SELECT * FROM invoice_voucher_detail";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "invoice_voucher_detail";
 
     @Override
     public InvoiceVoucherDetail findById(Integer id) {
@@ -21,8 +22,25 @@ public class InvoiceVoucherDetailDao implements GenericDao<InvoiceVoucherDetail,
     }
 
     @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
     public ArrayList<InvoiceVoucherDetail> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<InvoiceVoucherDetail> details = new ArrayList<>(records.size());
+        records.forEach(row -> details.add(new InvoiceVoucherDetail(row)));
+        return details;
+    }
+
+    @Override
+    public ArrayList<InvoiceVoucherDetail> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
         ArrayList<InvoiceVoucherDetail> details = new ArrayList<>(records.size());
         records.forEach(row -> details.add(new InvoiceVoucherDetail(row)));
         return details;

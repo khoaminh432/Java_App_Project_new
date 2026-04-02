@@ -3,9 +3,11 @@ package my_app;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import my_app.bus.IngredientBus;
-import my_app.model.Ingredient;
+import my_app.bus.CustomerBus;
 import my_app.util.DBConnection;
+import my_app.dao.IngredientProductDao;
+import my_app.dao.ProductDao;
+import my_app.util.QueryExecutor;
 
 /**
  * * Using JUnit 3 (TestCase, TestSuite).

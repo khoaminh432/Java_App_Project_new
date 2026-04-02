@@ -1,26 +1,40 @@
-use jdbc_demo;;
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
+CREATE DATABASE IF NOT EXISTS jdbc_demo
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE jdbc_demo;
 
 -- 1. product_category
 CREATE TABLE IF NOT EXISTS product_category (
     id INT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(255) NOT NULL,
     description TEXT
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 2. supplier
 CREATE TABLE IF NOT EXISTS supplier (
     id INT PRIMARY KEY AUTO_INCREMENT,
     supplier_name VARCHAR(255) NOT NULL,
     address TEXT,
-    phone_number VARCHAR(20)
-);
+    phone_number VARCHAR(20),
+    status INT DEFAULT 1
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 3. role
 CREATE TABLE IF NOT EXISTS role (
     id INT PRIMARY KEY AUTO_INCREMENT,
     role_name VARCHAR(100) NOT NULL,
     hourly_rate DECIMAL(15, 2) DEFAULT 0
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 4. customer
 CREATE TABLE IF NOT EXISTS customer (
@@ -29,22 +43,28 @@ CREATE TABLE IF NOT EXISTS customer (
     phone_number VARCHAR(20) UNIQUE,
     email VARCHAR(100) UNIQUE,
     password VARCHAR(255),
-    status VARCHAR(50) DEFAULT 'active'
-);
+    status VARCHAR(50)
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 5. payment_method
 CREATE TABLE IF NOT EXISTS payment_method (
     id INT PRIMARY KEY AUTO_INCREMENT,
     method_name VARCHAR(100) NOT NULL
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 6. voucher
 CREATE TABLE IF NOT EXISTS voucher (
     id INT PRIMARY KEY AUTO_INCREMENT,
     promotion_name VARCHAR(255),
-    start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    end_date DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+    start_date DATETIME,
+    end_date DATETIME
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 7. employee
 CREATE TABLE IF NOT EXISTS employee (
@@ -58,7 +78,9 @@ CREATE TABLE IF NOT EXISTS employee (
     status VARCHAR(50) DEFAULT 'active',
     role_id INT,
     FOREIGN KEY (role_id) REFERENCES role(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 8. product
 CREATE TABLE IF NOT EXISTS product (
@@ -70,7 +92,9 @@ CREATE TABLE IF NOT EXISTS product (
     status VARCHAR(50) DEFAULT 'available',
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES product_category(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 9. shipper (inherits from employee 1:1)
 CREATE TABLE IF NOT EXISTS shipper (
@@ -78,16 +102,20 @@ CREATE TABLE IF NOT EXISTS shipper (
     vehicle_plate_number VARCHAR(50),
     current_status VARCHAR(50) DEFAULT 'available',
     FOREIGN KEY (id) REFERENCES employee(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 10. timesheet
-CREATE TABLE IF NOT EXISTS timesheet (
+CREATE TABLE IF NOT EXISTS timesheet ( 
     id INT PRIMARY KEY AUTO_INCREMENT,
     employee_id INT,
-    hours_worked DECIMAL(5, 2) DEFAULT 0,
-    work_date DATE DEFAULT (CURRENT_DATE),
+    hours_worked DECIMAL(5, 2),
+    work_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (employee_id) REFERENCES employee(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 11. goods_receipt (phiếu nhập hàng)
 CREATE TABLE IF NOT EXISTS goods_receipt (
@@ -97,7 +125,9 @@ CREATE TABLE IF NOT EXISTS goods_receipt (
     total_quantity INT DEFAULT 0,
     total_price DECIMAL(15, 2) DEFAULT 0,
     FOREIGN KEY (supplier_id) REFERENCES supplier(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 12. ingredient
 CREATE TABLE IF NOT EXISTS ingredient (
@@ -123,7 +153,9 @@ CREATE TABLE IF NOT EXISTS goods_receipt_detail (
     unit_price DECIMAL(15, 2) DEFAULT 0,
     FOREIGN KEY (receipt_id) REFERENCES goods_receipt(id),
     FOREIGN KEY (ingredient_id) REFERENCES ingredient(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 
 
@@ -136,7 +168,9 @@ CREATE TABLE IF NOT EXISTS ingredient_product (
     total_price DECIMAL(15, 2) DEFAULT 0,
     FOREIGN KEY (product_id) REFERENCES product(id),
     FOREIGN KEY (ingredient_id) REFERENCES ingredient(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 15. order (đơn đặt hàng chung)
 CREATE TABLE IF NOT EXISTS `order` (
@@ -147,7 +181,9 @@ CREATE TABLE IF NOT EXISTS `order` (
     total_amount DECIMAL(15, 2) DEFAULT 0,
     status VARCHAR(50) DEFAULT 'pending',
     FOREIGN KEY (customer_id) REFERENCES customer(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 16. online_order (specialization of order)
 CREATE TABLE IF NOT EXISTS online_order (
@@ -165,7 +201,9 @@ CREATE TABLE IF NOT EXISTS online_order (
     FOREIGN KEY (id) REFERENCES `order`(id),
     FOREIGN KEY (customer_id) REFERENCES customer(id),
     FOREIGN KEY (shipper_id) REFERENCES shipper(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 17. order_detail
 CREATE TABLE IF NOT EXISTS order_detail (
@@ -176,7 +214,9 @@ CREATE TABLE IF NOT EXISTS order_detail (
     unit_price DECIMAL(15, 2) DEFAULT 0,
     FOREIGN KEY (order_id) REFERENCES `order`(id),
     FOREIGN KEY (product_id) REFERENCES product(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 18. invoice
 CREATE TABLE IF NOT EXISTS invoice (
@@ -188,11 +228,15 @@ CREATE TABLE IF NOT EXISTS invoice (
     issued_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     total_amount DECIMAL(15, 2),
     status VARCHAR(50) DEFAULT 'NEW',
+    total_amount DECIMAL(15, 2),
+    status VARCHAR(50) DEFAULT 'NEW',
     FOREIGN KEY (customer_id) REFERENCES customer(id),
     FOREIGN KEY (employee_id) REFERENCES employee(id),
     FOREIGN KEY (order_id) REFERENCES `order`(id),
     FOREIGN KEY (payment_method_id) REFERENCES payment_method(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 19. invoice_detail
 CREATE TABLE IF NOT EXISTS invoice_detail (
@@ -203,17 +247,22 @@ CREATE TABLE IF NOT EXISTS invoice_detail (
     unit_price DECIMAL(15, 2) DEFAULT 0,
     FOREIGN KEY (invoice_id) REFERENCES invoice(id),
     FOREIGN KEY (product_id) REFERENCES product(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
 -- 20. invoice_voucher_detail
-CREATE TABLE IF NOT EXISTS invoice_voucher_detail  (
+CREATE TABLE IF NOT EXISTS invoice_voucher_detail (
     id INT PRIMARY KEY AUTO_INCREMENT,
     invoice_id INT,
     voucher_id INT,
     discount_value DECIMAL(15, 2) DEFAULT 0,
     FOREIGN KEY (invoice_id) REFERENCES invoice(id),
     FOREIGN KEY (voucher_id) REFERENCES voucher(id)
-);
+)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
 
 DELIMITER $$
 
@@ -254,7 +303,7 @@ FOR EACH ROW
 BEGIN
     UPDATE ingredient ing
     SET ing.net_weight = COALESCE(new.net_weight,0),
-        ing.quantity = COALESCE(NEW.quantity,0),
+        ing.quantity = COALESCE(ing.quantity, 0) + COALESCE(NEW.quantity, 0),
         ing.unit_price = COALESCE(NEW.unit_price, ing.unit_price),
         ing.total_weight = COALESCE(ing.total_weight,0)+(COALESCE(NEW.net_weight,0) * COALESCE(NEW.quantity,0))
     WHERE ing.id = NEW.ingredient_id;

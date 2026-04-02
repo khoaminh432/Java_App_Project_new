@@ -11,6 +11,7 @@ public class VoucherDao implements GenericDao<Voucher, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM voucher";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "voucher";
 
     @Override
     public Voucher findById(Integer id) {
@@ -22,8 +23,25 @@ public class VoucherDao implements GenericDao<Voucher, Integer> {
     }
 
     @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
     public ArrayList<Voucher> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<Voucher> vouchers = new ArrayList<>(records.size());
+        records.forEach(row -> vouchers.add(new Voucher(row)));
+        return vouchers;
+    }
+
+    @Override
+    public ArrayList<Voucher> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
         ArrayList<Voucher> vouchers = new ArrayList<>(records.size());
         records.forEach(row -> vouchers.add(new Voucher(row)));
         return vouchers;

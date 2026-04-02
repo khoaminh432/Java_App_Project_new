@@ -10,6 +10,7 @@ public class ProductCategoryDao implements GenericDao<ProductCategory, Integer> 
 
     private static final String BASE_QUERY = "SELECT * FROM product_category";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "product_category";
 
     @Override
     public ProductCategory findById(Integer id) {
@@ -21,8 +22,25 @@ public class ProductCategoryDao implements GenericDao<ProductCategory, Integer> 
     }
 
     @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
     public ArrayList<ProductCategory> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<ProductCategory> categories = new ArrayList<>(records.size());
+        records.forEach(row -> categories.add(new ProductCategory(row)));
+        return categories;
+    }
+
+    @Override
+    public ArrayList<ProductCategory> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
         ArrayList<ProductCategory> categories = new ArrayList<>(records.size());
         records.forEach(row -> categories.add(new ProductCategory(row)));
         return categories;

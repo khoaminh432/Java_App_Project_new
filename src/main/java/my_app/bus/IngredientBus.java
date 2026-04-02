@@ -18,9 +18,18 @@ public class IngredientBus implements GeneralConfig<Ingredient> {
     private static final IngredientProductDao ingredientProductDao = new IngredientProductDao();
     public static ArrayList<Ingredient> listIngredients = new ArrayList<>();
     private final ObservableList<Ingredient> ingredients;
+    private static final int count = ingredientDao.count();
 
     public IngredientBus() {
         this.ingredients = FXCollections.observableArrayList();
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public int count() {
+        return ingredientDao.count();
     }
 
     public ObservableList<Ingredient> getIngredients() {
@@ -72,6 +81,10 @@ public class IngredientBus implements GeneralConfig<Ingredient> {
         replaceAll(fetchAllFromDb());
     }
 
+    public void findAll(int limit, int page) {
+        replaceAll(ingredientDao.findAll(limit, page));
+    }
+
     @Override
     public void findById(int id) {
         Ingredient ingredient = ingredientDao.findById(id);
@@ -97,31 +110,40 @@ public class IngredientBus implements GeneralConfig<Ingredient> {
     @Override
     public int create(Ingredient obj) {
         int index = ingredientDao.create(obj);
-        findAll();
+        ingredients.add(obj);
         return index;
+    }
+
+    private int getIndex(int id) {
+        for (int i = 0; i < ingredients.size(); i++) {
+            if (ingredients.get(i).getId() == id) {
+                return i;
+            }
+        }
+        return -1; // Not found
     }
 
     @Override
     public int update(Ingredient obj) {
         int index = ingredientDao.update(obj);
-        findAll();
+        ingredients.set(getIndex(obj.getId()), obj);
         return index;
     }
 
     @Override
     public int delete(int id) {
         int index = ingredientDao.delete(id);
-        findAll();
+        ingredients.removeIf(ingredient -> ingredient.getId() == id);
         return index;
     }
 
     public IngredientProduct getIngredientProductByThis(Ingredient ingredienttemp) {
-        IngredientProduct IngProTemp = ingredientProductDao.findByIngredientId(ingredienttemp.getId());
+        IngredientProduct IngProTemp = new IngredientProduct();
+        IngProTemp.setIngredientId(ingredienttemp.getId());
         if (IngProTemp == null) {
             return null;
         }
         IngProTemp.setIngredient(ingredienttemp);
-
         return IngProTemp;
     }
 }

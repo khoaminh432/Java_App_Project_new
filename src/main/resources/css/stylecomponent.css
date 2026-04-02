@@ -1,12 +1,14 @@
 
 .container-component{
-    -fx-background-color: #ffffff;
+    -fx-background-color: #f7f5f2;
     -fx-background-radius: 5px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);
 }
 .background-component{
-    -fx-background-color: #f3f3f3;
+    -fx-background-color: rgba(255, 253, 250, 0.95);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 30, 0.15, 0, 10); 
+    -fx-background-radius: 12;
+    ;
 }
 
 /* Title Styles */
@@ -17,6 +19,13 @@
 .label-actor{
     -fx-font-size: 14px;
     -fx-text-fill: #2c3e50;
+}
+.highlight-icon{
+    -fx-text-fill: #b48c5c;
+    -fx-background-color: #f0e5d8;
+    -fx-background-radius: 24px;
+    -fx-padding: 2 4;
+    -fx-font-size: 2em;
 }
 
 /* Text Field Styles */
@@ -83,7 +92,7 @@
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 
-    -fx-padding: none;
+    -fx-padding: 6 12;
     -fx-background-radius: 10;
 
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);
@@ -283,4 +292,8 @@
     -fx-font-size: 20;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0.25, 0, 10);
     -fx-cursor: hand;
+}
+.design-leftLabel{
+    -fx-border-color: #b48c5c;
+    -fx-border-width: 0 0 0 4;
 }

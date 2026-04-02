@@ -11,6 +11,7 @@ public class GoodsReceiptDao implements GenericDao<GoodsReceipt, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM goods_receipt";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "goods_receipt";
 
     @Override
     public GoodsReceipt findById(Integer id) {
@@ -22,8 +23,25 @@ public class GoodsReceiptDao implements GenericDao<GoodsReceipt, Integer> {
     }
 
     @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
     public ArrayList<GoodsReceipt> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<GoodsReceipt> receipts = new ArrayList<>(records.size());
+        records.forEach(row -> receipts.add(new GoodsReceipt(row)));
+        return receipts;
+    }
+
+    @Override
+    public ArrayList<GoodsReceipt> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
         ArrayList<GoodsReceipt> receipts = new ArrayList<>(records.size());
         records.forEach(row -> receipts.add(new GoodsReceipt(row)));
         return receipts;
@@ -34,9 +52,10 @@ public class GoodsReceiptDao implements GenericDao<GoodsReceipt, Integer> {
         if (entity == null) {
             throw new IllegalArgumentException("Goods receipt entity must not be null");
         }
-        final String insertSql = "INSERT INTO goods_receipt (received_date, supplier_id, total_quantity, total_price) VALUES (?,?,?,?)";
+        final String insertSql = "INSERT INTO goods_receipt (id, received_date, supplier_id, total_quantity, total_price) VALUES (?,?,?,?,?)";
         Timestamp receivedDate = entity.getReceivedDate() != null ? Timestamp.valueOf(entity.getReceivedDate()) : null;
         return qe.ExecuteUpdate(insertSql,
+                entity.getId(),
                 receivedDate,
                 entity.getSupplierId(),
                 entity.getTotalQuantity(),

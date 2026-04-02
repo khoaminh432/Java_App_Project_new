@@ -10,6 +10,7 @@ public class PaymentMethodDao implements GenericDao<PaymentMethod, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM payment_method";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "payment_method";
 
     @Override
     public PaymentMethod findById(Integer id) {
@@ -21,8 +22,25 @@ public class PaymentMethodDao implements GenericDao<PaymentMethod, Integer> {
     }
 
     @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
     public ArrayList<PaymentMethod> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<PaymentMethod> methods = new ArrayList<>(records.size());
+        records.forEach(row -> methods.add(new PaymentMethod(row)));
+        return methods;
+    }
+
+    @Override
+    public ArrayList<PaymentMethod> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
         ArrayList<PaymentMethod> methods = new ArrayList<>(records.size());
         records.forEach(row -> methods.add(new PaymentMethod(row)));
         return methods;

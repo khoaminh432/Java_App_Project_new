@@ -11,6 +11,7 @@ public class TimesheetDao implements GenericDao<Timesheet, Integer> {
 
     private static final String BASE_QUERY = "SELECT * FROM timesheet";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "timesheet";
 
     @Override
     public Timesheet findById(Integer id) {
@@ -30,7 +31,25 @@ public class TimesheetDao implements GenericDao<Timesheet, Integer> {
     }
 
     @Override
-    public int create(Timesheet entity) {
+    public ArrayList<Timesheet> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
+        ArrayList<Timesheet> timesheets = new ArrayList<>(records.size());
+        records.forEach(row -> timesheets.add(new Timesheet(row)));
+        return timesheets;
+    }
+
+    @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
+    public int create(Timesheet entity
+    ) {
         if (entity == null) {
             throw new IllegalArgumentException("Timesheet entity must not be null");
         }
@@ -43,7 +62,8 @@ public class TimesheetDao implements GenericDao<Timesheet, Integer> {
     }
 
     @Override
-    public int update(Timesheet entity) {
+    public int update(Timesheet entity
+    ) {
         if (entity == null || entity.getId() == null) {
             throw new IllegalArgumentException("Timesheet entity and id must not be null");
         }
@@ -57,7 +77,8 @@ public class TimesheetDao implements GenericDao<Timesheet, Integer> {
     }
 
     @Override
-    public int delete(Integer id) {
+    public int delete(Integer id
+    ) {
         if (id == null) {
             throw new IllegalArgumentException("Timesheet id must not be null");
         }

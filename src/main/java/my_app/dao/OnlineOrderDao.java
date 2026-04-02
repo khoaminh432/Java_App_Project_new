@@ -16,6 +16,7 @@ public class OnlineOrderDao implements GenericDao<OnlineOrder, Integer> {
             + "oo.estimated_delivery_time, oo.completed_time "
             + "FROM online_order oo INNER JOIN `order` o ON oo.id = o.id";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "online_order";
 
     @Override
     public OnlineOrder findById(Integer id) {
@@ -27,8 +28,25 @@ public class OnlineOrderDao implements GenericDao<OnlineOrder, Integer> {
     }
 
     @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
     public ArrayList<OnlineOrder> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<OnlineOrder> orders = new ArrayList<>(records.size());
+        records.forEach(row -> orders.add(new OnlineOrder(row)));
+        return orders;
+    }
+
+    @Override
+    public ArrayList<OnlineOrder> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE o.id > ? LIMIT ?", offset, limit);
         ArrayList<OnlineOrder> orders = new ArrayList<>(records.size());
         records.forEach(row -> orders.add(new OnlineOrder(row)));
         return orders;

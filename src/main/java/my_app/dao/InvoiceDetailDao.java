@@ -6,10 +6,11 @@ import java.util.HashMap;
 import my_app.model.InvoiceDetail;
 import my_app.util.QueryExecutor;
 
-
 public class InvoiceDetailDao implements GenericDao<InvoiceDetail, Integer> {
+
     private static final String BASE_QUERY = "SELECT * FROM invoice_detail";
     private final QueryExecutor qe = new QueryExecutor();
+    private final static String TABLE_NAME = "invoice_detail";
 
     @Override
     public InvoiceDetail findById(Integer id) {
@@ -21,8 +22,25 @@ public class InvoiceDetailDao implements GenericDao<InvoiceDetail, Integer> {
     }
 
     @Override
+    public int getNextID() {
+        return qe.NextID(TABLE_NAME);
+    }
+
+    @Override
     public ArrayList<InvoiceDetail> findAll() {
         ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY);
+        ArrayList<InvoiceDetail> details = new ArrayList<>(records.size());
+        records.forEach(row -> details.add(new InvoiceDetail(row)));
+        return details;
+    }
+
+    @Override
+    public ArrayList<InvoiceDetail> findAll(int limit, int page) {
+        if (limit <= 0 || page < 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0 and page must be non-negative");
+        }
+        int offset = limit * page;
+        ArrayList<HashMap<String, Object>> records = qe.ExecuteQuery(BASE_QUERY + " WHERE id > ? LIMIT ?", offset, limit);
         ArrayList<InvoiceDetail> details = new ArrayList<>(records.size());
         records.forEach(row -> details.add(new InvoiceDetail(row)));
         return details;
