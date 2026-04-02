@@ -88,10 +88,12 @@ public class GoodsReceiptController extends BaseController {
     private void RenderData() {
         ingredientBus.findAll();
         supplierBus.findAll();
+
     }
 
     @FXML
     private void EmptyForm() {
+        String a = "";
 
     }
 
