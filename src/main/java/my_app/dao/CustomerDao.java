@@ -64,22 +64,6 @@ public class CustomerDao implements GenericDao<Customer, Integer> {
         }
     }
 
-    // Tìm khách hàng theo tên
-    public Customer findByName(String fullName) {
-        if (fullName == null || fullName.trim().isEmpty()) {
-            return null;
-        }
-        try {
-            ArrayList<Customer> results = new ArrayList<>();
-            qe.ExecuteQuery(QUERYALL + " WHERE full_name = ?", fullName.trim())
-                    .forEach(row -> results.add(new Customer(row)));
-            return results.isEmpty() ? null : results.get(0);
-        } catch (Exception e) {
-            System.err.println("Lỗi khi tìm khách hàng theo tên: " + e.getMessage());
-            return null;
-        }
-    }
-
     @Override
     public int create(Customer entity) {
         if (entity == null) {

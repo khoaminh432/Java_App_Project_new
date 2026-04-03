@@ -93,13 +93,6 @@ public class indexController extends SwitchPage {
     }
 
     @FXML
-    private void loadBillPage() throws IOException {
-        System.out.println("Load Bill Page");
-        handleSwitchPage("Hóa đơn", "/fxml/admin/component/invoicepage.fxml");
-        System.out.println("Bill Page loaded successfully");
-    }
-
-    @FXML
     private void loadEmployeePage() throws IOException {
         System.out.println("Load Employee Page");
         handleSwitchPage("Nhân viên", "/fxml/employee.fxml");
