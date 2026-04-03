@@ -88,7 +88,6 @@ public class indexController extends SwitchPage {
 
     @FXML
     private void loadCustomerPage() throws IOException {
-
         System.out.println("Load Customer Page");
         handleSwitchPage("Khách hàng", "/fxml/admin/component/product/addproduct.fxml");
     }

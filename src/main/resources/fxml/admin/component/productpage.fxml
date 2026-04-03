@@ -26,7 +26,7 @@
    <children>
       <StackPane layoutX="-10.0" layoutY="-9.600000381469727" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox fx:id="vbManagementProduct" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0" styleClass="background-component" visible="false">
+            <VBox fx:id="vbManagementProduct" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0" styleClass="background-component">
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="73.0" prefWidth="767.0" spacing="10.0" style="-fx-background-radius: 25px;">
                      <children>
@@ -229,7 +229,7 @@
                   <Insets bottom="10.0" top="10.0" />
                </padding>
             </VBox>
-            <VBox fx:id="vbAddProduct">
+            <VBox fx:id="vbAddProduct" visible="false">
                <children>
                   <AnchorPane prefHeight="425.0" prefWidth="535.0" styleClass="form-card" stylesheets="@../../../css/product.css" VBox.vgrow="ALWAYS">
                      <children>
@@ -389,7 +389,7 @@
                               </VBox>
                               <VBox styleClass="form-card-inner" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <TableView fx:id="tbIngredient" prefHeight="240.0" prefWidth="434.0" styleClass="label">
+                                    <TableView fx:id="tbIngredient" prefHeight="240.0" prefWidth="434.0" styleClass="label" VBox.vgrow="ALWAYS">
                                       <columns>
                                         <TableColumn fx:id="colIDIngredient" prefWidth="52.79998779296875" text="Mã" />
                                         <TableColumn fx:id="colNameIngredient" prefWidth="158.39999389648438" text="Tên Nguyên Liệu" />
